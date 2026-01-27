@@ -56,8 +56,16 @@ jobs:
           KEYCHAIN_PASSWORD: ${{ secrets.KEYCHAIN_PASSWORD || 'temp_keychain_password' }}
         run: |
           # Create API key file for App Store Connect
-          mkdir -p ~/private_keys
-          echo "$APP_STORE_CONNECT_API_KEY_CONTENT" > ~/private_keys/AuthKey_${APP_STORE_CONNECT_API_KEY_ID}.p8
+          API_KEY_PATH="${{ github.workspace }}/private_keys/AuthKey_${APP_STORE_CONNECT_API_KEY_ID}.p8"
+          mkdir -p "${{ github.workspace }}/private_keys"
+          echo "$APP_STORE_CONNECT_API_KEY_CONTENT" > "$API_KEY_PATH"
+          
+          # Set proper permissions
+          chmod 600 "$API_KEY_PATH"
+          
+          # Verify API key file was created
+          echo "API key created at: $API_KEY_PATH"
+          ls -la "$API_KEY_PATH"
           
           # Create variables
           CERTIFICATE_PATH=$RUNNER_TEMP/build_certificate.p12
@@ -85,15 +93,16 @@ jobs:
         env:
           APP_STORE_CONNECT_API_KEY_ID: ${{ secrets.APP_STORE_CONNECT_API_KEY_ID }}
           APP_STORE_CONNECT_API_ISSUER_ID: ${{ secrets.APP_STORE_CONNECT_API_ISSUER_ID }}
-          APP_STORE_CONNECT_API_KEY_PATH: ~/private_keys/AuthKey_${{ secrets.APP_STORE_CONNECT_API_KEY_ID }}.p8
+          APP_STORE_CONNECT_API_KEY_PATH: ${{ github.workspace }}/private_keys/AuthKey_${{ secrets.APP_STORE_CONNECT_API_KEY_ID }}.p8
         run: |
           cd ios
           bundle exec fastlane beta
           
-      - name: Clean up keychain
+      - name: Clean up keychain and secrets
         if: always()
         run: |
           security delete-keychain $RUNNER_TEMP/app-signing.keychain-db || true
+          rm -rf "${{ github.workspace }}/private_keys" || true
           
       - name: Upload build artifacts
         if: always()
