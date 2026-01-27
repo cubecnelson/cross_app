@@ -28,7 +28,16 @@ platform :ios do
       build_number: new_build
     )
     
-    # Build the app with automatic signing (Xcode manages profiles)
+    # For CI: Disable automatic signing and use manual signing with provided certificates
+    if ENV['CI']
+      disable_automatic_code_signing(
+        path: "Runner.xcodeproj",
+        targets: ["Runner"],
+        profile_name: "Manual Provisioning Profile"
+      )
+    end
+    
+    # Build the app (Xcode will auto-find the installed provisioning profile)
     build_app(
       workspace: "Runner.xcworkspace",
       scheme: "Runner",
@@ -59,7 +68,16 @@ platform :ios do
   lane :release do
     # Fastlane will automatically use environment variables
     
-    # Build the app with automatic signing
+    # For CI: Disable automatic signing
+    if ENV['CI']
+      disable_automatic_code_signing(
+        path: "Runner.xcodeproj",
+        targets: ["Runner"],
+        profile_name: "Manual Provisioning Profile"
+      )
+    end
+    
+    # Build the app (Xcode will auto-find the installed provisioning profile)
     build_app(
       workspace: "Runner.xcworkspace",
       scheme: "Runner",
