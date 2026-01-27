@@ -35,7 +35,7 @@ jobs:
       - name: Install CocoaPods dependencies
         run: |
           cd ios
-          pod install
+          pod install --repo-update
           cd ..
         
       - name: Set up Ruby
