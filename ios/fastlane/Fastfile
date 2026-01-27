@@ -11,16 +11,14 @@ platform :ios do
     # - APP_STORE_CONNECT_API_KEY_KEY
     # No need to explicitly call app_store_connect_api_key()
     
-    # Increment build number based on TestFlight
-    # Get the latest build number from TestFlight, default to 0 if none exists
-    begin
-      # latest_build = latest_testflight_build_number
-      # new_build = latest_build + 1
+    # Use build number from environment (GitHub run number) or increment local
+    if ENV['BUILD_NUMBER']
+      new_build = ENV['BUILD_NUMBER'].to_i
+      UI.message("Using build number from environment: #{new_build}")
+    else
+      # Fallback to local build number increment
       new_build = get_build_number(xcodeproj: "Runner.xcodeproj").to_i + 1
-    rescue => ex
-      UI.message("No TestFlight builds found or error fetching: #{ex.message}")
-      UI.message("Using build number from Xcode project")
-      new_build = get_build_number(xcodeproj: "Runner.xcodeproj").to_i + 1
+      UI.message("Using incremented local build number: #{new_build}")
     end
     
     increment_build_number(
