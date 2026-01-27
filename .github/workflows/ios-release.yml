@@ -55,31 +55,7 @@ jobs:
           BUILD_PROVISION_PROFILE_BASE64: ${{ secrets.BUILD_PROVISION_PROFILE_BASE64 }}
           KEYCHAIN_PASSWORD: ${{ secrets.KEYCHAIN_PASSWORD || 'temp_keychain_password' }}
         run: |
-          # Create directory for API keys
-          mkdir -p "${{ github.workspace }}/private_keys"
-          
-          # Create the .p8 key file
-          API_KEY_PATH="${{ github.workspace }}/private_keys/AuthKey_${APP_STORE_CONNECT_API_KEY_ID}.p8"
-          printf '%s\n' "$APP_STORE_CONNECT_API_KEY_CONTENT" > "$API_KEY_PATH"
-          chmod 600 "$API_KEY_PATH"
-          
-          # Create JSON configuration for Fastlane
-          API_KEY_JSON="${{ github.workspace }}/private_keys/api_key.json"
-          cat > "$API_KEY_JSON" <<EOF
-          {
-            "key_id": "${APP_STORE_CONNECT_API_KEY_ID}",
-            "issuer_id": "${APP_STORE_CONNECT_API_ISSUER_ID}",
-            "key": "$(cat "$API_KEY_PATH" | sed -E ':a;N;$!ba;s/\r{0,1}\n/\\n/g')",
-            "duration": 1200,
-            "in_house": false
-          }
-          EOF
-          chmod 600 "$API_KEY_JSON"
-          
-          # Verify files were created
-          echo "API key file created at: $API_KEY_PATH"
-          echo "API key JSON created at: $API_KEY_JSON"
-          ls -la "${{ github.workspace }}/private_keys/"
+          echo "Setting up App Store Connect API authentication..."
           
           # Create variables
           CERTIFICATE_PATH=$RUNNER_TEMP/build_certificate.p12
@@ -105,7 +81,10 @@ jobs:
           
       - name: Build and upload to TestFlight
         env:
-          APP_STORE_CONNECT_API_KEY_PATH: ${{ github.workspace }}/private_keys/api_key.json
+          APP_STORE_CONNECT_API_KEY_KEY_ID: ${{ secrets.APP_STORE_CONNECT_API_KEY_ID }}
+          APP_STORE_CONNECT_API_KEY_ISSUER_ID: ${{ secrets.APP_STORE_CONNECT_API_ISSUER_ID }}
+          APP_STORE_CONNECT_API_KEY_KEY: ${{ secrets.APP_STORE_CONNECT_API_KEY_CONTENT }}
+          APP_STORE_CONNECT_API_KEY_IS_KEY_CONTENT_BASE64: false
         run: |
           cd ios
           bundle exec fastlane beta

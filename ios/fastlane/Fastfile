@@ -5,10 +5,11 @@ default_platform(:ios)
 platform :ios do
   desc "Push a new beta build to TestFlight"
   lane :beta do
-    # Set up the App Store Connect API Key from JSON file
-    app_store_connect_api_key(
-      key_filepath: ENV['APP_STORE_CONNECT_API_KEY_PATH']
-    )
+    # Fastlane will automatically use these environment variables:
+    # - APP_STORE_CONNECT_API_KEY_KEY_ID
+    # - APP_STORE_CONNECT_API_KEY_ISSUER_ID
+    # - APP_STORE_CONNECT_API_KEY_KEY
+    # No need to explicitly call app_store_connect_api_key()
     
     # Increment build number based on TestFlight
     # Get the latest build number from TestFlight, default to 0 if none exists
@@ -47,10 +48,7 @@ platform :ios do
   
   desc "Build the app for App Store submission"
   lane :release do
-    # Set up the App Store Connect API Key from JSON file
-    app_store_connect_api_key(
-      key_filepath: ENV['APP_STORE_CONNECT_API_KEY_PATH']
-    )
+    # Fastlane will automatically use environment variables
     
     # Build the app
     build_app(
