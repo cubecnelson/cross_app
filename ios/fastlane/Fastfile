@@ -28,7 +28,7 @@ platform :ios do
       build_number: new_build
     )
     
-    # Build the app
+    # Build the app  
     build_app(
       workspace: "Runner.xcworkspace",
       scheme: "Runner",
@@ -36,11 +36,14 @@ platform :ios do
       output_directory: "./build/Runner",
       output_name: "Runner.ipa",
       clean: true,
+      skip_profile_detection: false,
+      codesigning_identity: "Apple Distribution",
+      export_xcargs: "-allowProvisioningUpdates",
       export_options: {
         method: "app-store",
-        signingStyle: "manual"
-      },
-      xcargs: "-allowProvisioningUpdates"
+        uploadSymbols: true,
+        uploadBitcode: false
+      }
     )
     
     # Upload to TestFlight
@@ -67,11 +70,14 @@ platform :ios do
       output_directory: "./build/Runner",
       output_name: "Runner.ipa",
       clean: true,
+      skip_profile_detection: false,
+      codesigning_identity: "Apple Distribution",
+      export_xcargs: "-allowProvisioningUpdates",
       export_options: {
         method: "app-store",
-        signingStyle: "manual"
-      },
-      xcargs: "-allowProvisioningUpdates"
+        uploadSymbols: true,
+        uploadBitcode: false
+      }
     )
     
     # Upload to App Store Connect
