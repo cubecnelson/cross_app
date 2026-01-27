@@ -28,14 +28,13 @@ platform :ios do
       build_number: new_build
     )
     
-    # Disable automatic code signing (use manual signing with our certificates)
-    update_code_signing_settings(
-      use_automatic_signing: false,
+    # Disable automatic code signing for CI
+    disable_automatic_code_signing(
       path: "Runner.xcodeproj",
-      code_sign_identity: "Apple Distribution"
+      targets: ["Runner"]
     )
     
-    # Build the app  
+    # Build the app with manual signing
     build_app(
       workspace: "Runner.xcworkspace",
       scheme: "Runner",
@@ -43,13 +42,14 @@ platform :ios do
       output_directory: "./build/Runner",
       output_name: "Runner.ipa",
       clean: true,
-      skip_profile_detection: false,
       codesigning_identity: "Apple Distribution",
-      export_xcargs: "-allowProvisioningUpdates",
+      xcargs: "CODE_SIGN_STYLE=Manual -allowProvisioningUpdates",
       export_options: {
         method: "app-store",
         uploadSymbols: true,
-        uploadBitcode: false
+        uploadBitcode: false,
+        signingStyle: "manual",
+        signingCertificate: "Apple Distribution"
       }
     )
     
@@ -69,14 +69,13 @@ platform :ios do
   lane :release do
     # Fastlane will automatically use environment variables
     
-    # Disable automatic code signing
-    update_code_signing_settings(
-      use_automatic_signing: false,
+    # Disable automatic code signing for CI
+    disable_automatic_code_signing(
       path: "Runner.xcodeproj",
-      code_sign_identity: "Apple Distribution"
+      targets: ["Runner"]
     )
     
-    # Build the app
+    # Build the app with manual signing
     build_app(
       workspace: "Runner.xcworkspace",
       scheme: "Runner",
@@ -84,13 +83,14 @@ platform :ios do
       output_directory: "./build/Runner",
       output_name: "Runner.ipa",
       clean: true,
-      skip_profile_detection: false,
       codesigning_identity: "Apple Distribution",
-      export_xcargs: "-allowProvisioningUpdates",
+      xcargs: "CODE_SIGN_STYLE=Manual -allowProvisioningUpdates",
       export_options: {
         method: "app-store",
         uploadSymbols: true,
-        uploadBitcode: false
+        uploadBitcode: false,
+        signingStyle: "manual",
+        signingCertificate: "Apple Distribution"
       }
     )
     
