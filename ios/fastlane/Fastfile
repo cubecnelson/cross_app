@@ -30,13 +30,17 @@ platform :ios do
     
     # For CI: Disable automatic signing and use manual signing with provided certificates
     if ENV['CI']
-      disable_automatic_code_signing(
+      # Update project settings for manual signing
+      update_code_signing_settings(
+        use_automatic_signing: false,
         path: "Runner.xcodeproj",
-        targets: ["Runner"]
+        targets: ["Runner"],
+        code_sign_identity: "Apple Distribution",
+        profile_uuid: ENV['PROVISIONING_PROFILE_UUID']
       )
     end
     
-    # Build the app (Xcode will auto-find the installed provisioning profile)
+    # Build the app
     build_app(
       workspace: "Runner.xcworkspace",
       scheme: "Runner",
@@ -69,13 +73,17 @@ platform :ios do
     
     # For CI: Disable automatic signing
     if ENV['CI']
-      disable_automatic_code_signing(
+      # Update project settings for manual signing
+      update_code_signing_settings(
+        use_automatic_signing: false,
         path: "Runner.xcodeproj",
-        targets: ["Runner"]
+        targets: ["Runner"],
+        code_sign_identity: "Apple Distribution",
+        profile_uuid: ENV['PROVISIONING_PROFILE_UUID']
       )
     end
     
-    # Build the app (Xcode will auto-find the installed provisioning profile)
+    # Build the app
     build_app(
       workspace: "Runner.xcworkspace",
       scheme: "Runner",
