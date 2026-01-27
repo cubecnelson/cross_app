@@ -86,11 +86,13 @@ jobs:
       - name: Increment build number
         run: |
           cd ios
-          # Get current build number and increment
-          CURRENT_BUILD=$(agvtool what-version -terse)
-          NEW_BUILD=$((CURRENT_BUILD + 1))
-          agvtool new-version -all $NEW_BUILD
-          echo "Build number: $CURRENT_BUILD -> $NEW_BUILD"
+          # Use timestamp-based build number for uniqueness
+          BUILD_NUMBER=${{ github.run_number }}
+          
+          # Update Info.plist
+          /usr/libexec/PlistBuddy -c "Set :CFBundleVersion $BUILD_NUMBER" Runner/Info.plist
+          
+          echo "Build number set to: $BUILD_NUMBER"
           
       - name: Create ExportOptions.plist
         run: |
