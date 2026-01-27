@@ -79,6 +79,12 @@ jobs:
           mkdir -p ~/Library/MobileDevice/Provisioning\ Profiles
           cp $PP_PATH ~/Library/MobileDevice/Provisioning\ Profiles
           
+          # List installed certificates and profiles for debugging
+          echo "Installed certificates:"
+          security find-identity -v -p codesigning $KEYCHAIN_PATH
+          echo "Installed provisioning profiles:"
+          ls -la ~/Library/MobileDevice/Provisioning\ Profiles/
+          
       - name: Build and upload to TestFlight
         env:
           APP_STORE_CONNECT_API_KEY_KEY_ID: ${{ secrets.APP_STORE_CONNECT_API_KEY_ID }}
@@ -101,8 +107,8 @@ jobs:
         with:
           name: ios-build-artifacts
           path: |
-            ios/build/ios/archive/Runner.xcarchive
-            ios/build/ios/ipa/*.ipa
+            ios/build/Runner/Runner.ipa
+            ios/build/Runner/*.ipa
           retention-days: 30
           
       - name: Notify on success

@@ -31,7 +31,15 @@ platform :ios do
     build_app(
       workspace: "Runner.xcworkspace",
       scheme: "Runner",
-      export_method: "app-store"
+      export_method: "app-store",
+      output_directory: "./build/Runner",
+      output_name: "Runner.ipa",
+      clean: true,
+      export_options: {
+        method: "app-store",
+        signingStyle: "manual"
+      },
+      xcargs: "-allowProvisioningUpdates"
     )
     
     # Upload to TestFlight
@@ -54,7 +62,15 @@ platform :ios do
     build_app(
       workspace: "Runner.xcworkspace",
       scheme: "Runner",
-      export_method: "app-store"
+      export_method: "app-store",
+      output_directory: "./build/Runner",
+      output_name: "Runner.ipa",
+      clean: true,
+      export_options: {
+        method: "app-store",
+        signingStyle: "manual"
+      },
+      xcargs: "-allowProvisioningUpdates"
     )
     
     # Upload to App Store Connect
