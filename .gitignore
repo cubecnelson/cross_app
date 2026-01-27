@@ -54,3 +54,30 @@ app.*.map.json
 *.hive
 *.hive.lock
 
+# iOS Fastlane
+ios/Gemfile.lock
+ios/.bundle/
+ios/vendor/
+ios/fastlane/report.xml
+ios/fastlane/Preview.html
+ios/fastlane/screenshots/
+ios/fastlane/test_output/
+ios/fastlane/README.md
+
+# iOS certificates and keys (NEVER commit these!)
+*.cer
+*.certSigningRequest
+*.mobileprovision
+*.p12
+*.p8
+AuthKey_*.p8
+ApiKey_*.p8
+
+# Xcode build artifacts
+ios/build/
+ios/Pods/
+ios/.symlinks/
+ios/*.xcworkspace/xcuserdata/
+ios/*.xcodeproj/xcuserdata/
+ios/*.xcodeproj/project.xcworkspace/xcuserdata/
+

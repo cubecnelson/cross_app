@@ -1,0 +1,70 @@
+# Fastfile for iOS deployment
+
+default_platform(:ios)
+
+platform :ios do
+  desc "Push a new beta build to TestFlight"
+  lane :beta do
+    # Set up the App Store Connect API Key
+    app_store_connect_api_key(
+      key_id: ENV['APP_STORE_CONNECT_API_KEY_ID'],
+      issuer_id: ENV['APP_STORE_CONNECT_API_ISSUER_ID'],
+      key_filepath: ENV['APP_STORE_CONNECT_API_KEY_PATH'],
+      duration: 1200, # optional (maximum 1200)
+      in_house: false
+    )
+    
+    # Increment build number based on TestFlight
+    increment_build_number(
+      xcodeproj: "Runner.xcodeproj",
+      build_number: latest_testflight_build_number + 1
+    )
+    
+    # Build the app
+    build_app(
+      workspace: "Runner.xcworkspace",
+      scheme: "Runner",
+      export_method: "app-store"
+    )
+    
+    # Upload to TestFlight
+    upload_to_testflight(
+      skip_waiting_for_build_processing: true,
+      skip_submission: true,
+      distribute_external: false,
+      notify_external_testers: false
+    )
+    
+    # Clean up
+    clean_build_artifacts
+  end
+  
+  desc "Build the app for App Store submission"
+  lane :release do
+    # Set up the App Store Connect API Key
+    app_store_connect_api_key(
+      key_id: ENV['APP_STORE_CONNECT_API_KEY_ID'],
+      issuer_id: ENV['APP_STORE_CONNECT_API_ISSUER_ID'],
+      key_filepath: ENV['APP_STORE_CONNECT_API_KEY_PATH'],
+      duration: 1200,
+      in_house: false
+    )
+    
+    # Build the app
+    build_app(
+      workspace: "Runner.xcworkspace",
+      scheme: "Runner",
+      export_method: "app-store"
+    )
+    
+    # Upload to App Store Connect
+    upload_to_app_store(
+      skip_metadata: true,
+      skip_screenshots: true,
+      precheck_include_in_app_purchases: false
+    )
+    
+    # Clean up
+    clean_build_artifacts
+  end
+end

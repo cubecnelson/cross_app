@@ -1,0 +1,14 @@
+# iOS Device Registration for Ad Hoc Distribution
+# Format: Device ID<tab>Device Name
+# 
+# To find your device UDID:
+# 1. Connect device to Mac
+# 2. Open Finder → Click on device
+# 3. Click under device name to show UDID
+# 4. Right-click UDID → Copy
+#
+# Example:
+# 00008030-001234567890001E	John's iPhone 14 Pro
+# 00008110-000123456789001E	Jane's iPad Air
+
+# Add your test devices below:
