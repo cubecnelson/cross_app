@@ -28,13 +28,7 @@ platform :ios do
       build_number: new_build
     )
     
-    # Disable automatic code signing for CI
-    disable_automatic_code_signing(
-      path: "Runner.xcodeproj",
-      targets: ["Runner"]
-    )
-    
-    # Build the app with manual signing
+    # Build the app with automatic signing (Xcode manages profiles)
     build_app(
       workspace: "Runner.xcworkspace",
       scheme: "Runner",
@@ -42,14 +36,10 @@ platform :ios do
       output_directory: "./build/Runner",
       output_name: "Runner.ipa",
       clean: true,
-      codesigning_identity: "Apple Distribution",
-      xcargs: "CODE_SIGN_STYLE=Manual -allowProvisioningUpdates",
       export_options: {
         method: "app-store",
         uploadSymbols: true,
-        uploadBitcode: false,
-        signingStyle: "manual",
-        signingCertificate: "Apple Distribution"
+        uploadBitcode: false
       }
     )
     
@@ -69,13 +59,7 @@ platform :ios do
   lane :release do
     # Fastlane will automatically use environment variables
     
-    # Disable automatic code signing for CI
-    disable_automatic_code_signing(
-      path: "Runner.xcodeproj",
-      targets: ["Runner"]
-    )
-    
-    # Build the app with manual signing
+    # Build the app with automatic signing
     build_app(
       workspace: "Runner.xcworkspace",
       scheme: "Runner",
@@ -83,14 +67,10 @@ platform :ios do
       output_directory: "./build/Runner",
       output_name: "Runner.ipa",
       clean: true,
-      codesigning_identity: "Apple Distribution",
-      xcargs: "CODE_SIGN_STYLE=Manual -allowProvisioningUpdates",
       export_options: {
         method: "app-store",
         uploadSymbols: true,
-        uploadBitcode: false,
-        signingStyle: "manual",
-        signingCertificate: "Apple Distribution"
+        uploadBitcode: false
       }
     )
     
