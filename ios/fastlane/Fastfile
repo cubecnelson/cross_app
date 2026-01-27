@@ -5,19 +5,25 @@ default_platform(:ios)
 platform :ios do
   desc "Push a new beta build to TestFlight"
   lane :beta do
-    # Set up the App Store Connect API Key
+    # Set up the App Store Connect API Key from JSON file
     app_store_connect_api_key(
-      key_id: ENV['APP_STORE_CONNECT_API_KEY_ID'],
-      issuer_id: ENV['APP_STORE_CONNECT_API_ISSUER_ID'],
-      key_filepath: ENV['APP_STORE_CONNECT_API_KEY_PATH'],
-      duration: 1200, # optional (maximum 1200)
-      in_house: false
+      key_filepath: ENV['APP_STORE_CONNECT_API_KEY_PATH']
     )
     
     # Increment build number based on TestFlight
+    # Get the latest build number from TestFlight, default to 0 if none exists
+    begin
+      latest_build = latest_testflight_build_number
+      new_build = latest_build + 1
+    rescue => ex
+      UI.message("No TestFlight builds found or error fetching: #{ex.message}")
+      UI.message("Using build number from Xcode project")
+      new_build = get_build_number(xcodeproj: "Runner.xcodeproj").to_i + 1
+    end
+    
     increment_build_number(
       xcodeproj: "Runner.xcodeproj",
-      build_number: latest_testflight_build_number + 1
+      build_number: new_build
     )
     
     # Build the app
@@ -41,13 +47,9 @@ platform :ios do
   
   desc "Build the app for App Store submission"
   lane :release do
-    # Set up the App Store Connect API Key
+    # Set up the App Store Connect API Key from JSON file
     app_store_connect_api_key(
-      key_id: ENV['APP_STORE_CONNECT_API_KEY_ID'],
-      issuer_id: ENV['APP_STORE_CONNECT_API_ISSUER_ID'],
-      key_filepath: ENV['APP_STORE_CONNECT_API_KEY_PATH'],
-      duration: 1200,
-      in_house: false
+      key_filepath: ENV['APP_STORE_CONNECT_API_KEY_PATH']
     )
     
     # Build the app
