@@ -18,8 +18,10 @@ This file should NEVER be committed to your repository. It's already in `.gitign
 
 ### 1. You Already Have ✅
 
-- ✅ App Store Connect API Key file (`ApiKey_EBYTI4YYF06V.p8`)
+- ✅ App Store Connect API Key file (should be named `AuthKey_EBYTI4YYF06V.p8`)
 - Your Key ID is: `EBYTI4YYF06V`
+
+**Note**: Apple's standard naming is `AuthKey_<KEY_ID>.p8`, not `ApiKey_`
 
 ### 2. Get Issuer ID
 
@@ -123,7 +125,8 @@ rm ~/Downloads/distribution.p12
 rm ~/Downloads/YourProfile.mobileprovision
 rm ~/Downloads/certificate.txt
 rm ~/Downloads/profile.txt
-rm ApiKey_EBYTI4YYF06V.p8  # In your project root!
+rm ApiKey_EBYTI4YYF06V.p8  # Delete from project root!
+rm AuthKey_EBYTI4YYF06V.p8  # If you renamed it
 ```
 
 The values are safely stored in GitHub Secrets.

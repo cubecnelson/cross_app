@@ -71,7 +71,6 @@ ios/fastlane/README.md
 *.p12
 *.p8
 AuthKey_*.p8
-ApiKey_*.p8
 
 # Xcode build artifacts
 ios/build/
