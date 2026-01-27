@@ -28,6 +28,13 @@ platform :ios do
       build_number: new_build
     )
     
+    # Disable automatic code signing (use manual signing with our certificates)
+    update_code_signing_settings(
+      use_automatic_signing: false,
+      path: "Runner.xcodeproj",
+      code_sign_identity: "Apple Distribution"
+    )
+    
     # Build the app  
     build_app(
       workspace: "Runner.xcworkspace",
@@ -61,6 +68,13 @@ platform :ios do
   desc "Build the app for App Store submission"
   lane :release do
     # Fastlane will automatically use environment variables
+    
+    # Disable automatic code signing
+    update_code_signing_settings(
+      use_automatic_signing: false,
+      path: "Runner.xcodeproj",
+      code_sign_identity: "Apple Distribution"
+    )
     
     # Build the app
     build_app(
