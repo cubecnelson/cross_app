@@ -14,8 +14,9 @@ platform :ios do
     # Increment build number based on TestFlight
     # Get the latest build number from TestFlight, default to 0 if none exists
     begin
-      latest_build = latest_testflight_build_number
-      new_build = latest_build + 1
+      # latest_build = latest_testflight_build_number
+      # new_build = latest_build + 1
+      new_build = get_build_number(xcodeproj: "Runner.xcodeproj").to_i + 1
     rescue => ex
       UI.message("No TestFlight builds found or error fetching: #{ex.message}")
       UI.message("Using build number from Xcode project")
