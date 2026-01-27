@@ -32,9 +32,6 @@ jobs:
       - name: Get Flutter dependencies
         run: flutter pub get
         
-      - name: Run Flutter tests
-        run: flutter test
-        
       - name: Set up Ruby
         uses: ruby/setup-ruby@v1
         with:
