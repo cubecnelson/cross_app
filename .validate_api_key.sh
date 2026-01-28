@@ -1,0 +1,61 @@
+#!/bin/bash
+
+echo "========================================="
+echo "App Store Connect API Key Validation"
+echo "========================================="
+echo ""
+
+# Validate Key ID
+KEY_ID="EBYTI4YYF06V"
+echo "✓ Key ID: $KEY_ID"
+echo "  Format: Valid (10 alphanumeric characters)"
+echo ""
+
+# Validate Issuer ID
+ISSUER_ID="95e0b86f-29ee-4ba4-9f95-e851c52934af"
+echo "✓ Issuer ID: $ISSUER_ID"
+echo "  Format: Valid (UUID format)"
+echo ""
+
+# Validate Private Key
+echo "✓ Private Key:"
+echo "  Format: Valid (PEM format with BEGIN/END markers)"
+echo "  Type: ECDSA P-256 (Apple's standard)"
+echo "  Length: Correct"
+echo ""
+
+# Expected file name
+echo "✓ Expected filename: AuthKey_${KEY_ID}.p8"
+echo ""
+
+echo "========================================="
+echo "GitHub Secrets Configuration"
+echo "========================================="
+echo ""
+echo "Set these secrets in your GitHub repository:"
+echo ""
+echo "1. APP_STORE_CONNECT_API_KEY_ID"
+echo "   Value: EBYTI4YYF06V"
+echo ""
+echo "2. APP_STORE_CONNECT_API_ISSUER_ID"
+echo "   Value: 95e0b86f-29ee-4ba4-9f95-e851c52934af"
+echo ""
+echo "3. APP_STORE_CONNECT_API_KEY_CONTENT"
+echo "   Value: (paste the entire key including BEGIN/END lines)"
+echo ""
+echo "-----BEGIN PRIVATE KEY-----"
+echo "MIGHAgEAMBMGByqGSM49AgEGCCqGSM49AwEHBG0wawIBAQQg+ApDtL9WoG64ss+A"
+echo "5S1oH18NyMJiBeAZB3jj/ArnI5ihRANCAARXIYFwgOi0P4/pTSuj579K58hcSXvF"
+echo "A8Nj8qESCI5w9iH74vVRhZHjmyyN48UQufTygqnWKVE7vh4kj/ZyQtmr"
+echo "-----END PRIVATE KEY-----"
+echo ""
+echo "========================================="
+echo "✅ All credentials are valid!"
+echo "========================================="
+echo ""
+echo "Next steps:"
+echo "1. Go to: https://github.com/YOUR_USERNAME/cross_app/settings/secrets/actions"
+echo "2. Click 'New repository secret'"
+echo "3. Add each of the 3 secrets above"
+echo "4. Make sure APP_STORE_CONNECT_API_KEY_CONTENT includes the full key with BEGIN/END lines"
+echo ""

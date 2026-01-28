@@ -79,5 +79,4 @@ ios/.symlinks/
 ios/*.xcworkspace/xcuserdata/
 ios/*.xcodeproj/xcuserdata/
 ios/*.xcodeproj/project.xcworkspace/xcuserdata/
-ios/ExportOptions.plist
 
