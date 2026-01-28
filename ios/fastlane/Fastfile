@@ -36,22 +36,42 @@ platform :ios do
         code_sign_identity: "Apple Distribution",
         profile_uuid: ENV['PROVISIONING_PROFILE_UUID']
       )
+      
+      # Build with explicit manual signing
+      build_app(
+        workspace: "Runner.xcworkspace",
+        scheme: "Runner",
+        export_method: "app-store",
+        output_directory: "./build/Runner",
+        output_name: "Runner.ipa",
+        clean: true,
+        destination: "generic/platform=iOS",
+        xcargs: "CODE_SIGN_STYLE=Manual CODE_SIGN_IDENTITY='Apple Distribution' PROVISIONING_PROFILE_SPECIFIER=#{ENV['PROVISIONING_PROFILE_UUID']}",
+        export_options: {
+          method: "app-store",
+          uploadSymbols: true,
+          uploadBitcode: false,
+          provisioningProfiles: {
+            "com.cross.app" => ENV['PROVISIONING_PROFILE_UUID']
+          }
+        }
+      )
+    else
+      # Local build with automatic signing
+      build_app(
+        workspace: "Runner.xcworkspace",
+        scheme: "Runner",
+        export_method: "app-store",
+        output_directory: "./build/Runner",
+        output_name: "Runner.ipa",
+        clean: true,
+        export_options: {
+          method: "app-store",
+          uploadSymbols: true,
+          uploadBitcode: false
+        }
+      )
     end
-    
-    # Build the app
-    build_app(
-      workspace: "Runner.xcworkspace",
-      scheme: "Runner",
-      export_method: "app-store",
-      output_directory: "./build/Runner",
-      output_name: "Runner.ipa",
-      clean: true,
-      export_options: {
-        method: "app-store",
-        uploadSymbols: true,
-        uploadBitcode: false
-      }
-    )
     
     # Upload to TestFlight
     upload_to_testflight(
@@ -79,22 +99,42 @@ platform :ios do
         code_sign_identity: "Apple Distribution",
         profile_uuid: ENV['PROVISIONING_PROFILE_UUID']
       )
+      
+      # Build with explicit manual signing
+      build_app(
+        workspace: "Runner.xcworkspace",
+        scheme: "Runner",
+        export_method: "app-store",
+        output_directory: "./build/Runner",
+        output_name: "Runner.ipa",
+        clean: true,
+        destination: "generic/platform=iOS",
+        xcargs: "CODE_SIGN_STYLE=Manual CODE_SIGN_IDENTITY='Apple Distribution' PROVISIONING_PROFILE_SPECIFIER=#{ENV['PROVISIONING_PROFILE_UUID']}",
+        export_options: {
+          method: "app-store",
+          uploadSymbols: true,
+          uploadBitcode: false,
+          provisioningProfiles: {
+            "com.cross.app" => ENV['PROVISIONING_PROFILE_UUID']
+          }
+        }
+      )
+    else
+      # Local build with automatic signing
+      build_app(
+        workspace: "Runner.xcworkspace",
+        scheme: "Runner",
+        export_method: "app-store",
+        output_directory: "./build/Runner",
+        output_name: "Runner.ipa",
+        clean: true,
+        export_options: {
+          method: "app-store",
+          uploadSymbols: true,
+          uploadBitcode: false
+        }
+      )
     end
-    
-    # Build the app
-    build_app(
-      workspace: "Runner.xcworkspace",
-      scheme: "Runner",
-      export_method: "app-store",
-      output_directory: "./build/Runner",
-      output_name: "Runner.ipa",
-      clean: true,
-      export_options: {
-        method: "app-store",
-        uploadSymbols: true,
-        uploadBitcode: false
-      }
-    )
     
     # Upload to App Store Connect
     upload_to_app_store(
