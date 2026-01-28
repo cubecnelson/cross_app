@@ -26,20 +26,31 @@ platform :ios do
       build_number: new_build
     )
     
-    # Build the app with automatic signing
+    # Build the app with automatic signing and online profile fetching
+    # Set up authentication for automatic profile download
+    if ENV['CI']
+      api_key_path = File.expand_path("~/private_keys/AuthKey_#{ENV['APP_STORE_CONNECT_API_KEY_KEY_ID']}.p8")
+      xcargs = "-allowProvisioningUpdates -authenticationKeyPath '#{api_key_path}' -authenticationKeyID #{ENV['APP_STORE_CONNECT_API_KEY_KEY_ID']} -authenticationKeyIssuerID #{ENV['APP_STORE_CONNECT_API_KEY_ISSUER_ID']}"
+      UI.message("Using API key authentication: #{api_key_path}")
+    else
+      xcargs = "-allowProvisioningUpdates"
+    end
+    
     build_app(
       workspace: "Runner.xcworkspace",
       scheme: "Runner",
+      configuration: "Release",
       export_method: "app-store",
       output_directory: "./build/Runner",
       output_name: "Runner.ipa",
       clean: true,
-      xcargs: "-allowProvisioningUpdates",
+      xcargs: xcargs,
       export_options: {
         method: "app-store",
         uploadSymbols: true,
         uploadBitcode: false,
-        teamID: ENV['TEAM_ID']
+        teamID: ENV['TEAM_ID'],
+        signingStyle: "automatic"
       }
     )
     
@@ -59,20 +70,30 @@ platform :ios do
   lane :release do
     # Fastlane will automatically use environment variables
     
-    # Build the app with automatic signing
+    # Build the app with automatic signing and online profile fetching
+    if ENV['CI']
+      api_key_path = File.expand_path("~/private_keys/AuthKey_#{ENV['APP_STORE_CONNECT_API_KEY_KEY_ID']}.p8")
+      xcargs = "-allowProvisioningUpdates -authenticationKeyPath '#{api_key_path}' -authenticationKeyID #{ENV['APP_STORE_CONNECT_API_KEY_KEY_ID']} -authenticationKeyIssuerID #{ENV['APP_STORE_CONNECT_API_KEY_ISSUER_ID']}"
+      UI.message("Using API key authentication: #{api_key_path}")
+    else
+      xcargs = "-allowProvisioningUpdates"
+    end
+    
     build_app(
       workspace: "Runner.xcworkspace",
       scheme: "Runner",
+      configuration: "Release",
       export_method: "app-store",
       output_directory: "./build/Runner",
       output_name: "Runner.ipa",
       clean: true,
-      xcargs: "-allowProvisioningUpdates",
+      xcargs: xcargs,
       export_options: {
         method: "app-store",
         uploadSymbols: true,
         uploadBitcode: false,
-        teamID: ENV['TEAM_ID']
+        teamID: ENV['TEAM_ID'],
+        signingStyle: "automatic"
       }
     )
     
