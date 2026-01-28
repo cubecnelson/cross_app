@@ -37,6 +37,17 @@ jobs:
           cd ios
           pod install --repo-update
           cd ..
+          
+      - name: Configure manual signing in Xcode project
+        run: |
+          cd ios
+          # Disable automatic signing and set manual profile
+          sed -i '' 's/DEVELOPMENT_TEAM = "";/DEVELOPMENT_TEAM = YWQH3Z3Z85;/g' Runner.xcodeproj/project.pbxproj
+          sed -i '' 's/CODE_SIGN_STYLE = Automatic;/CODE_SIGN_STYLE = Manual;/g' Runner.xcodeproj/project.pbxproj
+          sed -i '' 's/ProvisioningStyle = Automatic;/ProvisioningStyle = Manual;/g' Runner.xcodeproj/project.pbxproj
+          
+          echo "Xcode project configured for manual signing"
+          cd ..
         
       - name: Set up Ruby
         uses: ruby/setup-ruby@v1
@@ -90,6 +101,12 @@ jobs:
           # Verify certificate was imported
           echo "Verifying certificate installation..."
           security find-identity -v -p codesigning $KEYCHAIN_PATH
+          echo ""
+          echo "All codesigning identities in system:"
+          security find-identity -v -p codesigning
+          echo ""
+          echo "Certificate details:"
+          openssl pkcs12 -in $CERTIFICATE_PATH -passin pass:"$P12_PASSWORD" -nokeys -clcerts | openssl x509 -noout -subject -issuer
           
           # Apply provisioning profile - extract UUID and install with proper name
           mkdir -p ~/Library/MobileDevice/Provisioning\ Profiles
