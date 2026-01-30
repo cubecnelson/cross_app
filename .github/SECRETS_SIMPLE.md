@@ -8,7 +8,8 @@ This is the simplified setup that stores certificates directly in GitHub Secrets
 - [ ] Export Distribution Certificate (.p12)
 - [ ] Download Provisioning Profile
 - [ ] Convert both to base64
-- [ ] Add 6 secrets to GitHub
+- [ ] Add 6 Apple secrets to GitHub
+- [ ] Add 2 Supabase secrets (SUPABASE_URL, SUPABASE_ANON_KEY) for the app backend
 
 ---
 
@@ -141,6 +142,36 @@ MIINuQYJKoZIhvcNAQcCoIINqjCCDaYCAQExDzANBglghkgBZQMEAgEFADCC
 AuIGCSqGSIb3DQEHAaCCAtkEggLVMYIC0TAMDApWZXJzaW9uAgEB...
 (... very long string ...)
 ```
+
+---
+
+## Supabase (for app backend)
+
+Add these so the built app can talk to your Supabase project.
+
+### SUPABASE_URL
+
+**What**: Your Supabase project URL
+
+**How to get**: Supabase Dashboard → Settings → API → Project URL
+
+**Example value**:
+```
+https://xxxxx.supabase.co
+```
+
+### SUPABASE_ANON_KEY
+
+**What**: Your Supabase anon/public API key
+
+**How to get**: Supabase Dashboard → Settings → API → Project API keys → `anon` `public`
+
+**Example value**:
+```
+eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...
+```
+
+The workflow uses these when running `flutter build ios` so the app is built with the correct backend URL and key.
 
 ---
 
