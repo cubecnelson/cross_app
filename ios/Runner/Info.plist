@@ -45,5 +45,36 @@
 		<string>UIInterfaceOrientationLandscapeLeft</string>
 		<string>UIInterfaceOrientationLandscapeRight</string>
 	</array>
+	
+	<!-- Google & Apple Sign-In Configuration -->
+	<key>CFBundleURLTypes</key>
+	<array>
+		<dict>
+			<key>CFBundleTypeRole</key>
+			<string>Editor</string>
+			<key>CFBundleURLSchemes</key>
+			<array>
+				<!-- TODO: Add your reversed iOS Client ID -->
+				<!-- Example: <string>com.googleusercontent.apps.301653161337</string> -->
+				<!-- TODO: Add your app's custom URL scheme for Supabase deep linking -->
+				<!-- Example: <string>com.yourcompany.cross</string> -->
+			</array>
+		</dict>
+	</array>
+	
+	<!-- Optional: Direct Google Sign-In config -->
+	<key>GIDClientID</key>
+	<string>TODO: ADD_YOUR_IOS_CLIENT_ID.apps.googleusercontent.com</string>
+	
+	<!-- Apple Sign-In (only needed if using Apple Sign-In) -->
+	<key>com.apple.developer.applesignin</key>
+	<array>
+		<dict>
+			<key>Default</key>
+			<array>
+				<string>TODO: ADD_YOUR_BUNDLE_ID</string>
+			</array>
+		</dict>
+	</array>
 </dict>
 </plist>
