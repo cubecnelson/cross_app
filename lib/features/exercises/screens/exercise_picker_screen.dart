@@ -118,10 +118,26 @@ class _ExercisePickerScreenState extends ConsumerState<ExercisePickerScreen> {
                   ),
                   title: Text(exercise.name),
                   subtitle: Text(exercise.category),
-                  trailing: exercise.isPredefined
-                      ? null
-                      : const Icon(Icons.person, size: 16),
+                  trailing: Row(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      if (exercise.videoUrl != null || exercise.tutorialUrl != null)
+                        const Icon(Icons.video_library, size: 16, color: Colors.blue),
+                      const SizedBox(width: 8),
+                      exercise.isPredefined
+                          ? const Icon(Icons.library_books, size: 16)
+                          : const Icon(Icons.person, size: 16),
+                    ],
+                  ),
                   onTap: () => Navigator.pop(context, exercise),
+                  onLongPress: () {
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder: (_) => ExerciseDetailScreen(exercise: exercise),
+                      ),
+                    );
+                  },
                 ),
               );
             },
