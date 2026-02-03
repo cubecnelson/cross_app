@@ -54,18 +54,20 @@
 			<string>Editor</string>
 			<key>CFBundleURLSchemes</key>
 			<array>
-				<!-- TODO: Add your reversed iOS Client ID -->
-				<!-- Replace 301653161337 with your actual iOS Client ID numbers -->
-				<string>com.googleusercontent.apps.301653161337</string>
-				<!-- Add your app's custom URL scheme for Supabase deep linking -->
+				<!-- IMPORTANT: Replace with your actual reversed iOS Client ID -->
+				<!-- Get from Google Cloud Console → OAuth 2.0 Client IDs → iOS Client -->
+				<!-- Example format: com.googleusercontent.apps.123456789012-abcd1234abcd1234abcd1234 -->
+				<string>com.googleusercontent.apps.YOUR_IOS_CLIENT_ID</string>
+				<!-- App's custom URL scheme for Supabase deep linking -->
 				<string>com.cross.app</string>
 			</array>
 		</dict>
 	</array>
 	
-	<!-- Optional: Direct Google Sign-In config -->
+	<!-- Direct Google Sign-In config -->
+	<!-- IMPORTANT: Replace with your actual iOS Client ID from Google Cloud Console -->
 	<key>GIDClientID</key>
-	<string>301653161337-k38vpgr6scftakr5obhbbrkoie73pnph.apps.googleusercontent.com</string>
+	<string>YOUR_IOS_CLIENT_ID.apps.googleusercontent.com</string>
 	
 	<!-- Apple Sign-In (only needed if using Apple Sign-In) -->
 	<key>com.apple.developer.applesignin</key>
