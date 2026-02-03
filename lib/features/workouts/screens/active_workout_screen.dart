@@ -9,6 +9,7 @@ import '../../../models/workout_set.dart';
 import '../../../models/workout_recommendation.dart';
 import '../../../providers/auth_provider.dart';
 import '../../../providers/workout_provider.dart';
+import '../../../providers/recommendation_provider.dart';
 import '../../exercises/screens/exercise_picker_screen.dart';
 import '../widgets/exercise_set_widget.dart';
 import '../widgets/recommendations_section.dart';
