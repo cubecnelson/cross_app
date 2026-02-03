@@ -1,7 +1,5 @@
 import 'dart:async';
 import 'package:health/health.dart';
-import 'package:healthkit/healthkit.dart';
-// import 'package:google_fit/google_fit.dart';  // Package not available
 
 enum HealthPlatform {
   appleHealth,
@@ -69,12 +67,14 @@ class HealthService {
 
     try {
       // Try to detect platform
-      if (await HealthKitFactory.isAvailable) {
-        _platform = HealthPlatform.appleHealth;
-        _isInitialized = await _initializeAppleHealth();
-      } else if (await GoogleFitFactory.isAvailable) {
-        _platform = HealthPlatform.googleFit;
-        _isInitialized = await _initializeGoogleFit();
+      // Note: health package handles both iOS HealthKit and Android Google Fit
+      // We'll use health package for both platforms
+      _isInitialized = await _initializeHealthPackage();
+      
+      if (_isInitialized) {
+        // Determine which platform we're on
+        // For now, we'll assume iOS if we get Apple Health data
+        _platform = HealthPlatform.appleHealth; // Default assumption
       }
 
       return _isInitialized;
@@ -84,36 +84,13 @@ class HealthService {
     }
   }
 
-  Future<bool> _initializeAppleHealth() async {
+  Future<bool> _initializeHealthPackage() async {
     try {
-      final healthKit = HealthKitFactory();
-      final typesToRead = [
-        HKQuantityTypeIdentifier.stepCount,
-        HKQuantityTypeIdentifier.activeEnergyBurned,
-        HKQuantityTypeIdentifier.distanceWalkingRunning,
-        HKQuantityTypeIdentifier.heartRate,
-        HKWorkoutTypeIdentifier,
-      ];
-
-      // Request authorization
-      final authorized = await healthKit.requestAuthorization(
-        typesToRead: typesToRead,
-      );
-
-      return authorized;
+      // Request permissions for health data types
+      final hasPermissions = await Health.requestAuthorization(_healthDataTypes);
+      return hasPermissions;
     } catch (e) {
-      print('Apple Health initialization failed: $e');
-      return false;
-    }
-  }
-
-  Future<bool> _initializeGoogleFit() async {
-    try {
-      // Google Fit package is not available on pub.dev
-      // We'll need to implement alternative approach or skip Google Fit
-      return false;
-    } catch (e) {
-      print('Google Fit initialization failed: $e');
+      print('Health package initialization failed: $e');
       return false;
     }
   }
@@ -129,82 +106,57 @@ class HealthService {
     final endOfDay = startOfDay.add(const Duration(days: 1));
 
     try {
-      switch (_platform) {
-        case HealthPlatform.appleHealth:
-          return await _getAppleHealthSummary(startOfDay, endOfDay);
-        case HealthPlatform.googleFit:
-          return await _getGoogleFitSummary(startOfDay, endOfDay);
-        case HealthPlatform.none:
-          return null;
-      }
+      return await _getHealthSummary(startOfDay, endOfDay);
     } catch (e) {
       print('Failed to get health summary: $e');
       return null;
     }
   }
 
-  Future<HealthData?> _getAppleHealthSummary(
+  Future<HealthData?> _getHealthSummary(
       DateTime start, DateTime end) async {
     try {
-      final healthKit = HealthKitFactory();
-
       // Get steps
-      final steps = await healthKit.getTotalSteps(start, end);
+      final stepsData = await Health.getHealthDataFromTypes(start, end, [HealthDataType.STEPS]);
+      double? steps = stepsData.isNotEmpty ? stepsData.last.value : null;
 
       // Get calories
-      final calories = await healthKit.getTotalCalories(start, end);
+      final caloriesData = await Health.getHealthDataFromTypes(start, end, [HealthDataType.ACTIVE_ENERGY_BURNED]);
+      double? calories = caloriesData.isNotEmpty ? caloriesData.last.value : null;
 
       // Get distance
-      final distance = await healthKit.getTotalDistance(start, end);
+      final distanceData = await Health.getHealthDataFromTypes(start, end, [HealthDataType.DISTANCE_WALKING_RUNNING]);
+      double? distance = distanceData.isNotEmpty ? distanceData.last.value : null;
 
       // Get heart rate (average)
-      final heartRate = await healthKit.getAverageHeartRate(start, end);
+      final heartRateData = await Health.getHealthDataFromTypes(start, end, [HealthDataType.HEART_RATE]);
+      double? heartRate = heartRateData.isNotEmpty 
+          ? heartRateData.map((d) => d.value).reduce((a, b) => a + b) / heartRateData.length
+          : null;
 
-      // Get active minutes from workouts
-      final activeMinutes = await _getAppleHealthActiveMinutes(start, end);
+      // Get workouts for active minutes
+      final workoutData = await Health.getHealthDataFromTypes(start, end, [HealthDataType.WORKOUT]);
+      Duration? activeMinutes;
+      if (workoutData.isNotEmpty) {
+        double totalMinutes = 0;
+        for (final workout in workoutData) {
+          if (workout.value != null) {
+            totalMinutes += workout.value!;
+          }
+        }
+        activeMinutes = Duration(minutes: totalMinutes.toInt());
+      }
 
       return HealthData(
         date: start,
-        steps: steps?.toDouble(),
-        calories: calories?.toDouble(),
+        steps: steps,
+        calories: calories,
         distance: distance,
         heartRate: heartRate,
         activeMinutes: activeMinutes,
       );
     } catch (e) {
-      print('Apple Health summary failed: $e');
-      return null;
-    }
-  }
-
-  Future<Duration?> _getAppleHealthActiveMinutes(
-      DateTime start, DateTime end) async {
-    try {
-      final healthKit = HealthKitFactory();
-      final workouts = await healthKit.getWorkouts(start, end);
-
-      if (workouts.isEmpty) return null;
-
-      Duration totalDuration = Duration.zero;
-      for (final workout in workouts) {
-        totalDuration += workout.duration;
-      }
-
-      return totalDuration;
-    } catch (e) {
-      print('Failed to get active minutes: $e');
-      return null;
-    }
-  }
-
-  Future<HealthData?> _getGoogleFitSummary(
-      DateTime start, DateTime end) async {
-    try {
-      // Google Fit package is not available on pub.dev
-      // We'll need to implement alternative approach or skip Google Fit
-      return null;
-    } catch (e) {
-      print('Google Fit summary failed: $e');
+      print('Health summary failed: $e');
       return null;
     }
   }
@@ -220,16 +172,7 @@ class HealthService {
 
       HealthData? dayData;
       try {
-        switch (_platform) {
-          case HealthPlatform.appleHealth:
-            dayData = await _getAppleHealthSummary(startOfDay, endOfDay);
-            break;
-          case HealthPlatform.googleFit:
-            dayData = await _getGoogleFitSummary(startOfDay, endOfDay);
-            break;
-          case HealthPlatform.none:
-            continue;
-        }
+        dayData = await _getHealthSummary(startOfDay, endOfDay);
       } catch (e) {
         print('Failed to get day $i data: $e');
       }
@@ -254,74 +197,45 @@ class HealthService {
       final startTime = now.subtract(duration);
       final endTime = now;
 
-      switch (_platform) {
-        case HealthPlatform.appleHealth:
-          await _syncWorkoutToAppleHealth(
-              workoutType, startTime, endTime, calories);
-          break;
-        case HealthPlatform.googleFit:
-          await _syncWorkoutToGoogleFit(
-              workoutType, startTime, endTime, calories);
-          break;
-        case HealthPlatform.none:
-          break;
+      // Use health package to write workout data
+      final workoutData = HealthDataPoint(
+        type: HealthDataType.WORKOUT,
+        value: duration.inMinutes.toDouble(),
+        dateFrom: startTime,
+        dateTo: endTime,
+        unit: HealthDataUnit.MINUTES,
+        deviceId: "Cross App",
+        sourceId: "cross_app",
+        platform: "iOS", // or "Android" based on platform
+      );
+
+      // Write workout data
+      final success = await Health.writeHealthData(workoutData);
+      if (!success) {
+        print('Failed to write workout data');
       }
     } catch (e) {
       print('Failed to sync workout to health: $e');
     }
   }
 
-  Future<void> _syncWorkoutToAppleHealth(
-      String workoutType,
-      DateTime startTime,
-      DateTime endTime,
-      double calories) async {
-    try {
-      final healthKit = HealthKitFactory();
-      final workoutTypeId = _getAppleHealthWorkoutType(workoutType);
-
-      await healthKit.saveWorkout(
-        workoutTypeId: workoutTypeId,
-        start: startTime,
-        end: endTime,
-        calories: calories,
-      );
-    } catch (e) {
-      print('Failed to sync to Apple Health: $e');
-    }
-  }
-
-  Future<void> _syncWorkoutToGoogleFit(
-      String workoutType,
-      DateTime startTime,
-      DateTime endTime,
-      double calories) async {
-    try {
-      // Google Fit package is not available on pub.dev
-      // We'll need to implement alternative approach or skip Google Fit
-      print('Google Fit sync not implemented - package unavailable');
-    } catch (e) {
-      print('Failed to sync to Google Fit: $e');
-    }
-  }
-
-  String _getAppleHealthWorkoutType(String workoutType) {
-    // Map Cross workout types to Apple Health workout types
+  String _getWorkoutType(String workoutType) {
+    // Map Cross workout types to health workout types
     switch (workoutType.toLowerCase()) {
       case 'strength training':
       case 'weight training':
-        return HKWorkoutTypeIdentifier.traditionalStrengthTraining;
+        return 'Traditional Strength Training';
       case 'cardio':
       case 'running':
-        return HKWorkoutTypeIdentifier.running;
+        return 'Running';
       case 'cycling':
-        return HKWorkoutTypeIdentifier.cycling;
+        return 'Cycling';
       case 'swimming':
-        return HKWorkoutTypeIdentifier.swimming;
+        return 'Swimming';
       case 'walking':
-        return HKWorkoutTypeIdentifier.walking;
+        return 'Walking';
       default:
-        return HKWorkoutTypeIdentifier.other;
+        return 'Other';
     }
   }
 
