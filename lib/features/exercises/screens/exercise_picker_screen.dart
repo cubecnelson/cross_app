@@ -5,6 +5,7 @@ import '../../../providers/exercise_provider.dart';
 import '../../../widgets/loading_indicator.dart';
 import '../../../widgets/empty_state.dart';
 import 'add_exercise_screen.dart';
+import 'exercise_detail_screen.dart';
 
 class ExercisePickerScreen extends ConsumerStatefulWidget {
   const ExercisePickerScreen({super.key});
