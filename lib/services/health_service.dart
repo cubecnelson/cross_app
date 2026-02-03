@@ -1,7 +1,7 @@
 import 'dart:async';
 import 'package:health/health.dart';
 import 'package:healthkit/healthkit.dart';
-import 'package:google_fit/google_fit.dart';
+// import 'package:google_fit/google_fit.dart';  // Package not available
 
 enum HealthPlatform {
   appleHealth,
@@ -109,16 +109,9 @@ class HealthService {
 
   Future<bool> _initializeGoogleFit() async {
     try {
-      final googleFit = GoogleFitFactory();
-      final scopes = [
-        FitnessScopes.activityRead,
-        FitnessScopes.bodyRead,
-        FitnessScopes.locationRead,
-      ];
-
-      // Request authorization
-      final authorized = await googleFit.requestAuthorization(scopes: scopes);
-      return authorized;
+      // Google Fit package is not available on pub.dev
+      // We'll need to implement alternative approach or skip Google Fit
+      return false;
     } catch (e) {
       print('Google Fit initialization failed: $e');
       return false;
@@ -207,33 +200,9 @@ class HealthService {
   Future<HealthData?> _getGoogleFitSummary(
       DateTime start, DateTime end) async {
     try {
-      final googleFit = GoogleFitFactory();
-
-      // Get steps
-      final steps = await googleFit.getSteps(start, end);
-
-      // Get calories
-      final calories = await googleFit.getCalories(start, end);
-
-      // Get distance
-      final distance = await googleFit.getDistance(start, end);
-
-      // Get heart rate (average)
-      final heartRate = await googleFit.getHeartRate(start, end);
-
-      // Get active minutes
-      final activeMinutes = await googleFit.getActiveMinutes(start, end);
-
-      return HealthData(
-        date: start,
-        steps: steps?.toDouble(),
-        calories: calories?.toDouble(),
-        distance: distance,
-        heartRate: heartRate,
-        activeMinutes: activeMinutes != null
-            ? Duration(minutes: activeMinutes.toInt())
-            : null,
-      );
+      // Google Fit package is not available on pub.dev
+      // We'll need to implement alternative approach or skip Google Fit
+      return null;
     } catch (e) {
       print('Google Fit summary failed: $e');
       return null;
@@ -328,16 +297,9 @@ class HealthService {
       DateTime endTime,
       double calories) async {
     try {
-      final googleFit = GoogleFitFactory();
-      final dataSource = await googleFit.getDefaultDataSource();
-
-      await googleFit.insertWorkout(
-        dataSource: dataSource,
-        workoutType: workoutType,
-        startTime: startTime,
-        endTime: endTime,
-        calories: calories,
-      );
+      // Google Fit package is not available on pub.dev
+      // We'll need to implement alternative approach or skip Google Fit
+      print('Google Fit sync not implemented - package unavailable');
     } catch (e) {
       print('Failed to sync to Google Fit: $e');
     }

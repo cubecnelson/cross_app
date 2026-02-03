@@ -45,7 +45,7 @@ dependencies:
   # Health Integration
   health: ^4.0.2
   healthkit: ^0.7.0
-  google_fit: ^0.2.2
+  # google_fit: ^0.2.2  # Package doesn't exist on pub.dev
 
 dev_dependencies:
   flutter_test:
