@@ -43,9 +43,7 @@ dependencies:
   sentry_flutter: ^8.12.0
   
   # Health Integration
-  health: ^4.0.2
-  # healthkit: ^0.7.0  # Package doesn't exist on pub.dev
-  # google_fit: ^0.2.2  # Package doesn't exist on pub.dev
+  health: ^13.3.0
 
 dev_dependencies:
   flutter_test:
