@@ -192,6 +192,7 @@ class DashboardScreen extends ConsumerWidget {
                               padding: const EdgeInsets.all(24),
                               child: Center(
                                 child: Column(
+                                  mainAxisAlignment: MainAxisAlignment.center,
                                   children: [
                                     Icon(
                                       Icons.fitness_center_outlined,
@@ -207,6 +208,7 @@ class DashboardScreen extends ConsumerWidget {
                                       style: Theme.of(context)
                                           .textTheme
                                           .titleMedium,
+                                      textAlign: TextAlign.center,
                                     ),
                                     const SizedBox(height: 4),
                                     Text(
@@ -214,6 +216,7 @@ class DashboardScreen extends ConsumerWidget {
                                       style: Theme.of(context)
                                           .textTheme
                                           .bodyMedium,
+                                      textAlign: TextAlign.center,
                                     ),
                                   ],
                                 ),
@@ -292,6 +295,7 @@ class DashboardScreen extends ConsumerWidget {
                               padding: const EdgeInsets.all(24),
                               child: Center(
                                 child: Column(
+                                  mainAxisAlignment: MainAxisAlignment.center,
                                   children: [
                                     Icon(
                                       Icons.list_alt_outlined,
@@ -307,6 +311,7 @@ class DashboardScreen extends ConsumerWidget {
                                       style: Theme.of(context)
                                           .textTheme
                                           .titleMedium,
+                                      textAlign: TextAlign.center,
                                     ),
                                     const SizedBox(height: 4),
                                     Text(
@@ -314,6 +319,7 @@ class DashboardScreen extends ConsumerWidget {
                                       style: Theme.of(context)
                                           .textTheme
                                           .bodyMedium,
+                                      textAlign: TextAlign.center,
                                     ),
                                   ],
                                 ),

@@ -182,17 +182,23 @@ class _CreateRoutineScreenState extends ConsumerState<CreateRoutineScreen> {
                   child: Padding(
                     padding: const EdgeInsets.all(32),
                     child: Center(
-                      child: Column(
-                        children: [
-                          const Icon(Icons.fitness_center_outlined, size: 48),
-                          const SizedBox(height: 12),
-                          const Text('No exercises added yet'),
-                          const SizedBox(height: 8),
-                          ElevatedButton(
-                            onPressed: _addExercise,
-                            child: const Text('Add Exercise'),
-                          ),
-                        ],
+                      child: Center(
+                        child: Column(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: [
+                            const Icon(Icons.fitness_center_outlined, size: 48),
+                            const SizedBox(height: 12),
+                            const Text(
+                              'No exercises added yet',
+                              textAlign: TextAlign.center,
+                            ),
+                            const SizedBox(height: 8),
+                            ElevatedButton(
+                              onPressed: _addExercise,
+                              child: const Text('Add Exercise'),
+                            ),
+                          ],
+                        ),
                       ),
                     ),
                   ),

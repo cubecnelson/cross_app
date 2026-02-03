@@ -376,29 +376,74 @@ class _ActiveWorkoutScreenState extends ConsumerState<ActiveWorkoutScreen> {
           ],
         ),
         body: _exercises.isEmpty
-            ? SingleChildScrollView(
-                padding: const EdgeInsets.all(16),
-                child: Column(
-                  children: [
-                    // Show recommendations when no exercises added
-                    RecommendationsSection(
-                      maxRecommendations: 5,
-                      onRecommendationTap: (recommendation) {
-                        // Handle recommendation tap - could auto-add exercise
-                        _handleRecommendationTap(recommendation);
-                      },
+            ? Consumer(
+                builder: (context, ref, child) {
+                  final recommendationsAsync = ref.watch(workoutRecommendationsProvider);
+                  
+                  return recommendationsAsync.when(
+                    data: (recommendations) {
+                      return Column(
+                        children: [
+                          if (recommendations.isNotEmpty)
+                            RecommendationsSection(
+                              maxRecommendations: 5,
+                              onRecommendationTap: (recommendation) {
+                                _handleRecommendationTap(recommendation);
+                              },
+                            ),
+                          if (recommendations.isNotEmpty) const SizedBox(height: 32),
+                          Expanded(
+                            child: Center(
+                              child: Padding(
+                                padding: const EdgeInsets.all(32.0),
+                                child: Column(
+                                  mainAxisAlignment: MainAxisAlignment.center,
+                                  children: [
+                                    const Icon(Icons.fitness_center_outlined, size: 64),
+                                    const SizedBox(height: 16),
+                                    const Text(
+                                      'No exercises added yet',
+                                      textAlign: TextAlign.center,
+                                    ),
+                                    const SizedBox(height: 8),
+                                    ElevatedButton(
+                                      onPressed: _addExercise,
+                                      child: const Text('Add Exercise'),
+                                    ),
+                                  ],
+                                ),
+                              ),
+                            ),
+                          ),
+                        ],
+                      );
+                    },
+                    loading: () => const Center(
+                      child: CircularProgressIndicator(),
                     ),
-                    const SizedBox(height: 32),
-                    const Icon(Icons.fitness_center_outlined, size: 64),
-                    const SizedBox(height: 16),
-                    const Text('No exercises added yet'),
-                    const SizedBox(height: 8),
-                    ElevatedButton(
-                      onPressed: _addExercise,
-                      child: const Text('Add Exercise'),
+                    error: (error, stack) => Center(
+                      child: Padding(
+                        padding: const EdgeInsets.all(32.0),
+                        child: Column(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: [
+                            const Icon(Icons.fitness_center_outlined, size: 64),
+                            const SizedBox(height: 16),
+                            const Text(
+                              'No exercises added yet',
+                              textAlign: TextAlign.center,
+                            ),
+                            const SizedBox(height: 8),
+                            ElevatedButton(
+                              onPressed: _addExercise,
+                              child: const Text('Add Exercise'),
+                            ),
+                          ],
+                        ),
+                      ),
                     ),
-                  ],
-                ),
+                  );
+                },
               )
             : ListView.builder(
                 padding: const EdgeInsets.all(16),
