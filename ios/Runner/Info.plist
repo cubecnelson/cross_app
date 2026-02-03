@@ -22,8 +22,30 @@
 	<string>$(FLUTTER_BUILD_NAME)</string>
 	<key>CFBundleSignature</key>
 	<string>????</string>
+	<key>CFBundleURLTypes</key>
+	<array>
+		<dict>
+			<key>CFBundleTypeRole</key>
+			<string>Editor</string>
+			<key>CFBundleURLSchemes</key>
+			<array>
+				<string>com.googleusercontent.apps.YOUR_IOS_CLIENT_ID</string>
+				<string>com.cross.app</string>
+			</array>
+		</dict>
+	</array>
 	<key>CFBundleVersion</key>
 	<string>$(FLUTTER_BUILD_NUMBER)</string>
+	<key>GIDClientID</key>
+	<string>YOUR_IOS_CLIENT_ID.apps.googleusercontent.com</string>
+	<key>LSApplicationQueriesSchemes</key>
+	<array>
+		<string>https</string>
+		<string>http</string>
+		<string>mailto</string>
+		<string>tel</string>
+		<string>sms</string>
+	</array>
 	<key>LSRequiresIPhoneOS</key>
 	<true/>
 	<key>UIApplicationSupportsIndirectInputEvents</key>
@@ -45,31 +67,6 @@
 		<string>UIInterfaceOrientationLandscapeLeft</string>
 		<string>UIInterfaceOrientationLandscapeRight</string>
 	</array>
-	
-	<!-- Google & Apple Sign-In Configuration -->
-	<key>CFBundleURLTypes</key>
-	<array>
-		<dict>
-			<key>CFBundleTypeRole</key>
-			<string>Editor</string>
-			<key>CFBundleURLSchemes</key>
-			<array>
-				<!-- IMPORTANT: Replace with your actual reversed iOS Client ID -->
-				<!-- Get from Google Cloud Console → OAuth 2.0 Client IDs → iOS Client -->
-				<!-- Example format: com.googleusercontent.apps.123456789012-abcd1234abcd1234abcd1234 -->
-				<string>com.googleusercontent.apps.YOUR_IOS_CLIENT_ID</string>
-				<!-- App's custom URL scheme for Supabase deep linking -->
-				<string>com.cross.app</string>
-			</array>
-		</dict>
-	</array>
-	
-	<!-- Direct Google Sign-In config -->
-	<!-- IMPORTANT: Replace with your actual iOS Client ID from Google Cloud Console -->
-	<key>GIDClientID</key>
-	<string>YOUR_IOS_CLIENT_ID.apps.googleusercontent.com</string>
-	
-	<!-- Apple Sign-In (only needed if using Apple Sign-In) -->
 	<key>com.apple.developer.applesignin</key>
 	<array>
 		<dict>

@@ -36,6 +36,9 @@ dependencies:
   uuid: ^4.3.3
   shared_preferences: ^2.2.2
   
+  # URL Handling
+  url_launcher: ^6.3.2
+  
   # Error Tracking
   sentry_flutter: ^8.12.0
 
