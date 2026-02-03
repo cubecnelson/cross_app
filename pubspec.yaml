@@ -41,6 +41,9 @@ dependencies:
   
   # Error Tracking
   sentry_flutter: ^8.12.0
+  
+  # Health Integration
+  health: ^13.3.0
 
 dev_dependencies:
   flutter_test:

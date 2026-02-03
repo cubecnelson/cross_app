@@ -58,6 +58,19 @@ class SettingsScreen extends ConsumerWidget {
           const Divider(),
           const _SectionHeader(title: 'Data'),
           ListTile(
+            leading: const Icon(Icons.health_and_safety_outlined),
+            title: const Text('Health Integration'),
+            subtitle: const Text('Connect with Apple Health or Google Fit'),
+            onTap: () {
+              Navigator.push(
+                context,
+                MaterialPageRoute(
+                  builder: (_) => const HealthSettingsScreen(),
+                ),
+              );
+            },
+          ),
+          ListTile(
             leading: const Icon(Icons.download_outlined),
             title: const Text('Export Data'),
             subtitle: const Text('Download your workout data as CSV'),

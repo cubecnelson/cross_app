@@ -33,6 +33,8 @@ class Exercise {
   final ExerciseType exerciseType;
   final String? description;
   final List<String> targetMuscles;
+  final String? videoUrl;
+  final String? tutorialUrl;
   final String? userId; // null for predefined exercises
   final bool isPredefined;
   final DateTime createdAt;
@@ -44,6 +46,8 @@ class Exercise {
     this.exerciseType = ExerciseType.strength,
     this.description,
     this.targetMuscles = const [],
+    this.videoUrl,
+    this.tutorialUrl,
     this.userId,
     this.isPredefined = false,
     required this.createdAt,
@@ -64,6 +68,8 @@ class Exercise {
       targetMuscles: json['target_muscles'] != null
           ? List<String>.from(json['target_muscles'] as List)
           : [],
+      videoUrl: json['video_url'] as String?,
+      tutorialUrl: json['tutorial_url'] as String?,
       userId: json['user_id'] as String?,
       isPredefined: json['is_predefined'] as bool? ?? false,
       createdAt: DateTime.parse(json['created_at'] as String),
@@ -78,6 +84,8 @@ class Exercise {
       'exercise_type': exerciseType.name,
       'description': description,
       'target_muscles': targetMuscles,
+      'video_url': videoUrl,
+      'tutorial_url': tutorialUrl,
       'user_id': userId,
       'is_predefined': isPredefined,
       'created_at': createdAt.toIso8601String(),
@@ -91,6 +99,8 @@ class Exercise {
     ExerciseType? exerciseType,
     String? description,
     List<String>? targetMuscles,
+    String? videoUrl,
+    String? tutorialUrl,
     String? userId,
     bool? isPredefined,
     DateTime? createdAt,
@@ -102,6 +112,8 @@ class Exercise {
       exerciseType: exerciseType ?? this.exerciseType,
       description: description ?? this.description,
       targetMuscles: targetMuscles ?? this.targetMuscles,
+      videoUrl: videoUrl ?? this.videoUrl,
+      tutorialUrl: tutorialUrl ?? this.tutorialUrl,
       userId: userId ?? this.userId,
       isPredefined: isPredefined ?? this.isPredefined,
       createdAt: createdAt ?? this.createdAt,
