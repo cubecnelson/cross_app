@@ -46,17 +46,30 @@ jobs:
           cache-key: flutter-v3.38.7
           
       - name: Get Flutter dependencies
-        run: flutter pub get
+        run: |
+          flutter pub get
+          # Check for dependency conflicts
+          flutter pub deps --style=tree | head -100
         
       - name: Install CocoaPods dependencies
         run: |
           cd ios
           # Clean pod cache to avoid stale dependencies
           pod cache clean --all
-          # Install with retry
-          for i in {1..3}; do
-            echo "Attempt $i of 3: Running pod install..."
-            pod install --repo-update && break || sleep 10
+          # Install with retry and debug output
+          for i in {1..5}; do
+            echo "Attempt $i of 5: Running pod install..."
+            if pod install --repo-update --verbose; then
+              echo "✅ Pod install succeeded on attempt $i"
+              break
+            else
+              echo "❌ Pod install failed on attempt $i"
+              if [ $i -eq 5 ]; then
+                echo "Fatal: All pod install attempts failed"
+                exit 1
+              fi
+              sleep 15
+            fi
           done
           cd ..
         
@@ -79,11 +92,12 @@ jobs:
           SUPABASE_ANON_KEY: ${{ secrets.SUPABASE_ANON_KEY }}
         run: |
           echo "Building Flutter iOS with Supabase configuration..."
+          echo "Supabase URL: ${SUPABASE_URL:0:30}..."
           flutter clean
-          flutter build ios --no-codesign \
+          flutter build ios --release --no-codesign \
             --dart-define=SUPABASE_URL="$SUPABASE_URL" \
             --dart-define=SUPABASE_ANON_KEY="$SUPABASE_ANON_KEY" \
-            --verbose
+            --verbose 2>&1 | tee build.log || (echo "Build failed"; cat build.log; exit 1)
           
       - name: Setup App Store Connect API Key for Automatic Signing
         env:
@@ -114,7 +128,16 @@ jobs:
           TEAM_ID: YWQH3Z3Z85
         run: |
           cd ios
-          bundle exec fastlane beta
+          # Create API key file for Fastlane
+          mkdir -p ~/private_keys
+          echo "$APP_STORE_CONNECT_API_KEY_KEY" > ~/private_keys/AuthKey_${APP_STORE_CONNECT_API_KEY_KEY_ID}.p8
+          
+          # Export environment variables for Fastlane
+          export FASTLANE_APPLE_APPLICATION_SPECIFIC_PASSWORD=""
+          export MATCH_GIT_BASIC_AUTHORIZATION=""
+          
+          # Run Fastlane with debug output
+          bundle exec fastlane beta --verbose
           
       - name: Clean up secrets
         if: always()
