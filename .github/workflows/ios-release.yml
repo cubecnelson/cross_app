@@ -1,12 +1,6 @@
-name: iOS Release to App Store Connect
+name: Build iOS App
 
 on:
-  push:
-    branches:
-      - main
-      - release/*
-    tags:
-      - 'v*'
   workflow_dispatch:
     inputs:
       release_notes:
