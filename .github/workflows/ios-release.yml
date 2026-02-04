@@ -1,4 +1,5 @@
 name: iOS Release to App Store Connect
+# Last updated: 2026-02-05 00:36 UTC
 
 on:
   push:
