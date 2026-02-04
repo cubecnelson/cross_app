@@ -79,25 +79,8 @@ jobs:
       - name: Install CocoaPods dependencies
         run: |
           cd ios
-          # Install CocoaPods gem
           gem install cocoapods
-          # Clean pod cache to avoid stale dependencies
-          pod cache clean --all
-          # Install with retry and debug output
-          for i in {1..5}; do
-            echo "Attempt $i of 5: Running pod install..."
-            if pod install --repo-update --verbose; then
-              echo "✅ Pod install succeeded on attempt $i"
-              break
-            else
-              echo "❌ Pod install failed on attempt $i"
-              if [ $i -eq 5 ]; then
-                echo "Fatal: All pod install attempts failed"
-                exit 1
-              fi
-              sleep 15
-            fi
-          done
+          pod install --repo-update
           cd ..
           
       - name: Install Fastlane
@@ -119,110 +102,27 @@ jobs:
             --dart-define=SUPABASE_ANON_KEY="$SUPABASE_ANON_KEY" \
             --verbose 2>&1 | tee build.log || (echo "Build failed"; cat build.log; exit 1)
           
+      - name: Setup App Store Connect API Key
+        env:
+          APP_STORE_CONNECT_API_KEY_ID: ${{ secrets.APP_STORE_CONNECT_API_KEY_ID }}
+          APP_STORE_CONNECT_API_KEY_CONTENT: ${{ secrets.APP_STORE_CONNECT_API_KEY_CONTENT }}
+        run: |
+          echo "Setting up App Store Connect API Key..."
+          mkdir -p ~/private_keys
+          echo "$APP_STORE_CONNECT_API_KEY_CONTENT" > ~/private_keys/AuthKey_${APP_STORE_CONNECT_API_KEY_ID}.p8
+          chmod 600 ~/private_keys/AuthKey_${APP_STORE_CONNECT_API_KEY_ID}.p8
+          echo "✅ API Key installed for Fastlane & Xcode"
+          
       - name: Build and upload to TestFlight
         env:
           APP_STORE_CONNECT_API_KEY_KEY_ID: ${{ secrets.APP_STORE_CONNECT_API_KEY_ID }}
           APP_STORE_CONNECT_API_KEY_ISSUER_ID: ${{ secrets.APP_STORE_CONNECT_API_ISSUER_ID }}
           APP_STORE_CONNECT_API_KEY_KEY: ${{ secrets.APP_STORE_CONNECT_API_KEY_CONTENT }}
-          APP_STORE_CONNECT_API_KEY_IS_KEY_CONTENT_BASE64: false
           BUILD_NUMBER: ${{ github.run_number }}
           TEAM_ID: YWQH3Z3Z85
         run: |
           cd ios
-          # Create API key file for Fastlane and Xcode
-          mkdir -p ~/private_keys
-          echo "$APP_STORE_CONNECT_API_KEY_KEY" > ~/private_keys/AuthKey_${APP_STORE_CONNECT_API_KEY_KEY_ID}.p8
-          chmod 600 ~/private_keys/AuthKey_${APP_STORE_CONNECT_API_KEY_KEY_ID}.p8
-          
-          # Debug: Show environment
-          echo "=== Environment Variables ==="
-          echo "APP_STORE_CONNECT_API_KEY_KEY_ID: ${APP_STORE_CONNECT_API_KEY_KEY_ID}"
-          echo "APP_STORE_CONNECT_API_KEY_ISSUER_ID: ${APP_STORE_CONNECT_API_KEY_ISSUER_ID}"
-          echo "TEAM_ID: ${TEAM_ID}"
-          echo "BUILD_NUMBER: ${BUILD_NUMBER}"
-          echo "API Key file exists: $(ls -la ~/private_keys/AuthKey_${APP_STORE_CONNECT_API_KEY_KEY_ID}.p8 2>/dev/null && echo 'Yes' || echo 'No')"
-          echo "API Key file size: $(wc -c < ~/private_keys/AuthKey_${APP_STORE_CONNECT_API_KEY_KEY_ID}.p8 2>/dev/null || echo 0) bytes"
-          
-          # Validate API key format (should start with -----BEGIN PRIVATE KEY-----)
-          if [ -f ~/private_keys/AuthKey_${APP_STORE_CONNECT_API_KEY_KEY_ID}.p8 ]; then
-            echo "=== API Key Content Preview ==="
-            head -3 ~/private_keys/AuthKey_${APP_STORE_CONNECT_API_KEY_KEY_ID}.p8
-            if ! grep -q "BEGIN PRIVATE KEY" ~/private_keys/AuthKey_${APP_STORE_CONNECT_API_KEY_KEY_ID}.p8; then
-              echo "❌ ERROR: API Key content doesn't look like a valid .p8 private private key!"
-              echo "Expected '-----BEGIN PRIVATE KEY-----' header"
-              exit 1
-            fi
-          fi
-          
-          # Test API key with Apple's API (skipped for speed)
-          echo "=== Skipping API key validation (jwt gem installation slow) ==="
-          
-          # Export environment variables for Fastlane
-          export FASTLANE_APPLE_APPLICATION_SPECIFIC_PASSWORD=""
-          export MATCH_GIT_BASIC_AUTHORIZATION=""
-          
-          # Option 1: Try Fastlane first
-          echo "=== Running Fastlane beta lane ==="
-          set -x
-          bundle exec fastlane beta --verbose --capture_output 2>&1 | tee fastlane.log
-          FASTLANE_EXIT_CODE=${PIPESTATUS[0]}
-          set +x
-          
-          if [ $FASTLANE_EXIT_CODE -eq 0 ]; then
-            echo "✅ Fastlane succeeded"
-          else
-            echo "⚠️ Fastlane failed with exit code $FASTLANE_EXIT_CODE"
-            echo "=== Full Fastlane log ==="
-            cat fastlane.log
-            echo "=== End Fastlane log ==="
-            
-            # Option 2: Fallback to direct xcodebuild/xcrun with API key
-            echo "=== Trying fallback: direct xcodebuild archive and upload ==="
-            
-            # Archive the app
-            xcodebuild archive \
-              -workspace Runner.xcworkspace \
-              -scheme Runner \
-              -configuration Release \
-              -archivePath Runner.xcarchive \
-              -allowProvisioningUpdates \
-              -authenticationKeyPath ~/private_keys/AuthKey_${APP_STORE_CONNECT_API_KEY_KEY_ID}.p8 \
-              -authenticationKeyID ${APP_STORE_CONNECT_API_KEY_KEY_ID} \
-              -authenticationKeyIssuerID ${APP_STORE_CONNECT_API_KEY_ISSUER_ID} \
-              -destination generic/platform=iOS
-            
-            # Export IPA
-            xcodebuild -exportArchive \
-              -archivePath Runner.xcarchive \
-              -exportOptionsPlist exportOptions.plist \
-              -exportPath . \
-              -allowProvisioningUpdates \
-              -authenticationKeyPath ~/private_keys/AuthKey_${APP_STORE_CONNECT_API_KEY_KEY_ID}.p8 \
-              -authenticationKeyID ${APP_STORE_CONNECT_API_KEY_KEY_ID} \
-              -authenticationKeyIssuerID ${APP_STORE_CONNECT_API_KEY_ISSUER_ID}
-            
-            # Use exportOptions.plist from repo (already exists)
-            if [ ! -f exportOptions.plist ]; then
-              echo "❌ exportOptions.plist missing - this should have been committed"
-              exit 1
-            fi
-            
-            # Upload with altool (legacy but works with API key)
-            echo "=== Uploading to App Store Connect ==="
-            xcrun altool --upload-app \
-              -f Runner.ipa \
-              -t ios \
-              --apiKey ${APP_STORE_CONNECT_API_KEY_KEY_ID} \
-              --apiIssuer ${APP_STORE_CONNECT_API_KEY_ISSUER_ID} \
-              --verbose
-            
-            if [ $? -eq 0 ]; then
-              echo "✅ Fallback upload succeeded"
-            else
-              echo "❌ Both Fastlane and fallback upload failed"
-              exit 1
-            fi
-          fi
+          bundle exec fastlane beta --verbose
           
       - name: Clean up secrets
         if: always()
