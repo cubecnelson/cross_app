@@ -271,7 +271,7 @@ class HealthSettingsScreen extends ConsumerWidget {
           children: [
             _buildMetricTile('Steps', '${summary.steps?.toInt() ?? '--'}', Icons.directions_walk),
             _buildMetricTile('Calories', '${summary.calories?.toInt() ?? '--'}', Icons.local_fire_department),
-            _buildMetricTile('Distance', '${_formatDistance(summary.distance)}', Icons.directions_run),
+            _buildMetricTile('Distance', _formatDistance(summary.distance), Icons.directions_run),
           ],
         ),
         const SizedBox(height: 16),

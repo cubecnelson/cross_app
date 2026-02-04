@@ -52,6 +52,7 @@ class HealthData {
 class HealthService {
   HealthPlatform _platform = HealthPlatform.none;
   bool _isInitialized = false;
+  late HealthFactory _health;
 
   // Health data types we want to access
   static final List<HealthDataType> _healthDataTypes = [
@@ -61,6 +62,10 @@ class HealthService {
     HealthDataType.HEART_RATE,
     HealthDataType.WORKOUT,
   ];
+
+  HealthService() {
+    _health = HealthFactory();
+  }
 
   Future<bool> initialize() async {
     if (_isInitialized) return true;
@@ -87,7 +92,7 @@ class HealthService {
   Future<bool> _initializeHealthPackage() async {
     try {
       // Request permissions for health data types
-      final hasPermissions = await Health.requestAuthorization(_healthDataTypes);
+      final hasPermissions = await _health.requestAuthorization(_healthDataTypes);
       return hasPermissions;
     } catch (e) {
       print('Health package initialization failed: $e');
@@ -117,32 +122,37 @@ class HealthService {
       DateTime start, DateTime end) async {
     try {
       // Get steps
-      final stepsData = await Health.getHealthDataFromTypes(start, end, [HealthDataType.STEPS]);
-      double? steps = stepsData.isNotEmpty ? stepsData.last.value : null;
+      final stepsData = await _health.getHealthDataFromTypes(start, end, [HealthDataType.STEPS]);
+      double? steps = stepsData.isNotEmpty ? stepsData.last.value.toDouble() : null;
 
       // Get calories
-      final caloriesData = await Health.getHealthDataFromTypes(start, end, [HealthDataType.ACTIVE_ENERGY_BURNED]);
-      double? calories = caloriesData.isNotEmpty ? caloriesData.last.value : null;
+      final caloriesData = await _health.getHealthDataFromTypes(start, end, [HealthDataType.ACTIVE_ENERGY_BURNED]);
+      double? calories = caloriesData.isNotEmpty ? caloriesData.last.value.toDouble() : null;
 
       // Get distance
-      final distanceData = await Health.getHealthDataFromTypes(start, end, [HealthDataType.DISTANCE_WALKING_RUNNING]);
-      double? distance = distanceData.isNotEmpty ? distanceData.last.value : null;
+      final distanceData = await _health.getHealthDataFromTypes(start, end, [HealthDataType.DISTANCE_WALKING_RUNNING]);
+      double? distance = distanceData.isNotEmpty ? distanceData.last.value.toDouble() : null;
 
       // Get heart rate (average)
-      final heartRateData = await Health.getHealthDataFromTypes(start, end, [HealthDataType.HEART_RATE]);
-      double? heartRate = heartRateData.isNotEmpty 
-          ? heartRateData.map((d) => d.value).reduce((a, b) => a + b) / heartRateData.length
-          : null;
+      final heartRateData = await _health.getHealthDataFromTypes(start, end, [HealthDataType.HEART_RATE]);
+      double? heartRate;
+      if (heartRateData.isNotEmpty) {
+        double sum = 0;
+        int count = 0;
+        for (final data in heartRateData) {
+          sum += data.value.toDouble();
+          count++;
+        }
+        heartRate = sum / count;
+      }
 
       // Get workouts for active minutes
-      final workoutData = await Health.getHealthDataFromTypes(start, end, [HealthDataType.WORKOUT]);
+      final workoutData = await _health.getHealthDataFromTypes(start, end, [HealthDataType.WORKOUT]);
       Duration? activeMinutes;
       if (workoutData.isNotEmpty) {
         double totalMinutes = 0;
         for (final workout in workoutData) {
-          if (workout.value != null) {
-            totalMinutes += workout.value!;
-          }
+          totalMinutes += workout.value.toDouble();
         }
         activeMinutes = Duration(minutes: totalMinutes.toInt());
       }
@@ -206,11 +216,12 @@ class HealthService {
         unit: HealthDataUnit.MINUTES,
         deviceId: "Cross App",
         sourceId: "cross_app",
-        platform: "iOS", // or "Android" based on platform
+        sourceName: "Cross",
+        sourcePlatform: _platform == HealthPlatform.appleHealth ? "iOS" : "Android",
       );
 
       // Write workout data
-      final success = await Health.writeHealthData(workoutData);
+      final success = await _health.writeHealthData(workoutData);
       if (!success) {
         print('Failed to write workout data');
       }
