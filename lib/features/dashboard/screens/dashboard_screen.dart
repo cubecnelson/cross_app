@@ -69,7 +69,7 @@ class DashboardScreen extends ConsumerWidget {
                       // Navigate to login screen and clear navigation stack
                       Navigator.of(context).pushAndRemoveUntil(
                         MaterialPageRoute(
-                          builder: (_) => const LoginScreen(),
+                          builder: (_) => LoginScreen(),
                         ),
                         (route) => false,
                       );
@@ -151,7 +151,7 @@ class DashboardScreen extends ConsumerWidget {
                           Navigator.push(
                             context,
                             MaterialPageRoute(
-                              builder: (_) => const ActiveWorkoutScreen(),
+                              builder: (_) => ActiveWorkoutScreen(),
                             ),
                           );
                         },

@@ -79,7 +79,7 @@ class _ActiveWorkoutScreenState extends ConsumerState<ActiveWorkoutScreen> {
     final result = await Navigator.push(
       context,
       MaterialPageRoute(
-        builder: (_) => const ExercisePickerScreen(),
+        builder: (_) => ExercisePickerScreen(),
       ),
     );
 

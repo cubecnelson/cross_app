@@ -232,7 +232,7 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
                       Navigator.push(
                         context,
                         MaterialPageRoute(
-                          builder: (_) => const ForgotPasswordScreen(),
+                          builder: (_) => ForgotPasswordScreen(),
                         ),
                       );
                     },
@@ -318,7 +318,7 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
                         Navigator.push(
                           context,
                           MaterialPageRoute(
-                            builder: (_) => const RegisterScreen(),
+                            builder: (_) => RegisterScreen(),
                           ),
                         );
                       },

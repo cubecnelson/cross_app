@@ -221,7 +221,7 @@ class ProfileScreen extends ConsumerWidget {
                               // Navigate to login screen and clear navigation stack
                               Navigator.of(context).pushAndRemoveUntil(
                                 MaterialPageRoute(
-                                  builder: (_) => const LoginScreen(),
+                                  builder: (_) => LoginScreen(),
                                 ),
                                 (route) => false,
                               );

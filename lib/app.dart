@@ -25,14 +25,14 @@ class CrossApp extends ConsumerWidget {
           if (state.session != null) {
             return const HomeScreen();
           }
-          return const LoginScreen();
+          return LoginScreen();
         },
         loading: () => const Scaffold(
           body: Center(
             child: CircularProgressIndicator(),
           ),
         ),
-        error: (_, __) => const LoginScreen(),
+        error: (_, __) => LoginScreen(),
       ),
     );
   }

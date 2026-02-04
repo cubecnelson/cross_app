@@ -39,7 +39,7 @@ class WorkoutsListScreen extends ConsumerWidget {
                 Navigator.push(
                   context,
                   MaterialPageRoute(
-                    builder: (_) => const ActiveWorkoutScreen(),
+                    builder: (_) => ActiveWorkoutScreen(),
                   ),
                 );
               },
@@ -152,7 +152,7 @@ class WorkoutsListScreen extends ConsumerWidget {
           Navigator.push(
             context,
             MaterialPageRoute(
-              builder: (_) => const ActiveWorkoutScreen(),
+              builder: (_) => ActiveWorkoutScreen(),
             ),
           );
         },

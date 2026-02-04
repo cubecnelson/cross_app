@@ -98,7 +98,7 @@ class _ExercisePickerScreenState extends ConsumerState<ExercisePickerScreen> {
                 await Navigator.push(
                   context,
                   MaterialPageRoute(
-                    builder: (_) => const AddExerciseScreen(),
+                    builder: (_) => AddExerciseScreen(),
                   ),
                 );
                 ref.invalidate(exercisesProvider);
@@ -166,7 +166,7 @@ class _ExercisePickerScreenState extends ConsumerState<ExercisePickerScreen> {
           await Navigator.push(
             context,
             MaterialPageRoute(
-              builder: (_) => const AddExerciseScreen(),
+              builder: (_) => AddExerciseScreen(),
             ),
           );
           ref.invalidate(exercisesProvider);

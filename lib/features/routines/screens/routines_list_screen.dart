@@ -29,7 +29,7 @@ class RoutinesListScreen extends ConsumerWidget {
                 Navigator.push(
                   context,
                   MaterialPageRoute(
-                    builder: (_) => const CreateRoutineScreen(),
+                    builder: (_) => CreateRoutineScreen(),
                   ),
                 );
               },
@@ -135,7 +135,7 @@ class RoutinesListScreen extends ConsumerWidget {
           Navigator.push(
             context,
             MaterialPageRoute(
-              builder: (_) => const CreateRoutineScreen(),
+              builder: (_) => CreateRoutineScreen(),
             ),
           );
         },
