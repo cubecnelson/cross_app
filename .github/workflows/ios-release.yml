@@ -36,7 +36,10 @@ jobs:
           
           for secret in "${REQUIRED_SECRETS[@]}"; do
             if [ -n "${!secret}" ]; then
-              echo "✅ $secret is set"
+              # Show first 5 chars for verification (safe for debugging)
+              value="${!secret}"
+              prefix="${value:0:5}"
+              echo "✅ $secret is set (starts with: '$prefix...')"
             else
               echo "❌ $secret is NOT set or empty"
               exit 1
