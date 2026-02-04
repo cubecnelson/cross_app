@@ -51,9 +51,18 @@ jobs:
           # Check for dependency conflicts
           flutter pub deps --style=tree | head -100
         
+      - name: Set up Ruby
+        uses: ruby/setup-ruby@v1
+        with:
+          ruby-version: '3.2'
+          bundler-cache: true
+          working-directory: ios
+          
       - name: Install CocoaPods dependencies
         run: |
           cd ios
+          # Install CocoaPods gem
+          gem install cocoapods
           # Clean pod cache to avoid stale dependencies
           pod cache clean --all
           # Install with retry and debug output
@@ -72,13 +81,6 @@ jobs:
             fi
           done
           cd ..
-        
-      - name: Set up Ruby
-        uses: ruby/setup-ruby@v1
-        with:
-          ruby-version: '3.2'
-          bundler-cache: true
-          working-directory: ios
           
       - name: Install Fastlane
         run: |
