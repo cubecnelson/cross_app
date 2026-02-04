@@ -62,6 +62,10 @@ jobs:
           # Check for dependency conflicts
           flutter pub deps --style=tree | head -100
         
+      - name: Analyze Flutter code
+        run: |
+          flutter analyze --no-fatal-infos || echo "⚠️ Flutter analysis found issues (continuing anyway)"
+        
       - name: Set up Ruby
         run: |
           # Use system Ruby on macOS runner (already installed)
