@@ -58,7 +58,7 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
         if (mounted) {
           Navigator.of(context).pushReplacement(
             MaterialPageRoute(
-              builder: (_) => const HomeScreen(),
+              builder: (_) => HomeScreen(),
             ),
           );
         }
@@ -99,7 +99,7 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
         if (mounted) {
           Navigator.of(context).pushReplacement(
             MaterialPageRoute(
-              builder: (_) => const HomeScreen(),
+              builder: (_) => HomeScreen(),
             ),
           );
         }
@@ -140,7 +140,7 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
         if (mounted) {
           Navigator.of(context).pushReplacement(
             MaterialPageRoute(
-              builder: (_) => const HomeScreen(),
+              builder: (_) => HomeScreen(),
             ),
           );
         }

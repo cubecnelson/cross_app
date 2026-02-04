@@ -276,7 +276,7 @@ class DashboardScreen extends ConsumerWidget {
                             Navigator.push(
                               context,
                               MaterialPageRoute(
-                                builder: (_) => const RoutinesListScreen(),
+                                builder: (_) => RoutinesListScreen(),
                               ),
                             );
                           },
