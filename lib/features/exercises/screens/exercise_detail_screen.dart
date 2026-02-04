@@ -142,7 +142,7 @@ class ExerciseDetailScreen extends ConsumerWidget {
                 children: exercise.targetMuscles.map((muscle) {
                   return Chip(
                     label: Text(muscle),
-                    backgroundColor: Theme.of(context).colorScheme.surfaceVariant,
+                    backgroundColor: Theme.of(context).colorScheme.surfaceContainerHighest,
                   );
                 }).toList(),
               ),

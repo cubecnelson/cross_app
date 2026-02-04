@@ -348,8 +348,15 @@ class _ActiveWorkoutScreenState extends ConsumerState<ActiveWorkoutScreen> {
 
   @override
   Widget build(BuildContext context) {
-    return WillPopScope(
-      onWillPop: _onWillPop,
+    return PopScope(
+      canPop: _exercises.isEmpty,
+      onPopInvoked: (didPop) async {
+        if (didPop) return;
+        if (!await _onWillPop()) {
+          // Prevent pop
+          return;
+        }
+      },
       child: Scaffold(
         appBar: AppBar(
           centerTitle: false,
