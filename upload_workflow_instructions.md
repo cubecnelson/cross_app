@@ -1,0 +1,30 @@
+#!/bin/bash
+# upload_workflow.sh - Instructions for uploading the fixed GitHub Actions workflow
+
+echo "=== GitHub Actions Workflow Fix ==="
+echo ""
+echo "The GitHub Actions workflow has been fixed locally but cannot be pushed due to"
+echo "GitHub's OAuth restrictions on workflow files."
+echo ""
+echo "To apply the fix, you need to manually upload the workflow file:"
+echo ""
+echo "STEP 1: Go to your GitHub repository:"
+echo "   https://github.com/cubecnelson/cross_app"
+echo ""
+echo "STEP 2: Click 'Add file' → 'Create new file'"
+echo ""
+echo "STEP 3: Enter this file path:"
+echo "   .github/workflows/build-ios.yml"
+echo ""
+echo "STEP 4: Copy and paste this content:"
+echo ""
+cat .github/workflows/build-ios.yml
+echo ""
+echo "STEP 5: Click 'Commit changes' (directly to main branch)"
+echo ""
+echo "Alternative: Use SSH key authentication"
+echo "1. Add this SSH public key to your GitHub account (Settings → SSH and GPG keys):"
+cat ~/.ssh/id_rsa.pub
+echo ""
+echo "2. Then run: git remote set-url origin git@github.com:cubecnelson/cross_app.git"
+echo "3. Then run: git push origin main"
