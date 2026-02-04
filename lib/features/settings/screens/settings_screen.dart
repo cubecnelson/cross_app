@@ -65,7 +65,7 @@ class SettingsScreen extends ConsumerWidget {
               Navigator.push(
                 context,
                 MaterialPageRoute(
-                  builder: (_) => const HealthSettingsScreen(),
+                  builder: (_) => HealthSettingsScreen(),
                 ),
               );
             },
