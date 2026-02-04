@@ -146,53 +146,8 @@ jobs:
             fi
           fi
           
-          # Test API key with Apple's API (optional diagnostic)
-          echo "=== Testing API Key with Apple App Store Connect API ==="
-          echo "Installing jwt gem..."
-          gem install jwt --no-document
-          
-          cat > test_key.rb << 'RUBYEOF'
-require 'jwt'
-require 'net/http'
-
-key_id = ENV['APP_STORE_CONNECT_API_KEY_KEY_ID']
-issuer_id = ENV['APP_STORE_CONNECT_API_KEY_ISSUER_ID']
-key_content = ENV['APP_STORE_CONNECT_API_KEY_KEY']
-
-# Generate JWT
-private_key = OpenSSL::PKey::EC.new(key_content)
-issued_at = Time.now.to_i
-expiration_time = issued_at + 600
-
-payload = {
-  iss: issuer_id,
-  iat: issued_at,
-  exp: expiration_time,
-  aud: 'appstoreconnect-v1'
-}
-
-headers = { kid: key_id, typ: 'JWT' }
-token = JWT.encode(payload, private_key, 'ES256', headers)
-
-# Test endpoint
-uri = URI('https://api.appstoreconnect.apple.com/v1/apps')
-req = Net::HTTP::Get.new(uri)
-req['Authorization'] = "Bearer #{token}"
-
-response = Net::HTTP.start(uri.hostname, uri.port, use_ssl: true) do |http|
-  http.request(req)
-end
-
-puts "API test response: #{response.code}"
-if response.code == '200'
-  puts "✅ API key works!"
-else
-  puts "⚠️ API key test got #{response.code}: #{response.body[0..200]}"
-  # Don't exit - just warn, because maybe key has limited permissions
-end
-RUBYEOF
-
-          ruby test_key.rb || echo "API key test failed (non-fatal)"
+          # Test API key with Apple's API (optional diagnostic) - skipped for now
+          echo "=== Skipping API key test (install jwt gem later if needed) ==="
           
           # Export environment variables for Fastlane
           export FASTLANE_APPLE_APPLICATION_SPECIFIC_PASSWORD=""
