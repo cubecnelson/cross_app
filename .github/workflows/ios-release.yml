@@ -137,8 +137,16 @@ jobs:
           export FASTLANE_APPLE_APPLICATION_SPECIFIC_PASSWORD=""
           export MATCH_GIT_BASIC_AUTHORIZATION=""
           
-          # Run Fastlane with debug output
-          bundle exec fastlane beta --verbose
+          # Run Fastlane with debug output and save logs
+          echo "=== Running Fastlane beta lane ==="
+          bundle exec fastlane beta --verbose --capture_output 2>&1 | tee fastlane.log
+          FASTLANE_EXIT_CODE=${PIPESTATUS[0]}
+          echo "Fastlane exit code: $FASTLANE_EXIT_CODE"
+          if [ $FASTLANE_EXIT_CODE -ne 0 ]; then
+            echo "=== Fastlane failed, showing last 100 lines of log ==="
+            tail -100 fastlane.log
+            exit $FASTLANE_EXIT_CODE
+          fi
           
       - name: Clean up secrets
         if: always()
