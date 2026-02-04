@@ -3,6 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../../core/constants/app_constants.dart';
 import '../../../providers/auth_provider.dart';
 import '../../auth/screens/login_screen.dart';
+import 'health_settings_screen.dart';
 
 class SettingsScreen extends ConsumerWidget {
   const SettingsScreen({super.key});
@@ -17,7 +18,7 @@ class SettingsScreen extends ConsumerWidget {
         children: [
           const _SectionHeader(title: 'App'),
           ListTile(
-            leading: const Icon(Icons.info_outline),
+            leading: const Icon(Icons.info_outline, size: 24, color: null),
             title: const Text('About'),
             subtitle: const Text('Version ${AppConstants.appVersion}'),
             onTap: () {
@@ -36,7 +37,7 @@ class SettingsScreen extends ConsumerWidget {
             },
           ),
           ListTile(
-            leading: const Icon(Icons.privacy_tip_outlined),
+            leading: const Icon(Icons.privacy_tip_outlined, size: 24, color: null),
             title: const Text('Privacy Policy'),
             onTap: () {
               // TODO: Show privacy policy
@@ -46,7 +47,7 @@ class SettingsScreen extends ConsumerWidget {
             },
           ),
           ListTile(
-            leading: const Icon(Icons.description_outlined),
+            leading: const Icon(Icons.description_outlined, size: 24, color: null),
             title: const Text('Terms of Service'),
             onTap: () {
               // TODO: Show terms of service
@@ -58,7 +59,7 @@ class SettingsScreen extends ConsumerWidget {
           const Divider(),
           const _SectionHeader(title: 'Data'),
           ListTile(
-            leading: const Icon(Icons.health_and_safety_outlined),
+            leading: const Icon(Icons.health_and_safety_outlined, size: 24, color: null),
             title: const Text('Health Integration'),
             subtitle: const Text('Connect with Apple Health or Google Fit'),
             onTap: () {
@@ -71,7 +72,7 @@ class SettingsScreen extends ConsumerWidget {
             },
           ),
           ListTile(
-            leading: const Icon(Icons.download_outlined),
+            leading: const Icon(Icons.download_outlined, size: 24, color: null),
             title: const Text('Export Data'),
             subtitle: const Text('Download your workout data as CSV'),
             onTap: () {
@@ -82,7 +83,7 @@ class SettingsScreen extends ConsumerWidget {
             },
           ),
           ListTile(
-            leading: const Icon(Icons.delete_outline),
+            leading: const Icon(Icons.delete_outline, size: 24, color: null),
             title: const Text('Delete Account'),
             subtitle: const Text('Permanently delete your account and data'),
             textColor: Colors.red,
@@ -123,7 +124,7 @@ class SettingsScreen extends ConsumerWidget {
           const Divider(),
           const _SectionHeader(title: 'Account'),
           ListTile(
-            leading: const Icon(Icons.logout),
+            leading: const Icon(Icons.logout, size: 24, color: null),
             title: const Text('Sign Out'),
             subtitle: const Text('Log out of your account'),
             onTap: () async {
@@ -198,7 +199,7 @@ class SettingsScreen extends ConsumerWidget {
           const Divider(),
           const _SectionHeader(title: 'Support'),
           ListTile(
-            leading: const Icon(Icons.help_outline),
+            leading: const Icon(Icons.help_outline, size: 24, color: null),
             title: const Text('Help & Support'),
             onTap: () {
               // TODO: Show help
@@ -208,7 +209,7 @@ class SettingsScreen extends ConsumerWidget {
             },
           ),
           ListTile(
-            leading: const Icon(Icons.bug_report_outlined),
+            leading: const Icon(Icons.bug_report_outlined, size: 24, color: null),
             title: const Text('Report a Bug'),
             onTap: () {
               // TODO: Show bug report form

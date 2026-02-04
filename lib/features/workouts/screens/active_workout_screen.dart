@@ -407,7 +407,7 @@ class _ActiveWorkoutScreenState extends ConsumerState<ActiveWorkoutScreen> {
                                 child: Column(
                                   mainAxisAlignment: MainAxisAlignment.center,
                                   children: [
-                                    const Icon(Icons.fitness_center_outlined, size: 64),
+                                    const Icon(Icons.fitness_center_outlined, size: 64, color: null),
                                     const SizedBox(height: 16),
                                     const Text(
                                       'No exercises added yet',
@@ -435,7 +435,7 @@ class _ActiveWorkoutScreenState extends ConsumerState<ActiveWorkoutScreen> {
                         child: Column(
                           mainAxisAlignment: MainAxisAlignment.center,
                           children: [
-                            const Icon(Icons.fitness_center_outlined, size: 64),
+                            const Icon(Icons.fitness_center_outlined, size: 64, color: null),
                             const SizedBox(height: 16),
                             const Text(
                               'No exercises added yet',
@@ -462,7 +462,7 @@ class _ActiveWorkoutScreenState extends ConsumerState<ActiveWorkoutScreen> {
                       padding: const EdgeInsets.symmetric(vertical: 16),
                       child: OutlinedButton.icon(
                         onPressed: _addExercise,
-                        icon: const Icon(Icons.add),
+                        icon: const Icon(Icons.add, size: 24),
                         label: const Text('Add Exercise'),
                       ),
                     );
@@ -488,7 +488,7 @@ class _ActiveWorkoutScreenState extends ConsumerState<ActiveWorkoutScreen> {
             color: Theme.of(context).cardColor,
             boxShadow: [
               BoxShadow(
-                color: Colors.black.withOpacity(0.1),
+                color: Colors.black.withValues(opacity: 0.1),
                 blurRadius: 4,
                 offset: const Offset(0, -2),
               ),
@@ -499,7 +499,7 @@ class _ActiveWorkoutScreenState extends ConsumerState<ActiveWorkoutScreen> {
             decoration: const InputDecoration(
               hintText: 'Add workout notes...',
               border: OutlineInputBorder(),
-              prefixIcon: Icon(Icons.note_outlined),
+              prefixIcon: Icon(Icons.note_outlined, size: 24, color: null),
             ),
             maxLines: 2,
           ),

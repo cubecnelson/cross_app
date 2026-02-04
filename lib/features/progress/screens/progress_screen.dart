@@ -135,7 +135,7 @@ class ProgressScreen extends ConsumerWidget {
                                   show: true,
                                   color: Theme.of(context)
                                       .primaryColor
-                                      .withOpacity(0.1),
+                                      .withValues(opacity: 0.1),
                                 ),
                               ),
                             ],
@@ -223,7 +223,7 @@ class _StatCard extends StatelessWidget {
         padding: const EdgeInsets.all(16),
         child: Column(
           children: [
-            Icon(icon, size: 32),
+            Icon(icon, size: 32, color: null),
             const SizedBox(height: 8),
             Text(
               value,

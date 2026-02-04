@@ -197,7 +197,7 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
                   label: 'Email',
                   keyboardType: TextInputType.emailAddress,
                   validator: Validators.validateEmail,
-                  prefixIcon: const Icon(Icons.email_outlined),
+                  prefixIcon: const Icon(Icons.email_outlined, size: 24, color: null),
                 ),
 
                 const SizedBox(height: 16),
@@ -209,12 +209,14 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
                   obscureText: _obscurePassword,
                   validator: (value) =>
                       Validators.validateRequired(value, 'Password'),
-                  prefixIcon: const Icon(Icons.lock_outline),
+                  prefixIcon: const Icon(Icons.lock_outline, size: 24, color: null),
                   suffixIcon: IconButton(
                     icon: Icon(
                       _obscurePassword
                           ? Icons.visibility
                           : Icons.visibility_off,
+                      size: 24,
+                      color: null,
                     ),
                     onPressed: () {
                       setState(() => _obscurePassword = !_obscurePassword);
@@ -276,7 +278,7 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
                     height: 24,
                     width: 24,
                     errorBuilder: (context, error, stackTrace) =>
-                        const Icon(Icons.g_mobiledata, size: 24),
+                        const Icon(Icons.g_mobiledata, size: 24, color: null),
                   ),
                   label: const Text('Continue with Google'),
                   style: OutlinedButton.styleFrom(
@@ -293,7 +295,7 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
                 if (Platform.isIOS)
                   OutlinedButton.icon(
                     onPressed: _isLoading ? null : _handleAppleSignIn,
-                    icon: const Icon(Icons.apple, size: 24),
+                    icon: const Icon(Icons.apple, size: 24, color: null),
                     label: const Text('Continue with Apple'),
                     style: OutlinedButton.styleFrom(
                       padding: const EdgeInsets.symmetric(vertical: 12),
