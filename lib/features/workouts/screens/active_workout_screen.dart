@@ -350,11 +350,11 @@ class _ActiveWorkoutScreenState extends ConsumerState<ActiveWorkoutScreen> {
   Widget build(BuildContext context) {
     return PopScope(
       canPop: _exercises.isEmpty,
-      onPopInvoked: (didPop) async {
-        if (didPop) return;
+      onPopInvokedWithResult: (result) async {
+        if (result.didPop) return;
         if (!await _onWillPop()) {
           // Prevent pop
-          return;
+          result.handle(false);
         }
       },
       child: Scaffold(
