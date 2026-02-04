@@ -152,15 +152,18 @@ jobs:
           
           # Option 1: Try Fastlane first
           echo "=== Running Fastlane beta lane ==="
+          set -x
           bundle exec fastlane beta --verbose --capture_output 2>&1 | tee fastlane.log
           FASTLANE_EXIT_CODE=${PIPESTATUS[0]}
+          set +x
           
           if [ $FASTLANE_EXIT_CODE -eq 0 ]; then
             echo "✅ Fastlane succeeded"
           else
             echo "⚠️ Fastlane failed with exit code $FASTLANE_EXIT_CODE"
-            echo "=== Last 50 lines of Fastlane log ==="
-            tail -50 fastlane.log
+            echo "=== Full Fastlane log ==="
+            cat fastlane.log
+            echo "=== End Fastlane log ==="
             
             # Option 2: Fallback to direct xcodebuild/xcrun with API key
             echo "=== Trying fallback: direct xcodebuild archive and upload ==="
