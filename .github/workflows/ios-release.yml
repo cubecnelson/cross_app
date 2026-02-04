@@ -194,26 +194,10 @@ jobs:
               -authenticationKeyID ${APP_STORE_CONNECT_API_KEY_KEY_ID} \
               -authenticationKeyIssuerID ${APP_STORE_CONNECT_API_KEY_ISSUER_ID}
             
-            # Create exportOptions.plist if not exists
+            # Use exportOptions.plist from repo (already exists)
             if [ ! -f exportOptions.plist ]; then
-              cat > exportOptions.plist << EOF
-<?xml version="1.0" encoding="UTF-8"?>
-<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
-<plist version="1.0">
-<dict>
-    <key>method</key>
-    <string>app-store</string>
-    <key>teamID</key>
-    <string>${TEAM_ID}</string>
-    <key>uploadSymbols</key>
-    <true/>
-    <key>uploadBitcode</key>
-    <false/>
-    <key>signingStyle</key>
-    <string>automatic</string>
-</dict>
-</plist>
-EOF
+              echo "❌ exportOptions.plist missing - this should have been committed"
+              exit 1
             fi
             
             # Upload with altool (legacy but works with API key)
