@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../../providers/health_provider.dart';
+import '../../../services/health_service.dart';
 import '../../../widgets/custom_button.dart';
 import '../../../widgets/loading_indicator.dart';
 
@@ -186,7 +187,7 @@ class HealthSettingsScreen extends ConsumerWidget {
         const SizedBox(height: 16),
         CustomButton(
           text: 'Disconnect',
-          variant: ButtonVariant.outlined,
+          isOutlined: true,
           onPressed: () => _showDisconnectDialog(),
         ),
       ],
