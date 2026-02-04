@@ -350,9 +350,10 @@ class _ActiveWorkoutScreenState extends ConsumerState<ActiveWorkoutScreen> {
   Widget build(BuildContext context) {
     return PopScope(
       canPop: _exercises.isEmpty,
-      onPopInvokedWithResult: (result) async {
+      onPopInvokedWithResult: (PopInvokedResult result) async {
         if (result.didPop) return;
-        if (!await _onWillPop()) {
+        final shouldPop = await _onWillPop();
+        if (!shouldPop) {
           // Prevent pop
           result.handle(false);
         }
@@ -488,7 +489,7 @@ class _ActiveWorkoutScreenState extends ConsumerState<ActiveWorkoutScreen> {
             color: Theme.of(context).cardColor,
             boxShadow: [
               BoxShadow(
-                color: Colors.black.withValues(opacity: 0.1),
+                color: Colors.black.withOpacity(0.1),
                 blurRadius: 4,
                 offset: const Offset(0, -2),
               ),

@@ -135,7 +135,7 @@ class ProgressScreen extends ConsumerWidget {
                                   show: true,
                                   color: Theme.of(context)
                                       .primaryColor
-                                      .withValues(opacity: 0.1),
+                                      .withOpacity(0.1),
                                 ),
                               ),
                             ],

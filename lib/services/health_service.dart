@@ -65,13 +65,8 @@ class HealthFactory {
 }
 
 class HealthService {
-  HealthPlatform _platform = HealthPlatform.none;
+  final HealthPlatform _platform = HealthPlatform.none;
   bool _isInitialized = false;
-  late HealthFactory _health;
-
-  HealthService() {
-    _health = HealthFactory();
-  }
 
   Future<bool> initialize() async {
     if (_isInitialized) return true;
