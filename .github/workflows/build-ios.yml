@@ -136,6 +136,23 @@ jobs:
           # Create API key file for Fastlane
           mkdir -p ~/private_keys
           echo "$APP_STORE_CONNECT_API_KEY_KEY" > ~/private_keys/AuthKey_${APP_STORE_CONNECT_API_KEY_KEY_ID}.p8
+          chmod 600 ~/private_keys/AuthKey_${APP_STORE_CONNECT_API_KEY_KEY_ID}.p8
+          
+          # Validate API key format
+          echo "=== API Key Validation ==="
+          echo "Key ID: ${APP_STORE_CONNECT_API_KEY_KEY_ID}"
+          echo "Issuer ID: ${APP_STORE_CONNECT_API_KEY_ISSUER_ID}"
+          echo "Team ID: ${TEAM_ID}"
+          echo "Key file size: $(wc -c < ~/private_keys/AuthKey_${APP_STORE_CONNECT_API_KEY_KEY_ID}.p8) bytes"
+          echo "First 3 lines of key:"
+          head -3 ~/private_keys/AuthKey_${APP_STORE_CONNECT_API_KEY_KEY_ID}.p8
+          
+          if ! grep -q "BEGIN PRIVATE KEY" ~/private_keys/AuthKey_${APP_STORE_CONNECT_API_KEY_KEY_ID}.p8; then
+            echo "❌ ERROR: API Key content doesn't look like a valid .p8 private key!"
+            echo "Expected '-----BEGIN PRIVATE KEY-----' header"
+            echo "Check if secret 'APP_STORE_CONNECT_API_KEY_CONTENT' contains the actual .p8 file content"
+            exit 1
+          fi
           
           # Export environment variables for Fastlane
           export FASTLANE_APPLE_APPLICATION_SPECIFIC_PASSWORD=""

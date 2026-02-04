@@ -135,6 +135,17 @@ jobs:
           echo "API Key file exists: $(ls -la ~/private_keys/AuthKey_${APP_STORE_CONNECT_API_KEY_KEY_ID}.p8 2>/dev/null && echo 'Yes' || echo 'No')"
           echo "API Key file size: $(wc -c < ~/private_keys/AuthKey_${APP_STORE_CONNECT_API_KEY_KEY_ID}.p8 2>/dev/null || echo 0) bytes"
           
+          # Validate API key format (should start with -----BEGIN PRIVATE KEY-----)
+          if [ -f ~/private_keys/AuthKey_${APP_STORE_CONNECT_API_KEY_KEY_ID}.p8 ]; then
+            echo "=== API Key Content Preview ==="
+            head -3 ~/private_keys/AuthKey_${APP_STORE_CONNECT_API_KEY_KEY_ID}.p8
+            if ! grep -q "BEGIN PRIVATE KEY" ~/private_keys/AuthKey_${APP_STORE_CONNECT_API_KEY_KEY_ID}.p8; then
+              echo "❌ ERROR: API Key content doesn't look like a valid .p8 private key!"
+              echo "Expected '-----BEGIN PRIVATE KEY-----' header"
+              exit 1
+            fi
+          fi
+          
           # Export environment variables for Fastlane
           export FASTLANE_APPLE_APPLICATION_SPECIFIC_PASSWORD=""
           export MATCH_GIT_BASIC_AUTHORIZATION=""
