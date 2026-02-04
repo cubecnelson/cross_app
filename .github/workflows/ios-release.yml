@@ -59,11 +59,14 @@ jobs:
           flutter pub deps --style=tree | head -100
         
       - name: Set up Ruby
-        uses: ruby/setup-ruby@v1
-        with:
-          ruby-version: '3.2'
-          bundler-cache: true
-          working-directory: ios
+        run: |
+          # Use system Ruby on macOS runner (already installed)
+          ruby --version
+          gem --version
+          # Install bundler if not present
+          gem install bundler --no-document
+          bundle --version
+          echo "Ruby environment ready"
           
       - name: Install CocoaPods dependencies
         run: |
