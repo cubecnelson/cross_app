@@ -5,7 +5,7 @@ default_platform(:ios)
 platform :ios do
   desc "Push a new beta build to TestFlight"
   lane :beta do
-    # Fastlane will automatically use these environment variables:
+    # Fastlane automatically detects these environment variables:
     # - APP_STORE_CONNECT_API_KEY_KEY_ID
     # - APP_STORE_CONNECT_API_KEY_ISSUER_ID
     # - APP_STORE_CONNECT_API_KEY_KEY
@@ -54,16 +54,8 @@ platform :ios do
       }
     )
     
-    # Upload to TestFlight using API key
-    api_key = app_store_connect_api_key(
-      key_id: ENV['APP_STORE_CONNECT_API_KEY_KEY_ID'],
-      issuer_id: ENV['APP_STORE_CONNECT_API_KEY_ISSUER_ID'],
-      key_content: ENV['APP_STORE_CONNECT_API_KEY_KEY'],
-      is_key_content_base64: false
-    )
-    
+    # Upload to TestFlight - Fastlane will auto-use environment variables
     upload_to_testflight(
-      api_key: api_key,
       skip_waiting_for_build_processing: true,
       skip_submission: true,
       distribute_external: false,
@@ -76,7 +68,7 @@ platform :ios do
   
   desc "Build the app for App Store submission"
   lane :release do
-    # Fastlane will automatically use environment variables
+    # Fastlane automatically uses environment variables
     
     # Build the app with automatic signing and online profile fetching
     if ENV['CI']
@@ -105,16 +97,8 @@ platform :ios do
       }
     )
     
-    # Upload to App Store Connect using API key
-    api_key = app_store_connect_api_key(
-      key_id: ENV['APP_STORE_CONNECT_API_KEY_KEY_ID'],
-      issuer_id: ENV['APP_STORE_CONNECT_API_KEY_ISSUER_ID'],
-      key_content: ENV['APP_STORE_CONNECT_API_KEY_KEY'],
-      is_key_content_base64: false
-    )
-    
+    # Upload to App Store Connect - Fastlane auto-uses environment variables
     upload_to_app_store(
-      api_key: api_key,
       skip_metadata: true,
       skip_screenshots: true,
       precheck_include_in_app_purchases: false
