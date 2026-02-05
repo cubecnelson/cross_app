@@ -20,7 +20,7 @@ jobs:
         env:
           SUPABASE_URL: ${{ secrets.SUPABASE_URL }}
           SUPABASE_ANON_KEY: ${{ secrets.SUPABASE_ANON_KEY }}
-          APP_STORE_CONNECT_API_KEY_KEY_ID: ${{ secrets.APP_STORE_CONNECT_API_KEY_ID }}
+          APP_STORE_CONNECT_API_KEY_ID: ${{ secrets.APP_STORE_CONNECT_API_KEY_ID }}
           APP_STORE_CONNECT_API_ISSUER_ID: ${{ secrets.APP_STORE_CONNECT_API_ISSUER_ID }}
           APP_STORE_CONNECT_API_KEY_CONTENT: ${{ secrets.APP_STORE_CONNECT_API_KEY_CONTENT }}
         run: |
@@ -97,28 +97,28 @@ jobs:
           
       - name: Setup App Store Connect API Key for Automatic Signing
         env:
-          APP_STORE_CONNECT_API_KEY_KEY_ID: ${{ secrets.APP_STORE_CONNECT_API_KEY_ID }}
+          APP_STORE_CONNECT_API_KEY_ID: ${{ secrets.APP_STORE_CONNECT_API_KEY_ID }}
           APP_STORE_CONNECT_API_KEY_CONTENT: ${{ secrets.APP_STORE_CONNECT_API_KEY_CONTENT }}
         run: |
           echo "Setting up App Store Connect API Key for automatic signing..."
           
           # Create API key file for Xcode automatic signing
           mkdir -p ~/private_keys
-          echo "$APP_STORE_CONNECT_API_KEY_CONTENT" > ~/private_keys/AuthKey_${APP_STORE_CONNECT_API_KEY_KEY_ID}.p8
+          echo "$APP_STORE_CONNECT_API_KEY_CONTENT" > ~/private_keys/AuthKey_${APP_STORE_CONNECT_API_KEY_ID}.p8
           
           echo "✅ API Key installed"
           echo "Xcode will automatically download certificates and provisioning profiles"
           
           # Debug: Show key info (without revealing full content)
           echo "API Key ID: ${APP_STORE_CONNECT_API_KEY_ID}"
-          echo "Key file created: ~/private_keys/AuthKey_${APP_STORE_CONNECT_API_KEY_KEY_ID}.p8"
-          echo "Key file size: $(wc -c < ~/private_keys/AuthKey_${APP_STORE_CONNECT_API_KEY_KEY_ID}.p8) bytes"
+          echo "Key file created: ~/private_keys/AuthKey_${APP_STORE_CONNECT_API_KEY_ID}.p8"
+          echo "Key file size: $(wc -c < ~/private_keys/AuthKey_${APP_STORE_CONNECT_API_KEY_ID}.p8) bytes"
           
       - name: Build and upload to TestFlight
         env:
-          APP_STORE_CONNECT_API_KEY_KEY_ID: ${{ secrets.APP_STORE_CONNECT_API_KEY_ID }}
+          APP_STORE_CONNECT_API_KEY_ID: ${{ secrets.APP_STORE_CONNECT_API_KEY_ID }}
           APP_STORE_CONNECT_API_KEY_ISSUER_ID: ${{ secrets.APP_STORE_CONNECT_API_ISSUER_ID }}
-          APP_STORE_CONNECT_API_KEY_KEY: ${{ secrets.APP_STORE_CONNECT_API_KEY_CONTENT }}
+          APP_STORE_CONNECT_API_KEY_CONTENT: ${{ secrets.APP_STORE_CONNECT_API_KEY_CONTENT }}
           APP_STORE_CONNECT_API_KEY_IS_KEY_CONTENT_BASE64: false
           BUILD_NUMBER: ${{ github.run_number }}
           TEAM_ID: YWQH3Z3Z85
@@ -126,19 +126,19 @@ jobs:
           cd ios
           # Create API key file for Fastlane
           mkdir -p ~/private_keys
-          echo "$APP_STORE_CONNECT_API_KEY_KEY" > ~/private_keys/AuthKey_${APP_STORE_CONNECT_API_KEY_KEY_ID}.p8
-          chmod 600 ~/private_keys/AuthKey_${APP_STORE_CONNECT_API_KEY_KEY_ID}.p8
+          echo "$APP_STORE_CONNECT_API_KEY_CONTENT" > ~/private_keys/AuthKey_${APP_STORE_CONNECT_API_KEY_ID}.p8
+          chmod 600 ~/private_keys/AuthKey_${APP_STORE_CONNECT_API_KEY_ID}.p8
           
           # Validate API key format
           echo "=== API Key Validation ==="
-          echo "Key ID: ${APP_STORE_CONNECT_API_KEY_KEY_ID}"
+          echo "Key ID: ${APP_STORE_CONNECT_API_KEY_ID}"
           echo "Issuer ID: ${APP_STORE_CONNECT_API_KEY_ISSUER_ID}"
           echo "Team ID: ${TEAM_ID}"
-          echo "Key file size: $(wc -c < ~/private_keys/AuthKey_${APP_STORE_CONNECT_API_KEY_KEY_ID}.p8) bytes"
+          echo "Key file size: $(wc -c < ~/private_keys/AuthKey_${APP_STORE_CONNECT_API_KEY_ID}.p8) bytes"
           echo "First 3 lines of key:"
-          head -3 ~/private_keys/AuthKey_${APP_STORE_CONNECT_API_KEY_KEY_ID}.p8
+          head -3 ~/private_keys/AuthKey_${APP_STORE_CONNECT_API_KEY_ID}.p8
           
-          if ! grep -q "BEGIN PRIVATE KEY" ~/private_keys/AuthKey_${APP_STORE_CONNECT_API_KEY_KEY_ID}.p8; then
+          if ! grep -q "BEGIN PRIVATE KEY" ~/private_keys/AuthKey_${APP_STORE_CONNECT_API_KEY_ID}.p8; then
             echo "❌ ERROR: API Key content doesn't look like a valid .p8 private key!"
             echo "Expected '-----BEGIN PRIVATE KEY-----' header"
             echo "Check if secret 'APP_STORE_CONNECT_API_KEY_CONTENT' contains the actual .p8 file content"
@@ -174,8 +174,8 @@ jobs:
               -configuration Release \
               -archivePath Runner.xcarchive \
               -allowProvisioningUpdates \
-              -authenticationKeyPath ~/private_keys/AuthKey_${APP_STORE_CONNECT_API_KEY_KEY_ID}.p8 \
-              -authenticationKeyID ${APP_STORE_CONNECT_API_KEY_KEY_ID} \
+              -authenticationKeyPath ~/private_keys/AuthKey_${APP_STORE_CONNECT_API_KEY_ID}.p8 \
+              -authenticationKeyID ${APP_STORE_CONNECT_API_KEY_ID} \
               -authenticationKeyIssuerID ${APP_STORE_CONNECT_API_KEY_ISSUER_ID} \
               -destination generic/platform=iOS
             
@@ -185,8 +185,8 @@ jobs:
               -exportOptionsPlist exportOptions.plist \
               -exportPath . \
               -allowProvisioningUpdates \
-              -authenticationKeyPath ~/private_keys/AuthKey_${APP_STORE_CONNECT_API_KEY_KEY_ID}.p8 \
-              -authenticationKeyID ${APP_STORE_CONNECT_API_KEY_KEY_ID} \
+              -authenticationKeyPath ~/private_keys/AuthKey_${APP_STORE_CONNECT_API_KEY_ID}.p8 \
+              -authenticationKeyID ${APP_STORE_CONNECT_API_KEY_ID} \
               -authenticationKeyIssuerID ${APP_STORE_CONNECT_API_KEY_ISSUER_ID}
             
             # Use exportOptions.plist from repo (already exists)
@@ -200,7 +200,7 @@ jobs:
             xcrun altool --upload-app \
               -f Runner.ipa \
               -t ios \
-              --apiKey ${APP_STORE_CONNECT_API_KEY_KEY_ID} \
+              --apiKey ${APP_STORE_CONNECT_API_KEY_ID} \
               --apiIssuer ${APP_STORE_CONNECT_API_KEY_ISSUER_ID} \
               --verbose
             

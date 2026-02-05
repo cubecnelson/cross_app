@@ -6,9 +6,9 @@ platform :ios do
   desc "Push a new beta build to TestFlight"
   lane :beta do
     # Fastlane automatically detects these environment variables:
-    # - APP_STORE_CONNECT_API_KEY_KEY_ID
+    # - APP_STORE_CONNECT_API_KEY_ID
     # - APP_STORE_CONNECT_API_KEY_ISSUER_ID
-    # - APP_STORE_CONNECT_API_KEY_KEY
+    # - APP_STORE_CONNECT_API_KEY_CONTENT
     # No need to explicitly call app_store_connect_api_key()
     
     # Use build number from environment (GitHub run number) or increment local
@@ -29,8 +29,8 @@ platform :ios do
     # Build the app with automatic signing and online profile fetching
     # Set up authentication for automatic profile download
     if ENV['CI']
-      api_key_path = File.expand_path("~/private_keys/AuthKey_#{ENV['APP_STORE_CONNECT_API_KEY_KEY_ID']}.p8")
-      xcargs = "-allowProvisioningUpdates -authenticationKeyPath '#{api_key_path}' -authenticationKeyID #{ENV['APP_STORE_CONNECT_API_KEY_KEY_ID']} -authenticationKeyIssuerID #{ENV['APP_STORE_CONNECT_API_KEY_ISSUER_ID']}"
+      api_key_path = File.expand_path("~/private_keys/AuthKey_#{ENV['APP_STORE_CONNECT_API_KEY_ID']}.p8")
+      xcargs = "-allowProvisioningUpdates -authenticationKeyPath '#{api_key_path}' -authenticationKeyID #{ENV['APP_STORE_CONNECT_API_KEY_ID']} -authenticationKeyIssuerID #{ENV['APP_STORE_CONNECT_API_KEY_ISSUER_ID']}"
       UI.message("Using API key authentication: #{api_key_path}")
     else
       xcargs = "-allowProvisioningUpdates"
@@ -72,8 +72,8 @@ platform :ios do
     
     # Build the app with automatic signing and online profile fetching
     if ENV['CI']
-      api_key_path = File.expand_path("~/private_keys/AuthKey_#{ENV['APP_STORE_CONNECT_API_KEY_KEY_ID']}.p8")
-      xcargs = "-allowProvisioningUpdates -authenticationKeyPath '#{api_key_path}' -authenticationKeyID #{ENV['APP_STORE_CONNECT_API_KEY_KEY_ID']} -authenticationKeyIssuerID #{ENV['APP_STORE_CONNECT_API_KEY_ISSUER_ID']}"
+      api_key_path = File.expand_path("~/private_keys/AuthKey_#{ENV['APP_STORE_CONNECT_API_KEY_ID']}.p8")
+      xcargs = "-allowProvisioningUpdates -authenticationKeyPath '#{api_key_path}' -authenticationKeyID #{ENV['APP_STORE_CONNECT_API_KEY_ID']} -authenticationKeyIssuerID #{ENV['APP_STORE_CONNECT_API_KEY_ISSUER_ID']}"
       UI.message("Using API key authentication: #{api_key_path}")
     else
       xcargs = "-allowProvisioningUpdates"
