@@ -20,7 +20,7 @@ jobs:
         env:
           SUPABASE_URL: ${{ secrets.SUPABASE_URL }}
           SUPABASE_ANON_KEY: ${{ secrets.SUPABASE_ANON_KEY }}
-          APP_STORE_CONNECT_API_KEY_ID: ${{ secrets.APP_STORE_CONNECT_API_KEY_ID }}
+          APP_STORE_CONNECT_API_KEY_KEY_ID: ${{ secrets.APP_STORE_CONNECT_API_KEY_ID }}
           APP_STORE_CONNECT_API_ISSUER_ID: ${{ secrets.APP_STORE_CONNECT_API_ISSUER_ID }}
           APP_STORE_CONNECT_API_KEY_CONTENT: ${{ secrets.APP_STORE_CONNECT_API_KEY_CONTENT }}
         run: |
@@ -97,22 +97,22 @@ jobs:
           
       - name: Setup App Store Connect API Key for Automatic Signing
         env:
-          APP_STORE_CONNECT_API_KEY_ID: ${{ secrets.APP_STORE_CONNECT_API_KEY_ID }}
+          APP_STORE_CONNECT_API_KEY_KEY_ID: ${{ secrets.APP_STORE_CONNECT_API_KEY_ID }}
           APP_STORE_CONNECT_API_KEY_CONTENT: ${{ secrets.APP_STORE_CONNECT_API_KEY_CONTENT }}
         run: |
           echo "Setting up App Store Connect API Key for automatic signing..."
           
           # Create API key file for Xcode automatic signing
           mkdir -p ~/private_keys
-          echo "$APP_STORE_CONNECT_API_KEY_CONTENT" > ~/private_keys/AuthKey_${APP_STORE_CONNECT_API_KEY_ID}.p8
+          echo "$APP_STORE_CONNECT_API_KEY_CONTENT" > ~/private_keys/AuthKey_${APP_STORE_CONNECT_API_KEY_KEY_ID}.p8
           
           echo "✅ API Key installed"
           echo "Xcode will automatically download certificates and provisioning profiles"
           
           # Debug: Show key info (without revealing full content)
           echo "API Key ID: ${APP_STORE_CONNECT_API_KEY_ID}"
-          echo "Key file created: ~/private_keys/AuthKey_${APP_STORE_CONNECT_API_KEY_ID}.p8"
-          echo "Key file size: $(wc -c < ~/private_keys/AuthKey_${APP_STORE_CONNECT_API_KEY_ID}.p8) bytes"
+          echo "Key file created: ~/private_keys/AuthKey_${APP_STORE_CONNECT_API_KEY_KEY_ID}.p8"
+          echo "Key file size: $(wc -c < ~/private_keys/AuthKey_${APP_STORE_CONNECT_API_KEY_KEY_ID}.p8) bytes"
           
       - name: Build and upload to TestFlight
         env:

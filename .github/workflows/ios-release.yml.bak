@@ -27,12 +27,12 @@ jobs:
         env:
           SUPABASE_URL: ${{ secrets.SUPABASE_URL }}
           SUPABASE_ANON_KEY: ${{ secrets.SUPABASE_ANON_KEY }}
-          APP_STORE_CONNECT_API_KEY_KEY_ID: ${{ secrets.APP_STORE_CONNECT_API_KEY_KEY_ID }}
+          APP_STORE_CONNECT_API_KEY_ID: ${{ secrets.APP_STORE_CONNECT_API_KEY_ID }}
           APP_STORE_CONNECT_API_ISSUER_ID: ${{ secrets.APP_STORE_CONNECT_API_ISSUER_ID }}
           APP_STORE_CONNECT_API_KEY_CONTENT: ${{ secrets.APP_STORE_CONNECT_API_KEY_CONTENT }}
         run: |
           echo "Verifying required GitHub secrets are set..."
-          REQUIRED_SECRETS=("SUPABASE_URL" "SUPABASE_ANON_KEY" "APP_STORE_CONNECT_API_KEY_KEY_ID" "APP_STORE_CONNECT_API_ISSUER_ID" "APP_STORE_CONNECT_API_KEY_CONTENT")
+          REQUIRED_SECRETS=("SUPABASE_URL" "SUPABASE_ANON_KEY" "APP_STORE_CONNECT_API_KEY_ID" "APP_STORE_CONNECT_API_ISSUER_ID" "APP_STORE_CONNECT_API_KEY_CONTENT")
           
           for secret in "${REQUIRED_SECRETS[@]}"; do
             if [ -n "${!secret}" ]; then
@@ -104,7 +104,7 @@ jobs:
           
       - name: Setup App Store Connect API Key
         env:
-          APP_STORE_CONNECT_API_KEY_KEY_ID: ${{ secrets.APP_STORE_CONNECT_API_KEY_KEY_ID }}
+          APP_STORE_CONNECT_API_KEY_KEY_ID: ${{ secrets.APP_STORE_CONNECT_API_KEY_ID }}
           APP_STORE_CONNECT_API_KEY_CONTENT: ${{ secrets.APP_STORE_CONNECT_API_KEY_CONTENT }}
         run: |
           echo "Setting up App Store Connect API Key..."
@@ -117,7 +117,7 @@ jobs:
           
       - name: Build and upload to TestFlight
         env:
-          APP_STORE_CONNECT_API_KEY_KEY_ID: ${{ secrets.APP_STORE_CONNECT_API_KEY_KEY_ID }}
+          APP_STORE_CONNECT_API_KEY_KEY_ID: ${{ secrets.APP_STORE_CONNECT_API_KEY_ID }}
           APP_STORE_CONNECT_API_KEY_ISSUER_ID: ${{ secrets.APP_STORE_CONNECT_API_ISSUER_ID }}
           APP_STORE_CONNECT_API_KEY_KEY: ${{ secrets.APP_STORE_CONNECT_API_KEY_CONTENT }}
           BUILD_NUMBER: ${{ github.run_number }}
