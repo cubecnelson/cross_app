@@ -82,3 +82,9 @@ ios/*.xcodeproj/project.xcworkspace/xcuserdata/
 
 # FVM Version Cache
 .fvm/
+
+# Backup files
+*.bak
+*_fixed.dart
+*_old.dart
+*.dart.bak
