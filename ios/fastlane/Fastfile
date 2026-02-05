@@ -9,6 +9,7 @@ platform :ios do
     # - APP_STORE_CONNECT_API_KEY_ID
     # - APP_STORE_CONNECT_API_KEY_ISSUER_ID
     # - APP_STORE_CONNECT_API_KEY_CONTENT
+    # - APP_STORE_CONNECT_API_KEY_IS_KEY_CONTENT_BASE64 (optional)
     # No need to explicitly call app_store_connect_api_key()
     
     # Use build number from environment (GitHub run number) or increment local
@@ -68,7 +69,9 @@ platform :ios do
   
   desc "Build the app for App Store submission"
   lane :release do
-    # Fastlane automatically uses environment variables
+    # Fastlane automatically uses environment variables:
+    # APP_STORE_CONNECT_API_KEY_ID, APP_STORE_CONNECT_API_KEY_ISSUER_ID,
+    # APP_STORE_CONNECT_API_KEY_CONTENT, APP_STORE_CONNECT_API_KEY_IS_KEY_CONTENT_BASE64
     
     # Build the app with automatic signing and online profile fetching
     if ENV['CI']

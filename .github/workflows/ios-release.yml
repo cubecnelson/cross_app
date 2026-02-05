@@ -48,6 +48,38 @@ jobs:
           
           echo "Team ID: YWQH3Z3Z85 (hardcoded in workflow)"
         
+      - name: Debug API Key Format
+        env:
+          APP_STORE_CONNECT_API_KEY_CONTENT: ${{ secrets.APP_STORE_CONNECT_API_KEY_CONTENT }}
+        run: |
+          echo "=== API Key Format Debug ==="
+          echo "First 50 characters of APP_STORE_CONNECT_API_KEY_CONTENT:"
+          echo "${APP_STORE_CONNECT_API_KEY_CONTENT:0:50}"
+          echo ""
+          echo "Checking if content is PEM or Base64 encoded..."
+          
+          # Check if it starts with PEM header
+          if echo "$APP_STORE_CONNECT_API_KEY_CONTENT" | grep -q "BEGIN PRIVATE KEY"; then
+            echo "✅ PEM format detected (starts with 'BEGIN PRIVATE KEY')"
+            echo "Content is plain PEM text, not base64 encoded."
+            echo "Setting APP_STORE_CONNECT_API_KEY_IS_KEY_CONTENT_BASE64: false"
+            echo "APP_STORE_CONNECT_API_KEY_IS_KEY_CONTENT_BASE64=false" >> $GITHUB_ENV
+          else
+            echo "❓ Might be base64 encoded"
+            echo "Attempting base64 decode..."
+            DECODED=$(echo "$APP_STORE_CONNECT_API_KEY_CONTENT" | base64 --decode 2>/dev/null | head -5)
+            if echo "$DECODED" | grep -q "BEGIN PRIVATE KEY"; then
+              echo "✅ Base64 encoded PEM detected (decodes to 'BEGIN PRIVATE KEY')"
+              echo "Content is base64 encoded PEM."
+              echo "Setting APP_STORE_CONNECT_API_KEY_IS_KEY_CONTENT_BASE64: true"
+              echo "APP_STORE_CONNECT_API_KEY_IS_KEY_CONTENT_BASE64=true" >> $GITHUB_ENV
+            else
+              echo "⚠️ Could not determine format. Assuming PEM text (not base64)."
+              echo "Setting APP_STORE_CONNECT_API_KEY_IS_KEY_CONTENT_BASE64: false"
+              echo "APP_STORE_CONNECT_API_KEY_IS_KEY_CONTENT_BASE64=false" >> $GITHUB_ENV
+            fi
+          fi
+        
       - name: Set up Flutter
         uses: subosito/flutter-action@v2
         with:
@@ -109,17 +141,29 @@ jobs:
         run: |
           echo "Setting up App Store Connect API Key..."
           mkdir -p ~/private_keys
-          echo "$APP_STORE_CONNECT_API_KEY_CONTENT" > ~/private_keys/AuthKey_${APP_STORE_CONNECT_API_KEY_ID}.p8
+          
+          # Check if we detected base64 encoding in previous step
+          if [ "$APP_STORE_CONNECT_API_KEY_IS_KEY_CONTENT_BASE64" = "true" ]; then
+            echo "🔧 Detected base64 encoded API key content. Decoding..."
+            echo "$APP_STORE_CONNECT_API_KEY_CONTENT" | base64 --decode > ~/private_keys/AuthKey_${APP_STORE_CONNECT_API_KEY_ID}.p8
+            echo "✅ Decoded base64 to PEM format"
+          else
+            echo "🔧 Using PEM format directly..."
+            echo "$APP_STORE_CONNECT_API_KEY_CONTENT" > ~/private_keys/AuthKey_${APP_STORE_CONNECT_API_KEY_ID}.p8
+          fi
+          
           chmod 600 ~/private_keys/AuthKey_${APP_STORE_CONNECT_API_KEY_ID}.p8
           echo "✅ API Key installed for Fastlane & Xcode"
           echo "Key ID: ${APP_STORE_CONNECT_API_KEY_ID}"
           echo "Key file: ~/private_keys/AuthKey_${APP_STORE_CONNECT_API_KEY_ID}.p8"
+          echo "Format: $([ "$APP_STORE_CONNECT_API_KEY_IS_KEY_CONTENT_BASE64" = "true" ] && echo "Base64 decoded to PEM" || echo "PEM directly")"
           
       - name: Build and upload to TestFlight
         env:
           APP_STORE_CONNECT_API_KEY_ID: ${{ secrets.APP_STORE_CONNECT_API_KEY_ID }}
           APP_STORE_CONNECT_API_KEY_ISSUER_ID: ${{ secrets.APP_STORE_CONNECT_API_ISSUER_ID }}
           APP_STORE_CONNECT_API_KEY_CONTENT: ${{ secrets.APP_STORE_CONNECT_API_KEY_CONTENT }}
+          APP_STORE_CONNECT_API_KEY_IS_KEY_CONTENT_BASE64: ${{ env.APP_STORE_CONNECT_API_KEY_IS_KEY_CONTENT_BASE64 || 'false' }}
           BUILD_NUMBER: ${{ github.run_number }}
           TEAM_ID: YWQH3Z3Z85
         run: |
