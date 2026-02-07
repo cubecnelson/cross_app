@@ -167,7 +167,23 @@ jobs:
           BUILD_NUMBER: ${{ github.run_number }}
           TEAM_ID: YWQH3Z3Z85
         run: |
+          echo "=== CICD DEBUG INFORMATION ==="
+          echo "Build Number: $BUILD_NUMBER"
+          echo "Team ID: $TEAM_ID"
+          echo "Key ID: $APP_STORE_CONNECT_API_KEY_ID"
+          echo "Issuer ID: $APP_STORE_CONNECT_API_KEY_ISSUER_ID"
+          echo "Key Format: $APP_STORE_CONNECT_API_KEY_IS_KEY_CONTENT_BASE64"
+          echo "Bundle ID: com.cross.app"
+          echo ""
+          
           cd ios
+          
+          # Debug: Check if API key file exists and has correct format
+          echo "Checking API key file..."
+          ls -la ~/private_keys/
+          echo ""
+          
+          echo "=== RUNNING FASTLANE BETA ==="
           bundle exec fastlane beta --verbose
           
       - name: Clean up secrets
