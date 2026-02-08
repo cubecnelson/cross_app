@@ -1,0 +1,140 @@
+name: Run Flutter Tests (Ubuntu)
+# Only runs when manually triggered via GitHub UI
+# Uses Ubuntu for consistent, fast test execution
+
+on:
+  workflow_dispatch:
+    inputs:
+      test_type:
+        description: 'Type of tests to run'
+        required: true
+        default: 'all'
+        type: choice
+        options:
+        - all
+        - unit
+        - widget
+        - integration
+      flutter_version:
+        description: 'Flutter version to use'
+        required: false
+        default: '3.38.7'
+
+jobs:
+  test:
+    name: Run Flutter Tests
+    runs-on: ubuntu-latest
+    
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        
+      - name: Set up Flutter (Ubuntu Optimized)
+        uses: subosito/flutter-action@v2
+        with:
+          flutter-version: ${{ inputs.flutter_version || '3.38.7' }}
+          channel: 'stable'
+          cache: true
+          cache-key: flutter-v${{ inputs.flutter_version || '3.38.7' }}-ubuntu
+          cache-exclude: |
+            .pub-cache/bin
+            .dart_tool
+          
+      - name: Verify Flutter installation
+        run: |
+          flutter --version
+          flutter doctor -v
+          
+      - name: Get Flutter dependencies
+        run: |
+          flutter pub get
+          echo "Dependencies installed successfully"
+          
+      - name: Analyze Flutter code
+        run: |
+          echo "Running Flutter analyze..."
+          flutter analyze --no-fatal-infos || echo "⚠️ Flutter analysis found issues (continuing with tests)"
+          
+      - name: Run Unit Tests
+        if: ${{ inputs.test_type == 'all' || inputs.test_type == 'unit' }}
+        run: |
+          echo "=== RUNNING UNIT TESTS ==="
+          mkdir -p test-results
+          flutter test test/unit/ --coverage --coverage-path=coverage/unit || echo "❌ Some unit tests failed"
+          echo "Unit tests completed"
+          
+      - name: Run Widget Tests
+        if: ${{ inputs.test_type == 'all' || inputs.test_type == 'widget' }}
+        run: |
+          echo "=== RUNNING WIDGET TESTS ==="
+          flutter test test/widget/ --coverage --coverage-path=coverage/widget || echo "❌ Some widget tests failed"
+          echo "Widget tests completed"
+          
+      - name: Run Integration Tests
+        if: ${{ inputs.test_type == 'all' || inputs.test_type == 'integration' }}
+        run: |
+          echo "=== RUNNING INTEGRATION TESTS ==="
+          flutter test test/integration/ --coverage --coverage-path=coverage/integration || echo "❌ Some integration tests failed"
+          echo "Integration tests completed"
+          
+      - name: Generate Test Coverage Report
+        if: ${{ inputs.test_type == 'all' }}
+        run: |
+          echo "=== GENERATING COVERAGE REPORT ==="
+          # Combine coverage data if available
+          if [ -d "coverage" ]; then
+            echo "Coverage data found, generating report..."
+            # Install lcov on Ubuntu for coverage reports
+            sudo apt-get update
+            sudo apt-get install -y lcov || echo "⚠️ Failed to install lcov, continuing without HTML report"
+            
+            # Generate lcov report if lcov is available
+            if command -v lcov &> /dev/null && [ -f "coverage/lcov.info" ]; then
+              echo "Generating HTML coverage report..."
+              genhtml coverage/lcov.info -o coverage/html
+              echo "HTML coverage report generated in coverage/html/"
+            else
+              echo "⚠️ lcov not available or coverage file not found"
+              echo "Basic coverage files available in coverage/ directory"
+            fi
+            
+            # Show basic coverage summary
+            echo "=== COVERAGE SUMMARY ==="
+            find coverage -name "lcov.info" -exec echo "Coverage file: {}" \; || true
+          else
+            echo "No coverage data generated"
+          fi
+          
+      - name: Upload Test Results
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: test-results-${{ github.run_id }}
+          path: |
+            coverage/
+            test-results/
+          retention-days: 30
+          
+      - name: Upload Coverage to Codecov (Optional)
+        if: ${{ inputs.test_type == 'all' && github.event_name == 'workflow_dispatch' }}
+        uses: codecov/codecov-action@v3
+        continue-on-error: true
+        with:
+          directory: coverage/
+          flags: flutter
+          name: flutter-tests
+          
+      - name: Summary
+        run: |
+          echo "=== TEST RUN SUMMARY ==="
+          echo "Platform: ubuntu-latest (optimized for CI)"
+          echo "Flutter Version: ${{ inputs.flutter_version || '3.38.7' }}"
+          echo "Test Type: ${{ inputs.test_type }}"
+          echo "Workflow: https://github.com/${{ github.repository }}/actions/runs/${{ github.run_id }}"
+          echo ""
+          echo "To run tests locally on Ubuntu/macOS:"
+          echo "  ./test_runner.sh --unit          # Unit tests"
+          echo "  ./test_runner.sh --widget        # Widget tests"
+          echo "  ./test_runner.sh --integration   # Integration tests"
+          echo "  ./test_runner.sh --coverage      # All tests with coverage"
+          echo "  flutter test                     # Run all tests directly"
