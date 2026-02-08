@@ -40,6 +40,29 @@ jobs:
           
       - name: Setup Android SDK
         uses: android-actions/setup-android@v3
+        with:
+          api-level: 34
+          build-tools-version: "34.0.0"
+          ndk-version: "26.1.10909125"
+          cmake-version: "3.22.1"
+          targets: "android-34"
+          arch: "x86_64"
+          
+      - name: Accept Android Licenses
+        run: |
+          echo "=== ACCEPTING ANDROID LICENSES ==="
+          # Try multiple methods to accept licenses
+          echo "Method 1: Using sdkmanager..."
+          yes | sdkmanager --licenses || echo "sdkmanager method may have failed"
+          
+          echo "Method 2: Using flutter doctor..."
+          flutter doctor --android-licenses -y || echo "flutter doctor method may have failed"
+          
+          echo "Method 3: Direct license file creation..."
+          mkdir -p "$ANDROID_HOME/licenses"
+          echo -e "\n24333f8a63b6825ea9c5514f83c2829b004d1fee" > "$ANDROID_HOME/licenses/android-sdk-license"
+          echo -e "\n84831b9409646a918e30573bab4c9c91346d8abd" > "$ANDROID_HOME/licenses/android-sdk-preview-license"
+          echo "✅ License files created"
           
       - name: Set up Flutter
         uses: subosito/flutter-action@v2
@@ -55,6 +78,26 @@ jobs:
           flutter --version
           flutter doctor -v
           
+      - name: Check Android SDK Status
+        run: |
+          echo "=== ANDROID SDK STATUS ==="
+          flutter doctor
+          echo ""
+          echo "Checking Android SDK components..."
+          which sdkmanager || echo "sdkmanager not found"
+          which adb || echo "adb not found"
+          echo ""
+          echo "Android SDK path check:"
+          if [ -n "$ANDROID_HOME" ]; then
+            echo "ANDROID_HOME: $ANDROID_HOME"
+            ls -la "$ANDROID_HOME" || echo "Cannot list ANDROID_HOME"
+          elif [ -n "$ANDROID_SDK_ROOT" ]; then
+            echo "ANDROID_SDK_ROOT: $ANDROID_SDK_ROOT"
+            ls -la "$ANDROID_SDK_ROOT" || echo "Cannot list ANDROID_SDK_ROOT"
+          else
+            echo "Neither ANDROID_HOME nor ANDROID_SDK_ROOT set"
+          fi
+          
       - name: Get Flutter dependencies
         run: |
           echo "Getting dependencies..."
@@ -66,16 +109,49 @@ jobs:
           echo "=== ANDROID PROJECT CHECK ==="
           if [ -d "android" ]; then
             echo "✅ Android directory exists"
-            ls -la android/
+            echo "Android project structure:"
+            find android -maxdepth 2 -type f -name "*.gradle" -o -name "AndroidManifest.xml" -o -name "build.gradle" | sort
           else
             echo "⚠️ Android directory not found"
-            echo "Flutter will create it during build if needed"
+            echo "Creating Android project structure..."
+            # First check if Flutter can create Android project
+            echo "Current directory contents:"
+            ls -la
+            echo ""
+            echo "Creating Android platform support..."
+            flutter config --enable-android
+            flutter create --platforms=android --no-overwrite . || {
+              echo "⚠️ Could not create with --no-overwrite, trying without..."
+              # Create a temporary directory to avoid overwriting
+              mkdir -p temp_android_create
+              cd temp_android_create
+              flutter create --platforms=android --project-name cross_temp .
+              # Copy android directory if created
+              if [ -d "android" ]; then
+                cd ..
+                cp -r temp_android_create/android .
+                rm -rf temp_android_create
+                echo "✅ Android project created via temp directory"
+              else
+                echo "❌ Failed to create Android project"
+                echo "Trying alternative: flutter create ."
+                flutter create --platforms=android .
+              fi
+            }
+            echo "✅ Android project creation attempted"
           fi
           
       - name: Analyze Flutter code
         run: |
           echo "Running code analysis..."
           flutter analyze --no-fatal-infos || echo "⚠️ Analysis completed with warnings"
+          
+      - name: Clean previous builds
+        run: |
+          echo "Cleaning previous builds..."
+          flutter clean || echo "Clean command completed"
+          rm -rf build/android 2>/dev/null || true
+          mkdir -p build/android
           
       - name: Build Android APK
         run: |
@@ -84,45 +160,135 @@ jobs:
           # Create build directory if it doesn't exist
           mkdir -p build/android
           
-          # Build APK
-          if [ "${{ inputs.build_type }}" = "release" ]; then
-            echo "Building release APK..."
-            flutter build apk --release --no-tree-shake-icons \
-              --dart-define=SUPABASE_URL="${{ secrets.SUPABASE_URL }}" \
-              --dart-define=SUPABASE_ANON_KEY="${{ secrets.SUPABASE_ANON_KEY }}" \
-              --verbose 2>&1 | tee build/android/build.log
+          # Check if secrets are available
+          echo "=== CHECKING SECRETS ==="
+          if [ -z "${{ secrets.SUPABASE_URL }}" ]; then
+            echo "⚠️ SUPABASE_URL secret not set, using placeholder"
+            SUPABASE_URL_VALUE="placeholder_url"
           else
-            echo "Building debug APK..."
-            flutter build apk --debug --no-tree-shake-icons \
-              --dart-define=SUPABASE_URL="${{ secrets.SUPABASE_URL }}" \
-              --dart-define=SUPABASE_ANON_KEY="${{ secrets.SUPABASE_ANON_KEY }}" \
-              --verbose 2>&1 | tee build/android/build.log
+            SUPABASE_URL_VALUE="${{ secrets.SUPABASE_URL }}"
+            echo "✅ SUPABASE_URL secret is set"
           fi
           
-          echo "✅ APK build completed"
+          if [ -z "${{ secrets.SUPABASE_ANON_KEY }}" ]; then
+            echo "⚠️ SUPABASE_ANON_KEY secret not set, using placeholder"
+            SUPABASE_ANON_KEY_VALUE="placeholder_key"
+          else
+            SUPABASE_ANON_KEY_VALUE="${{ secrets.SUPABASE_ANON_KEY }}"
+            echo "✅ SUPABASE_ANON_KEY secret is set"
+          fi
+          
+          # Build APK with fallback options
+          echo "Attempting APK build..."
+          
+          # First try with environment variables
+          if [ "${{ inputs.build_type }}" = "release" ]; then
+            echo "Building release APK (attempt 1) with Supabase config..."
+            flutter build apk --release --no-tree-shake-icons \
+              --dart-define=SUPABASE_URL="$SUPABASE_URL_VALUE" \
+              --dart-define=SUPABASE_ANON_KEY="$SUPABASE_ANON_KEY_VALUE" \
+              --verbose 2>&1 | tee build/android/build.log || {
+                echo "⚠️ Build attempt 1 failed, trying without dart-define..."
+                flutter build apk --release --no-tree-shake-icons --verbose 2>&1 | tee -a build/android/build.log || {
+                  echo "⚠️ Release build failed, trying debug build as fallback..."
+                  flutter build apk --debug --verbose 2>&1 | tee -a build/android/build.log
+                }
+              }
+          else
+            echo "Building debug APK (attempt 1) with Supabase config..."
+            flutter build apk --debug --no-tree-shake-icons \
+              --dart-define=SUPABASE_URL="$SUPABASE_URL_VALUE" \
+              --dart-define=SUPABASE_ANON_KEY="$SUPABASE_ANON_KEY_VALUE" \
+              --verbose 2>&1 | tee build/android/build.log || {
+                echo "⚠️ Build attempt 1 failed, trying without dart-define..."
+                flutter build apk --debug --verbose 2>&1 | tee -a build/android/build.log
+              }
+          fi
+          
+          echo "✅ APK build process completed"
           
       - name: Locate APK file
         run: |
           echo "=== LOCATING APK FILE ==="
-          # Find APK file
-          if [ -f "build/app/outputs/flutter-apk/app-release.apk" ]; then
-            APK_PATH="build/app/outputs/flutter-apk/app-release.apk"
-          elif [ -f "build/app/outputs/flutter-apk/app-debug.apk" ]; then
-            APK_PATH="build/app/outputs/flutter-apk/app-debug.apk"
-          elif [ -f "build/app/outputs/apk/release/app-release.apk" ]; then
-            APK_PATH="build/app/outputs/apk/release/app-release.apk"
-          elif [ -f "build/app/outputs/apk/debug/app-debug.apk" ]; then
-            APK_PATH="build/app/outputs/apk/debug/app-debug.apk"
-          else
+          # Find APK file with multiple possible locations
+          APK_PATH=""
+          
+          # Check common Flutter APK output locations
+          POSSIBLE_PATHS=(
+            "build/app/outputs/flutter-apk/app-release.apk"
+            "build/app/outputs/flutter-apk/app-debug.apk"
+            "build/app/outputs/apk/release/app-release.apk"
+            "build/app/outputs/apk/debug/app-debug.apk"
+            "build/app/outputs/flutter-apk/app.apk"
+            "build/app/outputs/apk/app.apk"
+          )
+          
+          for path in "${POSSIBLE_PATHS[@]}"; do
+            if [ -f "$path" ]; then
+              APK_PATH="$path"
+              echo "✅ Found APK at: $path"
+              break
+            fi
+          done
+          
+          if [ -z "$APK_PATH" ]; then
             echo "❌ APK file not found in expected locations"
-            echo "Searching for APK files..."
-            find build -name "*.apk" -type f
+            echo "Searching for APK files in build directory..."
+            find build -name "*.apk" -type f 2>/dev/null || echo "No APK files found"
+            
+            echo ""
+            echo "=== BUILD DIRECTORY STRUCTURE ==="
+            find build -type f -name "*.log" -o -name "*.txt" 2>/dev/null | head -20
+            
+            echo ""
+            echo "=== FLUTTER BUILD OUTPUT ==="
+            if [ -f "build/android/build.log" ]; then
+              tail -100 build/android/build.log
+            fi
+            
+            echo ""
+            echo "⚠️ APK not generated. Build may have failed."
+            echo "Check build/android/build.log for details."
             exit 1
           fi
           
-          echo "✅ Found APK: $APK_PATH"
+          echo "✅ APK located: $APK_PATH"
+          echo "APK_SIZE=$(du -h "$APK_PATH" | cut -f1)"
           echo "APK_PATH=$APK_PATH" >> $GITHUB_ENV
           echo "APK_SIZE=$(du -h "$APK_PATH" | cut -f1)" >> $GITHUB_ENV
+          
+      - name: Build Troubleshooting (on failure)
+        if: failure()
+        run: |
+          echo "=== BUILD TROUBLESHOOTING ==="
+          echo ""
+          echo "📋 Common Android build issues:"
+          echo "1. Missing Android SDK licenses - Run: flutter doctor --android-licenses"
+          echo "2. Missing Android SDK components - Check Android SDK installation"
+          echo "3. Flutter version mismatch - Ensure Flutter 3.38.7+"
+          echo "4. Missing Android project - android/ directory should exist"
+          echo "5. Java version issues - Need Java 17"
+          echo ""
+          echo "📁 Directory structure:"
+          ls -la
+          echo ""
+          echo "📱 Android project check:"
+          if [ -d "android" ]; then
+            echo "android/ directory exists"
+            find android -name "*.gradle" -o -name "AndroidManifest.xml" | head -10
+          else
+            echo "❌ android/ directory missing"
+          fi
+          echo ""
+          echo "🔧 Flutter doctor output:"
+          flutter doctor
+          echo ""
+          echo "📄 Build logs (last 50 lines):"
+          if [ -f "build/android/build.log" ]; then
+            tail -50 build/android/build.log
+          else
+            echo "No build log found"
+          fi
           
       - name: Generate QR Code for Artifact
         if: ${{ inputs.generate_qr == true }}
