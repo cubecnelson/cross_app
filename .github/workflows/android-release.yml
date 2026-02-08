@@ -1,0 +1,198 @@
+name: Android Release to QR
+# Builds Android APK and generates QR code linking to artifact
+# Manual trigger only for security
+
+on:
+  workflow_dispatch:
+    inputs:
+      build_type:
+        description: 'Build type (debug or release)'
+        required: true
+        default: 'release'
+        type: choice
+        options:
+        - debug
+        - release
+      flutter_version:
+        description: 'Flutter version to use'
+        required: false
+        default: '3.38.7'
+      generate_qr:
+        description: 'Generate QR code for artifact'
+        required: false
+        default: true
+        type: boolean
+
+jobs:
+  build-android:
+    name: Build Android APK
+    runs-on: ubuntu-latest
+    
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        
+      - name: Setup Java (for Android builds)
+        uses: actions/setup-java@v4
+        with:
+          distribution: 'temurin'
+          java-version: '17'
+          
+      - name: Setup Android SDK
+        uses: android-actions/setup-android@v3
+          
+      - name: Set up Flutter
+        uses: subosito/flutter-action@v2
+        with:
+          flutter-version: ${{ inputs.flutter_version || '3.38.7' }}
+          channel: 'stable'
+          cache: true
+          cache-key: flutter-android-${{ inputs.flutter_version || '3.38.7' }}
+          
+      - name: Verify Flutter installation
+        run: |
+          echo "=== FLUTTER ENVIRONMENT ==="
+          flutter --version
+          flutter doctor -v
+          
+      - name: Get Flutter dependencies
+        run: |
+          echo "Getting dependencies..."
+          flutter pub get
+          echo "Dependencies installed"
+          
+      - name: Check Android project structure
+        run: |
+          echo "=== ANDROID PROJECT CHECK ==="
+          if [ -d "android" ]; then
+            echo "✅ Android directory exists"
+            ls -la android/
+          else
+            echo "⚠️ Android directory not found"
+            echo "Flutter will create it during build if needed"
+          fi
+          
+      - name: Analyze Flutter code
+        run: |
+          echo "Running code analysis..."
+          flutter analyze --no-fatal-infos || echo "⚠️ Analysis completed with warnings"
+          
+      - name: Build Android APK
+        run: |
+          echo "=== BUILDING ANDROID APK (${{ inputs.build_type }}) ==="
+          
+          # Create build directory if it doesn't exist
+          mkdir -p build/android
+          
+          # Build APK
+          if [ "${{ inputs.build_type }}" = "release" ]; then
+            echo "Building release APK..."
+            flutter build apk --release --no-tree-shake-icons \
+              --dart-define=SUPABASE_URL="${{ secrets.SUPABASE_URL }}" \
+              --dart-define=SUPABASE_ANON_KEY="${{ secrets.SUPABASE_ANON_KEY }}" \
+              --verbose 2>&1 | tee build/android/build.log
+          else
+            echo "Building debug APK..."
+            flutter build apk --debug --no-tree-shake-icons \
+              --dart-define=SUPABASE_URL="${{ secrets.SUPABASE_URL }}" \
+              --dart-define=SUPABASE_ANON_KEY="${{ secrets.SUPABASE_ANON_KEY }}" \
+              --verbose 2>&1 | tee build/android/build.log
+          fi
+          
+          echo "✅ APK build completed"
+          
+      - name: Locate APK file
+        run: |
+          echo "=== LOCATING APK FILE ==="
+          # Find APK file
+          if [ -f "build/app/outputs/flutter-apk/app-release.apk" ]; then
+            APK_PATH="build/app/outputs/flutter-apk/app-release.apk"
+          elif [ -f "build/app/outputs/flutter-apk/app-debug.apk" ]; then
+            APK_PATH="build/app/outputs/flutter-apk/app-debug.apk"
+          elif [ -f "build/app/outputs/apk/release/app-release.apk" ]; then
+            APK_PATH="build/app/outputs/apk/release/app-release.apk"
+          elif [ -f "build/app/outputs/apk/debug/app-debug.apk" ]; then
+            APK_PATH="build/app/outputs/apk/debug/app-debug.apk"
+          else
+            echo "❌ APK file not found in expected locations"
+            echo "Searching for APK files..."
+            find build -name "*.apk" -type f
+            exit 1
+          fi
+          
+          echo "✅ Found APK: $APK_PATH"
+          echo "APK_PATH=$APK_PATH" >> $GITHUB_ENV
+          echo "APK_SIZE=$(du -h "$APK_PATH" | cut -f1)" >> $GITHUB_ENV
+          
+      - name: Generate QR Code for Artifact
+        if: ${{ inputs.generate_qr == true }}
+        run: |
+          echo "=== GENERATING QR CODE ==="
+          
+          # Create artifact URL (will be available after upload)
+          ARTIFACT_URL="https://github.com/${{ github.repository }}/actions/runs/${{ github.run_id }}"
+          
+          # Install QR code generator
+          sudo apt-get update
+          sudo apt-get install -y qrencode
+          
+          # Generate QR code
+          mkdir -p build/qr
+          qrencode -o build/qr/apk-qr.png -s 10 "$ARTIFACT_URL"
+          
+          echo "✅ QR code generated: build/qr/apk-qr.png"
+          echo "QR_CODE_PATH=build/qr/apk-qr.png" >> $GITHUB_ENV
+          
+      - name: Upload APK Artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: cross-android-apk-${{ github.run_id }}
+          path: |
+            ${{ env.APK_PATH }}
+            build/android/build.log
+          retention-days: 90
+          
+      - name: Upload QR Code Artifact
+        if: ${{ inputs.generate_qr == true }}
+        uses: actions/upload-artifact@v4
+        with:
+          name: cross-apk-qr-${{ github.run_id }}
+          path: |
+            ${{ env.QR_CODE_PATH }}
+          retention-days: 90
+          
+      - name: Create Release Information
+        run: |
+          echo "=== RELEASE INFORMATION ==="
+          echo ""
+          echo "📱 ANDROID APK BUILD COMPLETE"
+          echo ""
+          echo "Build Type: ${{ inputs.build_type }}"
+          echo "Flutter Version: ${{ inputs.flutter_version || '3.38.7' }}"
+          echo "APK Size: ${{ env.APK_SIZE }}"
+          echo "APK Path: ${{ env.APK_PATH }}"
+          echo ""
+          echo "📦 ARTIFACTS AVAILABLE:"
+          echo "1. APK file: Download from Actions artifacts"
+          echo "2. Build logs: Available in artifacts"
+          if [ "${{ inputs.generate_qr }}" = "true" ]; then
+            echo "3. QR Code: Scan to open artifact page"
+          fi
+          echo ""
+          echo "🔗 DIRECT LINKS:"
+          echo "Artifacts: https://github.com/${{ github.repository }}/actions/runs/${{ github.run_id }}"
+          echo ""
+          echo "📝 INSTALLATION INSTRUCTIONS:"
+          echo "1. Download APK from artifacts"
+          echo "2. Enable 'Install from unknown sources' on Android device"
+          echo "3. Install APK"
+          echo ""
+          echo "⚠️ SECURITY NOTE:"
+          echo "Debug builds are for testing only."
+          echo "Release builds should be signed for production distribution."
+          
+      - name: Output Summary
+        run: |
+          echo "SUMMARY_BUILD_TYPE=${{ inputs.build_type }}" >> $GITHUB_ENV
+          echo "SUMMARY_APK_SIZE=${{ env.APK_SIZE }}" >> $GITHUB_ENV
+          echo "SUMMARY_ARTIFACT_URL=https://github.com/${{ github.repository }}/actions/runs/${{ github.run_id }}" >> $GITHUB_ENV
