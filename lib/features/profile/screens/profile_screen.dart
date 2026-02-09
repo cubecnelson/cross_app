@@ -201,7 +201,7 @@ class ProfileScreen extends ConsumerWidget {
                         );
 
                         if (result == true && context.mounted) {
-                          print('🚪 Signing out user...');
+                          debugPrint('🚪 Signing out user...');
 
                           // Show loading indicator
                           ScaffoldMessenger.of(context).showSnackBar(
@@ -215,7 +215,7 @@ class ProfileScreen extends ConsumerWidget {
                             await ref
                                 .read(authNotifierProvider.notifier)
                                 .signOut();
-                            print('✅ Sign out successful');
+                            debugPrint('✅ Sign out successful');
 
                             if (context.mounted) {
                               // Navigate to login screen and clear navigation stack
@@ -235,7 +235,7 @@ class ProfileScreen extends ConsumerWidget {
                               );
                             }
                           } catch (e) {
-                            print('❌ Sign out failed: $e');
+                            debugPrint('❌ Sign out failed: $e');
 
                             if (context.mounted) {
                               ScaffoldMessenger.of(context).showSnackBar(

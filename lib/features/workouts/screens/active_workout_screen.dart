@@ -171,12 +171,12 @@ class _ActiveWorkoutScreenState extends ConsumerState<ActiveWorkoutScreen> {
     // Validate user is logged in
     final user = ref.read(currentUserProvider);
 
-    print('🔐 Checking authentication...');
-    print('User: ${user?.email ?? "NULL"}');
-    print('User ID: ${user?.id ?? "NULL"}');
+    debugPrint('🔐 Checking authentication...');
+    debugPrint('User: ${user?.email ?? "NULL"}');
+    debugPrint('User ID: ${user?.id ?? "NULL"}');
 
     if (user == null) {
-      print('❌ User is null - not authenticated!');
+      debugPrint('❌ User is null - not authenticated!');
 
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
@@ -191,7 +191,7 @@ class _ActiveWorkoutScreenState extends ConsumerState<ActiveWorkoutScreen> {
       return;
     }
 
-    print('✅ User authenticated: ${user.email}');
+    debugPrint('✅ User authenticated: ${user.email}');
 
     // Validate there are exercises
     if (_exercises.isEmpty) {
@@ -226,7 +226,7 @@ class _ActiveWorkoutScreenState extends ConsumerState<ActiveWorkoutScreen> {
     setState(() => _isSaving = true);
 
     try {
-      print('🏋️ Creating workout for user: ${user.id}');
+      debugPrint('🏋️ Creating workout for user: ${user.id}');
 
       // Create workout
       final workout = Workout(
@@ -240,7 +240,7 @@ class _ActiveWorkoutScreenState extends ConsumerState<ActiveWorkoutScreen> {
         createdAt: DateTime.now(),
       );
 
-      print('📝 Workout data: ${workout.toJson()}');
+      debugPrint('📝 Workout data: ${workout.toJson()}');
 
       final createdWorkout = await ref
           .read(workoutNotifierProvider.notifier)
@@ -250,14 +250,14 @@ class _ActiveWorkoutScreenState extends ConsumerState<ActiveWorkoutScreen> {
         throw Exception('Failed to create workout - returned null');
       }
 
-      print('✅ Workout created with ID: ${createdWorkout.id}');
+      debugPrint('✅ Workout created with ID: ${createdWorkout.id}');
 
       // Create sets
       int setsCreated = 0;
       for (var exercise in _exercises) {
         for (var set in exercise.sets) {
           if (set.isCompleted) {
-            print(
+            debugPrint(
                 '💪 Creating set ${set.setNumber} for ${exercise.exerciseName}');
 
             await ref.read(workoutNotifierProvider.notifier).addSet(
@@ -290,7 +290,7 @@ class _ActiveWorkoutScreenState extends ConsumerState<ActiveWorkoutScreen> {
         }
       }
 
-      print('✅ Created $setsCreated sets');
+      debugPrint('✅ Created $setsCreated sets');
 
       if (mounted) {
         Navigator.pop(context);
@@ -302,8 +302,8 @@ class _ActiveWorkoutScreenState extends ConsumerState<ActiveWorkoutScreen> {
         );
       }
     } catch (e, stackTrace) {
-      print('❌ Error saving workout: $e');
-      print('Stack trace: $stackTrace');
+      debugPrint('❌ Error saving workout: $e');
+      debugPrint('Stack trace: $stackTrace');
 
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
@@ -348,8 +348,15 @@ class _ActiveWorkoutScreenState extends ConsumerState<ActiveWorkoutScreen> {
 
   @override
   Widget build(BuildContext context) {
-    return WillPopScope(
-      onWillPop: _onWillPop,
+    return PopScope(
+      canPop: false,
+      onPopInvokedWithResult: (bool didPop, dynamic result) async {
+        if (didPop) return;
+        final shouldPop = await _onWillPop();
+        if (shouldPop && context.mounted) {
+          Navigator.of(context).pop();
+        }
+      },
       child: Scaffold(
         appBar: AppBar(
           centerTitle: false,
@@ -481,7 +488,7 @@ class _ActiveWorkoutScreenState extends ConsumerState<ActiveWorkoutScreen> {
             color: Theme.of(context).cardColor,
             boxShadow: [
               BoxShadow(
-                color: Colors.black.withOpacity(0.1),
+                color: Colors.black.withValues(alpha: 0.1),
                 blurRadius: 4,
                 offset: const Offset(0, -2),
               ),

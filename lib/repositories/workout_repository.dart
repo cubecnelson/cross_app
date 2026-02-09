@@ -1,4 +1,5 @@
 import 'package:supabase_flutter/supabase_flutter.dart';
+import 'package:flutter/foundation.dart';
 import '../core/config/supabase_config.dart';
 import '../models/workout.dart';
 import '../models/workout_set.dart';
@@ -169,7 +170,7 @@ class WorkoutRepository {
 
   Future<Workout> _loadWorkoutSets(Workout workout) async {
     final sets = await getSetsByWorkoutId(workout.id);
-    print('💪 Loaded ${sets.length} sets for workout ${workout.id}');
+    debugPrint('💪 Loaded ${sets.length} sets for workout ${workout.id}');
     return workout.copyWith(sets: sets);
   }
 }

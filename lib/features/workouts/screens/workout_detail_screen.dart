@@ -13,8 +13,8 @@ class WorkoutDetailScreen extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     // Debug: Log workout sets info
-    print('📊 Workout Detail - ID: ${workout.id}');
-    print('📊 Total sets loaded: ${workout.sets.length}');
+    debugPrint('📊 Workout Detail - ID: ${workout.id}');
+    debugPrint('📊 Total sets loaded: ${workout.sets.length}');
     
     // Group sets by exercise
     final exerciseGroups = <String, List<WorkoutSet>>{};
@@ -25,7 +25,7 @@ class WorkoutDetailScreen extends ConsumerWidget {
       exerciseGroups[set.exerciseId]!.add(set);
     }
     
-    print('📊 Exercise groups: ${exerciseGroups.length}');
+    debugPrint('📊 Exercise groups: ${exerciseGroups.length}');
 
     return Scaffold(
       appBar: AppBar(

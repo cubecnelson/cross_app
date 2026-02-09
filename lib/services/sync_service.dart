@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'package:flutter/foundation.dart';
 import '../repositories/workout_repository.dart';
 import '../repositories/exercise_repository.dart';
 import '../repositories/routine_repository.dart';
@@ -31,7 +32,7 @@ class SyncService {
       }
     } catch (e) {
       // If sync fails, we'll use cached data
-      print('Workout sync failed: $e');
+      debugPrint('Workout sync failed: $e');
     }
   }
 
@@ -47,7 +48,7 @@ class SyncService {
         await LocalStorageService.cacheExercises(exercisesJson);
       }
     } catch (e) {
-      print('Exercise sync failed: $e');
+      debugPrint('Exercise sync failed: $e');
     }
   }
 
@@ -63,7 +64,7 @@ class SyncService {
         await LocalStorageService.cacheRoutines(routinesJson);
       }
     } catch (e) {
-      print('Routine sync failed: $e');
+      debugPrint('Routine sync failed: $e');
     }
   }
 

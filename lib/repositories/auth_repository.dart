@@ -4,6 +4,7 @@ import 'package:sign_in_with_apple/sign_in_with_apple.dart';
 import 'package:crypto/crypto.dart';
 import 'dart:convert';
 import 'dart:math';
+import 'package:flutter/foundation.dart';
 import '../core/config/supabase_config.dart';
 import '../models/user_profile.dart';
 
@@ -19,7 +20,7 @@ class AuthRepository {
     required String password,
   }) async {
     try {
-      print('🔐 Starting sign up for: $email');
+      debugPrint('🔐 Starting sign up for: $email');
 
       final response = await _client.auth.signUp(
         email: email,
@@ -27,12 +28,12 @@ class AuthRepository {
       );
 
       final user = response.user;
-      print('✅ Auth user created: ${user?.id}');
+      debugPrint('✅ Auth user created: ${user?.id}');
 
       if (user != null) {
         try {
           // Create user profile in the users table
-          print('📝 Creating user profile in database...');
+          debugPrint('📝 Creating user profile in database...');
 
           final profileData = {
             'id': user.id,
@@ -40,25 +41,25 @@ class AuthRepository {
             'created_at': DateTime.now().toIso8601String(),
           };
 
-          print('Profile data: $profileData');
+          debugPrint('Profile data: $profileData');
 
           // Insert and return the created profile
           final profileResponse =
               await _client.from('users').insert(profileData).select().single();
 
-          print('✅ User profile created: $profileResponse');
+          debugPrint('✅ User profile created: $profileResponse');
 
           return UserProfile.fromJson(profileResponse);
         } catch (profileError) {
-          print('❌ Failed to create user profile: $profileError');
+          debugPrint('❌ Failed to create user profile: $profileError');
 
           // If profile creation fails, try to get existing profile
           // (in case it was created by a database trigger)
           try {
-            print('🔄 Attempting to fetch existing profile...');
+            debugPrint('🔄 Attempting to fetch existing profile...');
             return await getUserProfile(user.id);
           } catch (e) {
-            print('❌ Failed to fetch profile: $e');
+            debugPrint('❌ Failed to fetch profile: $e');
             throw Exception(
                 'Failed to create user profile: ${profileError.toString()}');
           }
@@ -67,7 +68,7 @@ class AuthRepository {
 
       return null;
     } catch (e) {
-      print('❌ Sign up failed: $e');
+      debugPrint('❌ Sign up failed: $e');
       throw Exception('Sign up failed: ${e.toString()}');
     }
   }
@@ -77,7 +78,7 @@ class AuthRepository {
     required String password,
   }) async {
     try {
-      print('🔐 Attempting sign in for: $email');
+      debugPrint('🔐 Attempting sign in for: $email');
 
       final response = await _client.auth.signInWithPassword(
         email: email,
@@ -86,20 +87,20 @@ class AuthRepository {
 
       final user = response.user;
       if (user != null) {
-        print('✅ Auth successful: ${user.id}');
+        debugPrint('✅ Auth successful: ${user.id}');
 
         try {
           // Try to get existing profile
-          print('🔄 Fetching user profile...');
+          debugPrint('🔄 Fetching user profile...');
           final profile = await getUserProfile(user.id);
           if (profile != null) {
-            print('✅ Profile found: ${profile.id}');
+            debugPrint('✅ Profile found: ${profile.id}');
             return profile;
           }
           throw Exception('Profile is null');
         } catch (profileError) {
           // Profile doesn't exist - create it now
-          print(
+          debugPrint(
               '⚠️ Profile not found, creating new profile for existing user...');
 
           try {
@@ -109,7 +110,7 @@ class AuthRepository {
               'created_at': DateTime.now().toIso8601String(),
             };
 
-            print('📝 Creating profile: $profileData');
+            debugPrint('📝 Creating profile: $profileData');
 
             final profileResponse = await _client
                 .from('users')
@@ -117,17 +118,17 @@ class AuthRepository {
                 .select()
                 .single();
 
-            print('✅ Profile created on login: $profileResponse');
+            debugPrint('✅ Profile created on login: $profileResponse');
             return UserProfile.fromJson(profileResponse);
           } catch (createError) {
-            print('❌ Failed to create profile on login: $createError');
+            debugPrint('❌ Failed to create profile on login: $createError');
 
             // One more attempt to fetch (in case of race condition)
             try {
               await Future.delayed(const Duration(milliseconds: 300));
               return await getUserProfile(user.id);
             } catch (finalError) {
-              print('❌ All attempts to get/create profile failed');
+              debugPrint('❌ All attempts to get/create profile failed');
               throw Exception(
                   'Failed to get or create user profile: ${createError.toString()}');
             }
@@ -137,7 +138,7 @@ class AuthRepository {
 
       return null;
     } catch (e) {
-      print('❌ Sign in failed: $e');
+      debugPrint('❌ Sign in failed: $e');
       throw Exception('Sign in failed: ${e.toString()}');
     }
   }
@@ -187,7 +188,7 @@ class AuthRepository {
   /// Sign in with Google
   Future<UserProfile?> signInWithGoogle() async {
     try {
-      print('🔐 Starting Google Sign-In...');
+      debugPrint('🔐 Starting Google Sign-In...');
 
       // Initialize Google Sign In
       final GoogleSignIn googleSignIn = GoogleSignIn(
@@ -201,11 +202,11 @@ class AuthRepository {
       final GoogleSignInAccount? googleUser = await googleSignIn.signIn();
 
       if (googleUser == null) {
-        print('⚠️ Google Sign-In cancelled by user');
+        debugPrint('⚠️ Google Sign-In cancelled by user');
         return null;
       }
 
-      print('✅ Google user: ${googleUser.email}');
+      debugPrint('✅ Google user: ${googleUser.email}');
 
       // Obtain auth details
       final GoogleSignInAuthentication googleAuth =
@@ -218,7 +219,7 @@ class AuthRepository {
         throw Exception('No ID Token found');
       }
 
-      print('🔑 Got Google tokens, signing in to Supabase...');
+      debugPrint('🔑 Got Google tokens, signing in to Supabase...');
 
       // Sign in to Supabase with Google credentials
       final AuthResponse response = await _client.auth.signInWithIdToken(
@@ -229,17 +230,17 @@ class AuthRepository {
 
       final user = response.user;
       if (user != null) {
-        print('✅ Supabase auth successful: ${user.id}');
+        debugPrint('✅ Supabase auth successful: ${user.id}');
 
         // Try to get or create user profile
         try {
           final profile = await getUserProfile(user.id);
           if (profile != null) {
-            print('✅ Profile found: ${profile.id}');
+            debugPrint('✅ Profile found: ${profile.id}');
             return profile;
           }
         } catch (profileError) {
-          print('⚠️ Profile not found, creating new profile...');
+          debugPrint('⚠️ Profile not found, creating new profile...');
         }
 
         // Create profile if it doesn't exist
@@ -251,7 +252,7 @@ class AuthRepository {
             'created_at': DateTime.now().toIso8601String(),
           };
 
-          print('📝 Creating profile: $profileData');
+          debugPrint('📝 Creating profile: $profileData');
 
           final profileResponse = await _client
               .from('users')
@@ -259,10 +260,10 @@ class AuthRepository {
               .select()
               .single();
 
-          print('✅ Profile created: $profileResponse');
+          debugPrint('✅ Profile created: $profileResponse');
           return UserProfile.fromJson(profileResponse);
         } catch (createError) {
-          print('❌ Failed to create profile: $createError');
+          debugPrint('❌ Failed to create profile: $createError');
           // Try one more time to fetch in case of race condition
           await Future.delayed(const Duration(milliseconds: 300));
           return await getUserProfile(user.id);
@@ -271,7 +272,7 @@ class AuthRepository {
 
       return null;
     } catch (e) {
-      print('❌ Google Sign-In failed: $e');
+      debugPrint('❌ Google Sign-In failed: $e');
       throw Exception('Google Sign-In failed: ${e.toString()}');
     }
   }
@@ -279,7 +280,7 @@ class AuthRepository {
   /// Sign in with Apple (iOS only)
   Future<UserProfile?> signInWithApple() async {
     try {
-      print('🔐 Starting Apple Sign-In...');
+      debugPrint('🔐 Starting Apple Sign-In...');
 
       // Generate random nonce
       final rawNonce = _generateNonce();
@@ -299,7 +300,7 @@ class AuthRepository {
         throw Exception('No identity token found');
       }
 
-      print('🔑 Got Apple token, signing in to Supabase...');
+      debugPrint('🔑 Got Apple token, signing in to Supabase...');
 
       // Sign in to Supabase with Apple credentials
       final AuthResponse response = await _client.auth.signInWithIdToken(
@@ -310,17 +311,17 @@ class AuthRepository {
 
       final user = response.user;
       if (user != null) {
-        print('✅ Supabase auth successful: ${user.id}');
+        debugPrint('✅ Supabase auth successful: ${user.id}');
 
         // Try to get or create user profile
         try {
           final profile = await getUserProfile(user.id);
           if (profile != null) {
-            print('✅ Profile found: ${profile.id}');
+            debugPrint('✅ Profile found: ${profile.id}');
             return profile;
           }
         } catch (profileError) {
-          print('⚠️ Profile not found, creating new profile...');
+          debugPrint('⚠️ Profile not found, creating new profile...');
         }
 
         // Create profile if it doesn't exist
@@ -336,7 +337,7 @@ class AuthRepository {
             'created_at': DateTime.now().toIso8601String(),
           };
 
-          print('📝 Creating profile: $profileData');
+          debugPrint('📝 Creating profile: $profileData');
 
           final profileResponse = await _client
               .from('users')
@@ -344,10 +345,10 @@ class AuthRepository {
               .select()
               .single();
 
-          print('✅ Profile created: $profileResponse');
+          debugPrint('✅ Profile created: $profileResponse');
           return UserProfile.fromJson(profileResponse);
         } catch (createError) {
-          print('❌ Failed to create profile: $createError');
+          debugPrint('❌ Failed to create profile: $createError');
           await Future.delayed(const Duration(milliseconds: 300));
           return await getUserProfile(user.id);
         }
@@ -355,7 +356,7 @@ class AuthRepository {
 
       return null;
     } catch (e) {
-      print('❌ Apple Sign-In failed: $e');
+      debugPrint('❌ Apple Sign-In failed: $e');
       throw Exception('Apple Sign-In failed: ${e.toString()}');
     }
   }

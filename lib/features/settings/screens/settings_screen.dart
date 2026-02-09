@@ -150,7 +150,7 @@ class SettingsScreen extends ConsumerWidget {
               );
 
               if (result == true && context.mounted) {
-                print('🚪 Signing out from settings...');
+                debugPrint('🚪 Signing out from settings...');
 
                 // Show loading indicator
                 ScaffoldMessenger.of(context).showSnackBar(
@@ -162,7 +162,7 @@ class SettingsScreen extends ConsumerWidget {
 
                 try {
                   await ref.read(authNotifierProvider.notifier).signOut();
-                  print('✅ Sign out successful from settings');
+                  debugPrint('✅ Sign out successful from settings');
 
                   if (context.mounted) {
                     // Navigate to login screen and clear navigation stack
@@ -182,7 +182,7 @@ class SettingsScreen extends ConsumerWidget {
                     );
                   }
                 } catch (e) {
-                  print('❌ Sign out failed: $e');
+                  debugPrint('❌ Sign out failed: $e');
 
                   if (context.mounted) {
                     ScaffoldMessenger.of(context).showSnackBar(

@@ -59,11 +59,11 @@ class DashboardScreen extends ConsumerWidget {
                 );
 
                 if (result == true && context.mounted) {
-                  print('🚪 Quick logout from dashboard');
+                  debugPrint('🚪 Quick logout from dashboard');
 
                   try {
                     await ref.read(authNotifierProvider.notifier).signOut();
-                    print('✅ Logged out successfully');
+                    debugPrint('✅ Logged out successfully');
 
                     if (context.mounted) {
                       // Navigate to login screen and clear navigation stack
@@ -83,7 +83,7 @@ class DashboardScreen extends ConsumerWidget {
                       );
                     }
                   } catch (e) {
-                    print('❌ Logout failed: $e');
+                    debugPrint('❌ Logout failed: $e');
 
                     if (context.mounted) {
                       ScaffoldMessenger.of(context).showSnackBar(

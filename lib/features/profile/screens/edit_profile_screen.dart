@@ -121,7 +121,7 @@ class _EditProfileScreenState extends ConsumerState<EditProfileScreen> {
               const SizedBox(height: 16),
               
               DropdownButtonFormField<String>(
-                value: _selectedUnits,
+                initialValue: _selectedUnits,
                 decoration: const InputDecoration(
                   labelText: 'Units',
                   border: OutlineInputBorder(),

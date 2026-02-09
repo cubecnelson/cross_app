@@ -19,12 +19,11 @@ void main() {
   final mockExercise = Exercise(
     id: 'test-exercise-1',
     name: 'Bench Press',
-    muscleGroup: 'Chest',
-    equipment: 'Barbell',
+    category: 'Chest',
+    exerciseType: ExerciseType.strength,
     description: 'Standard bench press',
-    isCompound: true,
+    targetMuscles: const ['Chest', 'Triceps', 'Shoulders'],
     createdAt: DateTime.now(),
-    updatedAt: DateTime.now(),
   );
 
   final mockRecommendationWithExercise = mockRecommendation.copyWith(

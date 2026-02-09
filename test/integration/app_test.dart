@@ -4,23 +4,24 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:cross/app.dart';
 import 'package:cross/providers/auth_provider.dart';
 import 'package:cross/providers/theme_provider.dart';
+import 'package:supabase_flutter/supabase_flutter.dart';
 
-// Mock providers for testing
-final mockAuthStateProvider = StateProvider<AsyncValue<Object?>>((ref) {
-  return const AsyncValue.data(null); // No session - shows login screen
-});
-
-final mockThemeProvider = StateProvider<ThemeMode>((ref) {
-  return ThemeMode.light;
-});
+// Mock ThemeNotifier for testing
+class MockThemeNotifier extends ThemeNotifier {
+  MockThemeNotifier(ThemeMode initialMode) : super() {
+    state = initialMode;
+  }
+}
 
 void main() {
   testWidgets('CrossApp shows LoginScreen when no session', (WidgetTester tester) async {
     await tester.pumpWidget(
       ProviderScope(
         overrides: [
-          authStateProvider.overrideWith((ref) => mockAuthStateProvider(ref)),
-          themeProvider.overrideWith((ref) => mockThemeProvider(ref)),
+          authStateProvider.overrideWith((ref) {
+            return Stream.value(AuthState(AuthChangeEvent.signedOut, null));
+          }),
+          themeProvider.overrideWith((ref) => MockThemeNotifier(ThemeMode.light)),
         ],
         child: const CrossApp(),
       ),
@@ -36,15 +37,14 @@ void main() {
   });
 
   testWidgets('CrossApp shows loading state', (WidgetTester tester) async {
-    final loadingAuthProvider = StateProvider<AsyncValue<Object?>>((ref) {
-      return const AsyncValue.loading();
-    });
-
     await tester.pumpWidget(
       ProviderScope(
         overrides: [
-          authStateProvider.overrideWith((ref) => loadingAuthProvider(ref)),
-          themeProvider.overrideWith((ref) => mockThemeProvider(ref)),
+          authStateProvider.overrideWith((ref) {
+            // Return a stream that never emits to simulate loading state
+            return const Stream.empty();
+          }),
+          themeProvider.overrideWith((ref) => MockThemeNotifier(ThemeMode.light)),
         ],
         child: const CrossApp(),
       ),
@@ -55,15 +55,13 @@ void main() {
   });
 
   testWidgets('CrossApp shows error state then login', (WidgetTester tester) async {
-    final errorAuthProvider = StateProvider<AsyncValue<Object?>>((ref) {
-      return AsyncValue.error('Test error', StackTrace.empty);
-    });
-
     await tester.pumpWidget(
       ProviderScope(
         overrides: [
-          authStateProvider.overrideWith((ref) => errorAuthProvider(ref)),
-          themeProvider.overrideWith((ref) => mockThemeProvider(ref)),
+          authStateProvider.overrideWith((ref) {
+            return Stream.error('Test error');
+          }),
+          themeProvider.overrideWith((ref) => MockThemeNotifier(ThemeMode.light)),
         ],
         child: const CrossApp(),
       ),
@@ -77,15 +75,13 @@ void main() {
 
   testWidgets('CrossApp respects theme mode', (WidgetTester tester) async {
     // Test light theme
-    final lightThemeProvider = StateProvider<ThemeMode>((ref) {
-      return ThemeMode.light;
-    });
-
     await tester.pumpWidget(
       ProviderScope(
         overrides: [
-          authStateProvider.overrideWith((ref) => mockAuthStateProvider(ref)),
-          themeProvider.overrideWith((ref) => lightThemeProvider(ref)),
+          authStateProvider.overrideWith((ref) {
+            return Stream.value(AuthState(AuthChangeEvent.signedOut, null));
+          }),
+          themeProvider.overrideWith((ref) => MockThemeNotifier(ThemeMode.light)),
         ],
         child: const CrossApp(),
       ),
@@ -95,15 +91,13 @@ void main() {
     expect(materialApp.themeMode, ThemeMode.light);
 
     // Test dark theme
-    final darkThemeProvider = StateProvider<ThemeMode>((ref) {
-      return ThemeMode.dark;
-    });
-
     await tester.pumpWidget(
       ProviderScope(
         overrides: [
-          authStateProvider.overrideWith((ref) => mockAuthStateProvider(ref)),
-          themeProvider.overrideWith((ref) => darkThemeProvider(ref)),
+          authStateProvider.overrideWith((ref) {
+            return Stream.value(AuthState(AuthChangeEvent.signedOut, null));
+          }),
+          themeProvider.overrideWith((ref) => MockThemeNotifier(ThemeMode.dark)),
         ],
         child: const CrossApp(),
       ),
@@ -113,15 +107,13 @@ void main() {
     expect(materialAppDark.themeMode, ThemeMode.dark);
 
     // Test system theme
-    final systemThemeProvider = StateProvider<ThemeMode>((ref) {
-      return ThemeMode.system;
-    });
-
     await tester.pumpWidget(
       ProviderScope(
         overrides: [
-          authStateProvider.overrideWith((ref) => mockAuthStateProvider(ref)),
-          themeProvider.overrideWith((ref) => systemThemeProvider(ref)),
+          authStateProvider.overrideWith((ref) {
+            return Stream.value(AuthState(AuthChangeEvent.signedOut, null));
+          }),
+          themeProvider.overrideWith((ref) => MockThemeNotifier(ThemeMode.system)),
         ],
         child: const CrossApp(),
       ),
