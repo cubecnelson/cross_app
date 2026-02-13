@@ -43,7 +43,8 @@ platform :ios do
           # Xcode will automatically manage them
           "com.cross.app" => ""
         }
-      }
+      },
+      xcargs: "-allowProvisioningUpdates"
     )
     
     # Upload to TestFlight - Fastlane auto-uses environment variables
@@ -95,7 +96,8 @@ platform :ios do
         provisioningProfiles: {
           "com.cross.app" => ""
         }
-      }
+      },
+      xcargs: "-allowProvisioningUpdates"
     )
     
     # Upload to App Store Connect - Fastlane auto-uses environment variables
