@@ -2,6 +2,7 @@ import 'dart:async';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:timezone/timezone.dart' as tz;
+import 'package:timezone/data/latest.dart' as tz;
 
 class RestTimerModel {
   final Duration remainingTime;
@@ -57,6 +58,9 @@ class RestTimerService {
   }
 
   Future<void> _initializeNotifications() async {
+    // Initialize timezone database
+    tz.initializeTimeZones();
+    
     const AndroidInitializationSettings initializationSettingsAndroid =
         AndroidInitializationSettings('@mipmap/ic_launcher');
     
@@ -141,11 +145,16 @@ class RestTimerService {
 
   Future<void> _scheduleNotification(Duration duration) async {
     if (duration.inSeconds > 10) { // Only schedule if timer > 10 seconds
+      final scheduledTime = tz.TZDateTime.from(
+        DateTime.now().add(duration),
+        tz.local,
+      );
+      
       await _notificationsPlugin.zonedSchedule(
         0,
         'Rest Timer Complete',
         'Your rest period is over! Time for your next set.',
-        tz.TZDateTime.now(tz.local).add(duration),
+        scheduledTime,
         const NotificationDetails(
           android: AndroidNotificationDetails(
             'rest_timer_channel',
@@ -163,7 +172,7 @@ class RestTimerService {
             presentSound: true,
           ),
         ),
-        androidAllowWhileIdle: true,
+        androidScheduleMode: AndroidScheduleMode.exactAllowWhileIdle,
         uiLocalNotificationDateInterpretation:
             UILocalNotificationDateInterpretation.absoluteTime,
       );
