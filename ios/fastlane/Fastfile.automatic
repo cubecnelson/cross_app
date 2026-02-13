@@ -28,15 +28,11 @@ platform :ios do
     )
     
     # Build the app with automatic signing and online profile fetching
-    # Set up authentication for automatic profile download
-    if ENV['CI']
-      api_key_path = File.expand_path("~/private_keys/AuthKey_#{ENV['APP_STORE_CONNECT_API_KEY_ID']}.p8")
-      xcargs = "-allowProvisioningUpdates -authenticationKeyPath '#{api_key_path}' -authenticationKeyID #{ENV['APP_STORE_CONNECT_API_KEY_ID']} -authenticationKeyIssuerID #{ENV['APP_STORE_CONNECT_API_KEY_ISSUER_ID']}"
-      UI.message("Using API key authentication: #{api_key_path}")
-    else
-      xcargs = "-allowProvisioningUpdates"
-    end
-    
+    # API key path always included for profile download (CI and local)
+    api_key_path = File.expand_path("~/private_keys/AuthKey_#{ENV['APP_STORE_CONNECT_API_KEY_ID']}.p8")
+    xcargs = "-allowProvisioningUpdates -authenticationKeyPath '#{api_key_path}' -authenticationKeyID #{ENV['APP_STORE_CONNECT_API_KEY_ID']} -authenticationKeyIssuerID #{ENV['APP_STORE_CONNECT_API_KEY_ISSUER_ID']}"
+    UI.message("Using API key authentication: #{api_key_path}")
+
     build_app(
       workspace: "Runner.xcworkspace",
       scheme: "Runner",
@@ -74,14 +70,11 @@ platform :ios do
     # APP_STORE_CONNECT_API_KEY_CONTENT, APP_STORE_CONNECT_API_KEY_IS_KEY_CONTENT_BASE64
     
     # Build the app with automatic signing and online profile fetching
-    if ENV['CI']
-      api_key_path = File.expand_path("~/private_keys/AuthKey_#{ENV['APP_STORE_CONNECT_API_KEY_ID']}.p8")
-      xcargs = "-allowProvisioningUpdates -authenticationKeyPath '#{api_key_path}' -authenticationKeyID #{ENV['APP_STORE_CONNECT_API_KEY_ID']} -authenticationKeyIssuerID #{ENV['APP_STORE_CONNECT_API_KEY_ISSUER_ID']}"
-      UI.message("Using API key authentication: #{api_key_path}")
-    else
-      xcargs = "-allowProvisioningUpdates"
-    end
-    
+    # API key path always included for profile download (CI and local)
+    api_key_path = File.expand_path("~/private_keys/AuthKey_#{ENV['APP_STORE_CONNECT_API_KEY_ID']}.p8")
+    xcargs = "-allowProvisioningUpdates -authenticationKeyPath '#{api_key_path}' -authenticationKeyID #{ENV['APP_STORE_CONNECT_API_KEY_ID']} -authenticationKeyIssuerID #{ENV['APP_STORE_CONNECT_API_KEY_ISSUER_ID']}"
+    UI.message("Using API key authentication: #{api_key_path}")
+
     build_app(
       workspace: "Runner.xcworkspace",
       scheme: "Runner",

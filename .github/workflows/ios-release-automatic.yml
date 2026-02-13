@@ -129,6 +129,8 @@ jobs:
           APP_STORE_CONNECT_API_KEY_ISSUER_ID: ${{ secrets.APP_STORE_CONNECT_API_ISSUER_ID }}
           TEAM_ID: YWQH3Z3Z85
           BUILD_NUMBER: ${{ github.run_number }}
+          # Optional: set PROVISIONING_PROFILE_NAME in repo vars or secrets to pre-install that profile before build
+          PROVISIONING_PROFILE_NAME: ${{ vars.PROVISIONING_PROFILE_NAME || secrets.PROVISIONING_PROFILE_NAME }}
           FASTLANE_APPLE_APPLICATION_SPECIFIC_PASSWORD: ${{ secrets.APPLE_APPLICATION_SPECIFIC_PASSWORD }}
           FASTLANE_ITC_TEAM_ID: ${{ secrets.ITC_TEAM_ID }}
         run: |
