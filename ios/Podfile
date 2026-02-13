@@ -45,6 +45,13 @@ post_install do |installer|
       if config.build_settings['IPHONEOS_DEPLOYMENT_TARGET'].to_f < 15.0
         config.build_settings['IPHONEOS_DEPLOYMENT_TARGET'] = '15.0'
       end
+      
+      # Suppress deprecation warnings for third-party dependencies we can't control
+      # These are known issues in AppAuth, GoogleSignIn, and other pods
+      # that we're waiting for upstream fixes for
+      if target.name == 'AppAuth' || target.name == 'GoogleSignIn' || target.name == 'Sentry'
+        config.build_settings['GCC_WARN_ABOUT_DEPRECATED_FUNCTIONS'] = 'NO'
+      end
     end
   end
 end
