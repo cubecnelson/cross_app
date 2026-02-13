@@ -1,6 +1,7 @@
 import 'dart:async';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
+import 'package:timezone/timezone.dart' as tz;
 
 class RestTimerModel {
   final Duration remainingTime;
@@ -144,7 +145,7 @@ class RestTimerService {
         0,
         'Rest Timer Complete',
         'Your rest period is over! Time for your next set.',
-        DateTime.now().add(duration),
+        tz.TZDateTime.now(tz.local).add(duration),
         const NotificationDetails(
           android: AndroidNotificationDetails(
             'rest_timer_channel',
