@@ -4,6 +4,7 @@ import '../../../core/constants/app_constants.dart';
 import '../../../providers/auth_provider.dart';
 import '../../auth/screens/login_screen.dart';
 import 'health_settings_screen.dart';
+import 'data_export_screen.dart';
 
 class SettingsScreen extends ConsumerWidget {
   const SettingsScreen({super.key});
@@ -74,11 +75,13 @@ class SettingsScreen extends ConsumerWidget {
           ListTile(
             leading: const Icon(Icons.download_outlined, size: 24, color: null),
             title: const Text('Export Data'),
-            subtitle: const Text('Download your workout data as CSV'),
+            subtitle: const Text('Download your workout data as CSV or PDF'),
             onTap: () {
-              // TODO: Implement data export
-              ScaffoldMessenger.of(context).showSnackBar(
-                const SnackBar(content: Text('Export feature coming soon')),
+              Navigator.push(
+                context,
+                MaterialPageRoute(
+                  builder: (_) => const DataExportScreen(),
+                ),
               );
             },
           ),

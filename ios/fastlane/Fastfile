@@ -1,12 +1,12 @@
-# Fastfile for iOS deployment (Certificate-Based)
+# Fastfile for iOS deployment (Automatic Signing)
 
 default_platform(:ios)
 
 platform :ios do
-  desc "Push a new beta build to TestFlight (Certificate-Based)"
+  desc "Push a new beta build to TestFlight (Automatic Signing)"
   lane :beta do
-    # For certificate-based approach, we use manual signing
-    # Certificates and profiles are already set up in the workflow
+    # For automatic signing approach, we use API key authentication
+    # Fastlane will automatically manage certificates and profiles
     
     # Use build number from environment (GitHub run number) or increment local
     if ENV['BUILD_NUMBER']
@@ -23,8 +23,7 @@ platform :ios do
       build_number: new_build
     )
     
-    # Build the app with manual signing using certificates and profiles
-    # For certificate-based approach, we use manual signing
+    # Build the app with automatic signing using API key
     build_app(
       workspace: "Runner.xcworkspace",
       scheme: "Runner",
@@ -38,10 +37,11 @@ platform :ios do
         uploadSymbols: true,
         uploadBitcode: false,
         teamID: ENV['TEAM_ID'],
-        signingStyle: "manual",
+        signingStyle: "automatic",
         provisioningProfiles: {
-          # Bundle ID mapped to provisioning profile name
-          "com.cross.app" => "AppStore"  # Should match your provisioning profile name
+          # For automatic signing, we don't specify profile names
+          # Xcode will automatically manage them
+          "com.cross.app" => ""
         }
       }
     )
@@ -58,9 +58,9 @@ platform :ios do
     clean_build_artifacts
   end
   
-  desc "Build the app for App Store submission (Certificate-Based)"
+  desc "Build the app for App Store submission (Automatic Signing)"
   lane :release do
-    # For certificate-based approach, we use manual signing
+    # For automatic signing approach
     
     # Use build number from environment (GitHub run number) or increment local
     if ENV['BUILD_NUMBER']
@@ -77,7 +77,7 @@ platform :ios do
       build_number: new_build
     )
     
-    # Build the app with manual signing
+    # Build the app with automatic signing
     build_app(
       workspace: "Runner.xcworkspace",
       scheme: "Runner",
@@ -91,9 +91,9 @@ platform :ios do
         uploadSymbols: true,
         uploadBitcode: false,
         teamID: ENV['TEAM_ID'],
-        signingStyle: "manual",
+        signingStyle: "automatic",
         provisioningProfiles: {
-          "com.cross.app" => "AppStore"  # Should match your provisioning profile name
+          "com.cross.app" => ""
         }
       }
     )
@@ -107,5 +107,37 @@ platform :ios do
     
     # Clean up
     clean_build_artifacts
+  end
+  
+  desc "Setup for automatic signing with API key"
+  lane :setup_auto_signing do
+    # Configure project for automatic signing
+    update_project_team(
+      path: "Runner.xcodeproj",
+      teamid: ENV['TEAM_ID']
+    )
+    
+    update_code_signing_settings(
+      use_automatic_signing: true,
+      path: "Runner.xcodeproj",
+      team_id: ENV['TEAM_ID'],
+      targets: ["Runner"],
+      code_sign_identity: "Apple Development"
+    )
+    
+    UI.success("Project configured for automatic signing")
+  end
+  
+  desc "Check signing configuration"
+  lane :check_signing do
+    # Check current signing configuration
+    UI.message("Checking signing configuration...")
+    
+    get_info_plist_value(
+      path: "Runner/Info.plist",
+      key: "CFBundleIdentifier"
+    )
+    
+    get_provisioning_profile
   end
 end

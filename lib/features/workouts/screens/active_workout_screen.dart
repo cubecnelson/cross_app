@@ -10,6 +10,8 @@ import '../../../models/workout_recommendation.dart';
 import '../../../providers/auth_provider.dart';
 import '../../../providers/workout_provider.dart';
 import '../../../providers/recommendation_provider.dart';
+import '../../../services/rest_timer_service.dart';
+import '../../../widgets/rest_timer_widget.dart';
 import '../../exercises/screens/exercise_picker_screen.dart';
 import '../widgets/exercise_set_widget.dart';
 import '../widgets/recommendations_section.dart';

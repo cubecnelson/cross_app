@@ -1,5 +1,5 @@
-name: iOS Release to App Store Connect
-# Last updated: 2026-02-05 00:36 UTC
+name: iOS Release to App Store Connect (Automatic Signing)
+# Last updated: 2026-02-13 10:47 UTC
 
 on:
   push:
@@ -48,38 +48,6 @@ jobs:
           
           echo "Team ID: YWQH3Z3Z85 (hardcoded in workflow)"
         
-      - name: Debug API Key Format
-        env:
-          APP_STORE_CONNECT_API_KEY_CONTENT: ${{ secrets.APP_STORE_CONNECT_API_KEY_CONTENT }}
-        run: |
-          echo "=== API Key Format Debug ==="
-          echo "First 50 characters of APP_STORE_CONNECT_API_KEY_CONTENT:"
-          echo "${APP_STORE_CONNECT_API_KEY_CONTENT:0:50}"
-          echo ""
-          echo "Checking if content is PEM or Base64 encoded..."
-          
-          # Check if it starts with PEM header
-          if echo "$APP_STORE_CONNECT_API_KEY_CONTENT" | grep -q "BEGIN PRIVATE KEY"; then
-            echo "✅ PEM format detected (starts with 'BEGIN PRIVATE KEY')"
-            echo "Content is plain PEM text, not base64 encoded."
-            echo "Setting APP_STORE_CONNECT_API_KEY_IS_KEY_CONTENT_BASE64: false"
-            echo "APP_STORE_CONNECT_API_KEY_IS_KEY_CONTENT_BASE64=false" >> $GITHUB_ENV
-          else
-            echo "❓ Might be base64 encoded"
-            echo "Attempting base64 decode..."
-            DECODED=$(echo "$APP_STORE_CONNECT_API_KEY_CONTENT" | base64 --decode 2>/dev/null | head -5)
-            if echo "$DECODED" | grep -q "BEGIN PRIVATE KEY"; then
-              echo "✅ Base64 encoded PEM detected (decodes to 'BEGIN PRIVATE KEY')"
-              echo "Content is base64 encoded PEM."
-              echo "Setting APP_STORE_CONNECT_API_KEY_IS_KEY_CONTENT_BASE64: true"
-              echo "APP_STORE_CONNECT_API_KEY_IS_KEY_CONTENT_BASE64=true" >> $GITHUB_ENV
-            else
-              echo "⚠️ Could not determine format. Assuming PEM text (not base64)."
-              echo "Setting APP_STORE_CONNECT_API_KEY_IS_KEY_CONTENT_BASE64: false"
-              echo "APP_STORE_CONNECT_API_KEY_IS_KEY_CONTENT_BASE64=false" >> $GITHUB_ENV
-            fi
-          fi
-        
       - name: Set up Flutter
         uses: subosito/flutter-action@v2
         with:
@@ -121,6 +89,23 @@ jobs:
           gem install bundler
           bundle install
           
+      - name: Setup API Key for Automatic Signing
+        env:
+          APP_STORE_CONNECT_API_KEY_ID: ${{ secrets.APP_STORE_CONNECT_API_KEY_ID }}
+          APP_STORE_CONNECT_API_KEY_CONTENT: ${{ secrets.APP_STORE_CONNECT_API_KEY_CONTENT }}
+        run: |
+          echo "Setting up App Store Connect API Key for automatic signing..."
+          mkdir -p ~/private_keys
+          
+          # Write the API key content to a .p8 file
+          # The content should already be in PEM format
+          echo "$APP_STORE_CONNECT_API_KEY_CONTENT" > ~/private_keys/AuthKey_${APP_STORE_CONNECT_API_KEY_ID}.p8
+          
+          chmod 600 ~/private_keys/AuthKey_${APP_STORE_CONNECT_API_KEY_ID}.p8
+          echo "✅ API Key installed for automatic signing"
+          echo "Key ID: ${APP_STORE_CONNECT_API_KEY_ID}"
+          echo "Key file: ~/private_keys/AuthKey_${APP_STORE_CONNECT_API_KEY_ID}.p8"
+          
       - name: Build Flutter iOS (embed Supabase config)
         env:
           SUPABASE_URL: ${{ secrets.SUPABASE_URL }}
@@ -128,63 +113,54 @@ jobs:
         run: |
           echo "Building Flutter iOS with Supabase configuration..."
           echo "Supabase URL: ${SUPABASE_URL:0:30}..."
+          
+          # Clean and build with automatic code signing
           flutter clean
-          flutter build ios --release --no-codesign \
+          flutter build ios --release \
             --dart-define=SUPABASE_URL="$SUPABASE_URL" \
             --dart-define=SUPABASE_ANON_KEY="$SUPABASE_ANON_KEY" \
-            --verbose 2>&1 | tee build.log || (echo "Build failed"; cat build.log; exit 1)
+            --no-codesign 2>&1 | tee build.log || (echo "Build failed"; cat build.log; exit 1)
           
-      - name: Setup App Store Connect API Key
-        env:
-          APP_STORE_CONNECT_API_KEY_ID: ${{ secrets.APP_STORE_CONNECT_API_KEY_ID }}
-          APP_STORE_CONNECT_API_KEY_CONTENT: ${{ secrets.APP_STORE_CONNECT_API_KEY_CONTENT }}
-        run: |
-          echo "Setting up App Store Connect API Key..."
-          mkdir -p ~/private_keys
+          echo "✅ Flutter iOS build completed"
           
-          # Check if we detected base64 encoding in previous step
-          if [ "$APP_STORE_CONNECT_API_KEY_IS_KEY_CONTENT_BASE64" = "true" ]; then
-            echo "🔧 Detected base64 encoded API key content. Decoding..."
-            echo "$APP_STORE_CONNECT_API_KEY_CONTENT" | base64 --decode > ~/private_keys/AuthKey_${APP_STORE_CONNECT_API_KEY_ID}.p8
-            echo "✅ Decoded base64 to PEM format"
-          else
-            echo "🔧 Using PEM format directly..."
-            echo "$APP_STORE_CONNECT_API_KEY_CONTENT" > ~/private_keys/AuthKey_${APP_STORE_CONNECT_API_KEY_ID}.p8
-          fi
-          
-          chmod 600 ~/private_keys/AuthKey_${APP_STORE_CONNECT_API_KEY_ID}.p8
-          echo "✅ API Key installed for Fastlane & Xcode"
-          echo "Key ID: ${APP_STORE_CONNECT_API_KEY_ID}"
-          echo "Key file: ~/private_keys/AuthKey_${APP_STORE_CONNECT_API_KEY_ID}.p8"
-          echo "Format: $([ "$APP_STORE_CONNECT_API_KEY_IS_KEY_CONTENT_BASE64" = "true" ] && echo "Base64 decoded to PEM" || echo "PEM directly")"
-          
-      - name: Build and upload to TestFlight
+      - name: Build and upload to TestFlight (Automatic Signing)
         env:
           APP_STORE_CONNECT_API_KEY_ID: ${{ secrets.APP_STORE_CONNECT_API_KEY_ID }}
           APP_STORE_CONNECT_API_KEY_ISSUER_ID: ${{ secrets.APP_STORE_CONNECT_API_ISSUER_ID }}
-          APP_STORE_CONNECT_API_KEY_CONTENT: ${{ secrets.APP_STORE_CONNECT_API_KEY_CONTENT }}
-          APP_STORE_CONNECT_API_KEY_IS_KEY_CONTENT_BASE64: ${{ env.APP_STORE_CONNECT_API_KEY_IS_KEY_CONTENT_BASE64 || 'false' }}
-          BUILD_NUMBER: ${{ github.run_number }}
           TEAM_ID: YWQH3Z3Z85
+          BUILD_NUMBER: ${{ github.run_number }}
+          FASTLANE_APPLE_APPLICATION_SPECIFIC_PASSWORD: ${{ secrets.APPLE_APPLICATION_SPECIFIC_PASSWORD }}
+          FASTLANE_ITC_TEAM_ID: ${{ secrets.ITC_TEAM_ID }}
         run: |
-          echo "=== CICD DEBUG INFORMATION ==="
+          echo "=== AUTOMATIC SIGNING CONFIGURATION ==="
           echo "Build Number: $BUILD_NUMBER"
           echo "Team ID: $TEAM_ID"
           echo "Key ID: $APP_STORE_CONNECT_API_KEY_ID"
           echo "Issuer ID: $APP_STORE_CONNECT_API_KEY_ISSUER_ID"
-          echo "Key Format: $APP_STORE_CONNECT_API_KEY_IS_KEY_CONTENT_BASE64"
           echo "Bundle ID: com.cross.app"
           echo ""
           
           cd ios
           
-          # Debug: Check if API key file exists and has correct format
-          echo "Checking API key file..."
-          ls -la ~/private_keys/
-          echo ""
+          # Verify Xcode project is configured for automatic signing
+          echo "Checking Xcode project configuration..."
+          if grep -q "DevelopmentTeam = YWQH3Z3Z85" Runner.xcodeproj/project.pbxproj; then
+            echo "✅ Development team configured in project"
+          else
+            echo "⚠️ Development team not found in project"
+          fi
           
-          echo "=== RUNNING FASTLANE BETA ==="
-          bundle exec fastlane beta --verbose
+          if grep -q "ProvisioningStyle = Automatic" Runner.xcodeproj/project.pbxproj; then
+            echo "✅ Automatic signing configured in project"
+          else
+            echo "⚠️ Automatic signing not configured in project"
+          fi
+          
+          echo "=== RUNNING FASTLANE BETA (AUTOMATIC SIGNING) ==="
+          
+          # Run Fastlane with environment variables for automatic signing
+          # Fastlane will use the API key for authentication
+          bundle exec fastlane beta
           
       - name: Clean up secrets
         if: always()
@@ -204,7 +180,7 @@ jobs:
       - name: Notify on success
         if: success()
         run: |
-          echo "✅ Successfully uploaded build to TestFlight!"
+          echo "✅ Successfully uploaded build to TestFlight using automatic signing!"
           echo "Build will be available for testing once processed by Apple."
           
       - name: Capture build logs on failure
@@ -215,19 +191,15 @@ jobs:
           # Try to capture any available logs
           if [ -d "ios/build" ]; then
             echo "=== iOS Build Directory Contents ==="
-            find ios/build -type f -name "*.log" | head -5
+            find ios/build -type f -name "*.log" -o -name "*.txt" | head -10
           fi
           
-          if [ -d "build" ]; then
-            echo "=== Flutter Build Directory Contents ==="
-            find build -type f -name "*.log" | head -5
+          if [ -f "build.log" ]; then
+            echo "=== Flutter Build Log (last 100 lines) ==="
+            tail -100 build.log
           fi
           
-          echo "=== Check Flutter Doctor ==="
-          flutter doctor -v 2>&1 | tail -20 || true
-          
-          echo "=== Check CocoaPods ==="
-          cd ios && pod --version || true
-          cd ..
+          echo "=== Flutter Doctor ==="
+          flutter doctor -v 2>&1 | tail -30 || true
           
           echo "❌ Check the logs above for specific error messages"

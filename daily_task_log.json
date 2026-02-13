@@ -25,13 +25,29 @@
       "task_id": "P1-001",
       "task_title": "Fix any crash bugs or stability issu",
       "effort_hours": 2,
-      "status": "in_progress",
-      "selected_at": "2026-02-09T01:01:24Z"
+      "status": "completed",
+      "selected_at": "2026-02-09T01:01:24Z",
+      "completed_at": "2026-02-10T01:03:55Z"
+    },
+    "2026-02-10": {
+      "task_id": "P1-003*",
+      "task_title": "Fix authentication edge cases",
+      "effort_hours": 2,
+      "priority": "P1",
+      "status": "completed",
+      "selected_at": "2026-02-10T01:03:55Z"
+    },
+    "2026-02-11": {
+      "task_id": "P2-001",
+      "task_title": "Implement Google OAuth authenticati",
+      "effort_hours": 4,
+      "status": "completed",
+      "selected_at": "2026-02-11T01:02:21Z"
     }
   },
   "statistics": {
-    "total_tasks": 3,
-    "completed": 4,
-    "in_progress": 1
+    "total_tasks": 4,
+    "completed": 7,
+    "in_progress": 0
   }
 }

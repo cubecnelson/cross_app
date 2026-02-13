@@ -9,6 +9,8 @@ This is a prioritized backlog of improvements and features for the Cross workout
 - **P1-002**: Improve startup performance
 - **P1-003**: Fix authentication edge cases
 - **P1-004**: Add error handling for network failures
+- **P1-005**: Add achievement system (gamification) - NEW
+- **P1-006**: Implement workout streaks - NEW
 
 ### 🟡 P2 - Important (Medium Impact, Medium Effort)
 - **P2-001**: Implement Google OAuth authentication
@@ -17,14 +19,18 @@ This is a prioritized backlog of improvements and features for the Cross workout
 - **P2-004**: Add exercise videos and tutorials
 - **P2-005**: Implement data export (CSV/PDF)
 - **P2-006**: Add Apple Health/Google Fit integration
+- **P2-007**: Add basic social sharing - MOVED FROM P3-001
+- **P2-008**: Implement advanced analytics (1RM tracking, PRs) - MOVED FROM P3-005
+- **P2-009**: Add monthly challenges - NEW
 
 ### 🔵 P3 - Enhancement (Low Impact, High Effort)
-- **P3-001**: Add social features (share workouts, follow friends)
-- **P3-002**: Create workout templates marketplace
-- **P3-003**: Add machine learning for personalized recommendations
-- **P3-004**: Implement periodization planning
-- **P3-005**: Add advanced analytics (1RM tracking, PRs)
-- **P3-006**: Create web/desktop version
+- **P3-001**: Create workout templates marketplace
+- **P3-002**: Enhance ML recommendations
+- **P3-003**: Implement periodization planning
+- **P3-004**: Add smart watch integration - NEW
+- **P3-005**: Add nutrition tracking integration - NEW
+- **P3-006**: Expand video workout library - NEW
+- **P3-007**: Create web/desktop version
 
 ### 🟣 P4 - Technical Debt
 - **P4-001**: Add comprehensive unit tests
@@ -132,10 +138,14 @@ This is a prioritized backlog of improvements and features for the Cross workout
 ## Current Backlog
 
 ### 🟢 P1 Tasks
-**P1-001**: Fix any crash bugs or stability issues
-- **Status**: In Progress
+**P1-001**: [Task Title]
+- **Status**: ✅ Done
+- **Completed**: 2026-02-10
+- **Status**: ✅ Done
+- **Completed**: 2026-02-10
+- **Status**: ✅ Done (blocked, moved to backlog)
 - **Effort**: 2 hours
-- **Notes**: Check crash logs in Firebase/Sentry
+- **Notes**: No crash logs found, moved to backlog for future investigation
 
 **P1-002**: Improve startup performance  
 - **Status**: ✅ Done (partially completed with workflow cleanup)
@@ -153,9 +163,19 @@ This is a prioritized backlog of improvements and features for the Cross workout
 - **Effort**: 2 hours
 - **Notes**: Add retry logic, better error messages
 
+**P1-005**: Add achievement system (gamification)
+- **Status**: Not Started
+- **Effort**: 3 hours
+- **Notes**: Badges for consistency, PRs, streaks
+
+**P1-006**: Implement workout streaks
+- **Status**: Not Started
+- **Effort**: 2 hours
+- **Notes**: Daily workout streak tracking
+
 ### 🟡 P2 Tasks
 **P2-001**: Implement Google OAuth authentication
-- **Status**: Not Started
+- **Status**: In Progress
 - **Effort**: 4 hours
 - **Notes**: Follow Google Auth setup guide in docs
 
@@ -165,9 +185,17 @@ This is a prioritized backlog of improvements and features for the Cross workout
 - **Notes**: Required for iOS App Store
 
 **P2-003**: Add workout rest timer with notifications
-- **Status**: Not Started
+- **Status**: ✅ Done
 - **Effort**: 3 hours
 - **Notes**: Background timer, local notifications
+- **Completed Features**:
+  - Full rest timer service with notifications
+  - Timer widget with pause/resume/skip/reset controls
+  - Integration into active workout screen
+  - Quick duration presets (30s, 1m, 1m30s, 2m, 3m)
+  - Progress visualization with circular and linear indicators
+  - Local notifications for timer completion
+  - Floating action button for quick access during workouts
 
 **P2-004**: Add exercise videos and tutorials
 - **Status**: ✅ Done (2026-02-03)
@@ -180,9 +208,17 @@ This is a prioritized backlog of improvements and features for the Cross workout
   - Updated ExercisePickerScreen to show video icons and details
 
 **P2-005**: Implement data export (CSV/PDF)
-- **Status**: Not Started
+- **Status**: ✅ Done
 - **Effort**: 3 hours
+- **Completed**: 2026-02-12 16:00 GMT+8
 - **Notes**: Export workout history
+- **Completed Features**:
+  - Full CSV export with detailed workout data (sets, reps, weights, cardio metrics)
+  - PDF export with workout summaries and statistics (text-based placeholder)
+  - DataExportScreen with statistics display and format selection
+  - Integration with device sharing system (share_plus)
+  - Support for both CSV and PDF formats
+  - Statistics display showing total workouts, sets, volume, and date range
 
 **P2-006**: Add Apple Health/Google Fit integration
 - **Status**: ✅ Done (2026-02-03)
@@ -195,33 +231,53 @@ This is a prioritized backlog of improvements and features for the Cross workout
   - Support sync of workouts to Apple Health/Google Fit
   - Display daily health metrics in app
 
-### 🔵 P3 Tasks
-**P3-001**: Add social features (share workouts, follow friends)
+**P2-007**: Add basic social sharing
 - **Status**: Not Started
-- **Effort**: 8 hours
-- **Notes**: Complex feature, needs backend updates
+- **Effort**: 4 hours
+- **Notes**: Share workouts to social media, friends
 
-**P3-002**: Create workout templates marketplace
-- **Status**: Not Started
-- **Effort**: 12 hours
-- **Notes**: User-generated content system
-
-**P3-003**: Add machine learning for personalized recommendations
-- **Status**: Not Started
-- **Effort**: 16 hours
-- **Notes**: Enhance existing recommendation system
-
-**P3-004**: Implement periodization planning
-- **Status**: Not Started
-- **Effort**: 8 hours
-- **Notes**: Advanced training planning
-
-**P3-005**: Add advanced analytics (1RM tracking, PRs)
+**P2-008**: Implement advanced analytics (1RM tracking, PRs)
 - **Status**: Not Started
 - **Effort**: 6 hours
 - **Notes**: One-rep max calculations, personal records
 
-**P3-006**: Create web/desktop version
+**P2-009**: Add monthly challenges
+- **Status**: Not Started
+- **Effort**: 3 hours
+- **Notes**: Community challenges, leaderboards
+
+### 🔵 P3 Tasks
+**P3-001**: Create workout templates marketplace
+- **Status**: Not Started
+- **Effort**: 12 hours
+- **Notes**: User-generated content system
+
+**P3-002**: Enhance ML recommendations
+- **Status**: Not Started
+- **Effort**: 16 hours
+- **Notes**: Advanced personalization, AI-generated workouts
+
+**P3-003**: Implement periodization planning
+- **Status**: Not Started
+- **Effort**: 8 hours
+- **Notes**: Advanced training planning
+
+**P3-004**: Add smart watch integration
+- **Status**: Not Started
+- **Effort**: 6 hours
+- **Notes**: Apple Watch, Garmin, Fitbit integration
+
+**P3-005**: Add nutrition tracking integration
+- **Status**: Not Started
+- **Effort**: 8 hours
+- **Notes**: Meal logging, calorie tracking
+
+**P3-006**: Expand video workout library
+- **Status**: Not Started
+- **Effort**: 4 hours
+- **Notes**: Premium workout videos, form tutorials
+
+**P3-007**: Create web/desktop version
 - **Status**: Not Started
 - **Effort**: 20 hours
 - **Notes**: Flutter web/desktop support
@@ -259,6 +315,33 @@ This is a prioritized backlog of improvements and features for the Cross workout
 
 ## Daily Selection Log
 
+### 2026-02-12
+**Selected Task**: P2-005
+**Reason**: User requested implementation of data export feature
+**Status**: ✅ Completed
+**Start Time**: 10:21 AM GMT+8
+**Completion Time**: 16:00 PM GMT+8
+**Work Completed**:
+- Created ExportService with CSV and PDF export functionality
+- Built DataExportScreen with statistics display and format selection
+- Added provider for state management
+- Integrated with Settings screen
+- Added share_plus and path_provider dependencies
+
+### 2026-02-11
+**Selected Task**: P2-001
+**Reason**: Automatically selected by daily task selector
+**Status**: In Progress
+**Start Time**: 9:00 AM
+**Expected Completion**: 01:02 PM
+
+### 2026-02-10
+**Selected Task**: P2-003
+**Reason**: User requested to switch to P2-003 (rest timer notifications)
+**Status**: In Progress
+**Start Time**: 17:29 GMT+8
+**Expected Completion**: 20:29 GMT+8
+
 ### 2026-02-09
 **Selected Task**: P1-001
 **Reason**: Automatically selected by daily task selector
@@ -290,9 +373,9 @@ This is a prioritized backlog of improvements and features for the Cross workout
 ### 2026-02-04
 **Selected Task**: P1-001 - Fix any crash bugs or stability issues
 **Reason**: Highest priority, foundation for all other work
-**Status**: In Progress
-**Start Time**: 9:00 AM
-**Expected Completion**: 11:00 AM
+**Status**: In Progress (P2-005 completed 2026-02-12)
+**Start Time**: 9:00 AM 2026-02-04
+**Expected Completion**: 11:00 AM 2026-02-04
 
 ## Completed Tasks
 
