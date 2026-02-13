@@ -493,6 +493,7 @@ class _InstructionStep extends StatelessWidget {
             ),
           ),
         ],
-      );
+      ),
+    );
   }
 }
