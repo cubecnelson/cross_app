@@ -36,7 +36,7 @@
                 <category android:name="android.intent.category.DEFAULT" />
                 <category android:name="android.intent.category.BROWSABLE" />
                 <data
-                    android:scheme="com.example.cross"
+                    android:scheme="com.cross.app"
                     android:host="login-callback" />
             </intent-filter>
         </activity>
