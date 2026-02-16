@@ -10,7 +10,7 @@ dependencies:
   flutter:
     sdk: flutter
   
-  # Device Info (explicit version to avoid Kotlin 12.3.0 compatibility issues)
+  # Device Info (explicit version to avoid device_info_plus 12.3.0 compatibility issues)
   device_info_plus: ^10.1.0
   
   # Supabase
