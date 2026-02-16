@@ -76,7 +76,9 @@ class RestTimerService {
       iOS: initializationSettingsDarwin,
     );
     
-    await _notificationsPlugin.initialize(initializationSettings);
+    await _notificationsPlugin.initialize(
+      initializationSettings: initializationSettings,
+    );
   }
 
   Future<void> startTimer(Duration duration) async {
@@ -151,11 +153,11 @@ class RestTimerService {
       );
       
       await _notificationsPlugin.zonedSchedule(
-        0,
-        'Rest Timer Complete',
-        'Your rest period is over! Time for your next set.',
-        scheduledTime,
-        const NotificationDetails(
+        id: 0,
+        title: 'Rest Timer Complete',
+        body: 'Your rest period is over! Time for your next set.',
+        scheduledDate: scheduledTime,
+        notificationDetails: const NotificationDetails(
           android: AndroidNotificationDetails(
             'rest_timer_channel',
             'Rest Timer',
@@ -173,18 +175,16 @@ class RestTimerService {
           ),
         ),
         androidScheduleMode: AndroidScheduleMode.exactAllowWhileIdle,
-        uiLocalNotificationDateInterpretation:
-            UILocalNotificationDateInterpretation.absoluteTime,
       );
     }
   }
 
   Future<void> _showCompletionNotification() async {
     await _notificationsPlugin.show(
-      1,
-      'Rest Timer Complete',
-      'Your rest period is over! Time for your next set.',
-      const NotificationDetails(
+      id: 1,
+      title: 'Rest Timer Complete',
+      body: 'Your rest period is over! Time for your next set.',
+      notificationDetails: const NotificationDetails(
         android: AndroidNotificationDetails(
           'rest_timer_channel',
           'Rest Timer',
