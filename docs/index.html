@@ -1,0 +1,226 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Cross - Hybrid Athlete Training App</title>
+    <meta name="description" content="Track strength, cardio, and isometric workouts with intelligent training load analysis for hybrid athletes.">
+    <link rel="stylesheet" href="style.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="icon" type="image/svg+xml" href="assets/icon.svg">
+</head>
+<body>
+    <!-- Navigation -->
+    <nav class="navbar">
+        <div class="container">
+            <div class="nav-content">
+                <a href="#" class="logo">
+                    <img src="assets/icon.svg" alt="Cross App Icon" class="logo-icon">
+                    <span>Cross</span>
+                </a>
+                <div class="nav-links">
+                    <a href="#features">Features</a>
+                    <a href="#workouts">Workouts</a>
+                    <a href="#analysis">Analysis</a>
+                    <a href="#download" class="cta-button">Get Early Access</a>
+                </div>
+                <button class="mobile-menu-btn">
+                    <i class="fas fa-bars"></i>
+                </button>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Hero Section -->
+    <section class="hero">
+        <div class="container">
+            <div class="hero-content">
+                <div class="hero-text">
+                    <h1 class="hero-title">Train Smarter, Not Just Harder</h1>
+                    <p class="hero-subtitle">The first training app that balances strength, cardio, and isometric workouts with <span class="highlight">science-backed training load analysis</span> to prevent injury and optimize progress.</p>
+                    <div class="hero-buttons">
+                        <a href="#download" class="primary-button">
+                            <i class="fab fa-apple"></i> App Store (Coming Soon)
+                        </a>
+                        <a href="#download" class="secondary-button">
+                            <i class="fab fa-google-play"></i> Google Play (Coming Soon)
+                        </a>
+                    </div>
+                    <div class="hero-stats">
+                        <div class="stat">
+                            <span class="stat-number">3-in-1</span>
+                            <span class="stat-label">Training Types</span>
+                        </div>
+                        <div class="stat">
+                            <span class="stat-number">ACWR</span>
+                            <span class="stat-label">Load Analysis</span>
+                        </div>
+                        <div class="stat">
+                            <span class="stat-number">AI</span>
+                            <span class="stat-label">Smart Recommendations</span>
+                        </div>
+                    </div>
+                </div>
+                <div class="hero-image">
+                    <div class="phone-mockup">
+                        <div class="phone-frame">
+                            <div class="phone-screen">
+                                <img src="assets/workout-screen.png" alt="Cross App Workout Screen">
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Features Section -->
+    <section id="features" class="features">
+        <div class="container">
+            <div class="section-header">
+                <h2>Built for Hybrid Athletes</h2>
+                <p>Whether you're a runner who lifts or a lifter who runs, Cross helps you balance both without overtraining.</p>
+            </div>
+            <div class="features-grid">
+                <div class="feature-card">
+                    <div class="feature-icon">
+                        <i class="fas fa-dumbbell"></i>
+                    </div>
+                    <h3>Strength Training</h3>
+                    <p>Track weight, reps, sets, and rest times with intelligent progression tracking.</p>
+                </div>
+                <div class="feature-card">
+                    <div class="feature-icon">
+                        <i class="fas fa-running"></i>
+                    </div>
+                    <h3>Cardio Workouts</h3>
+                    <p>Log distance, pace, heart rate, and elevation for running, cycling, or HIIT.</p>
+                </div>
+                <div class="feature-card">
+                    <div class="feature-icon">
+                        <i class="fas fa-clock"></i>
+                    </div>
+                    <h3>Isometric Holds</h3>
+                    <p>Track plank times, wall sits, and other isometric exercises with RPE ratings.</p>
+                </div>
+                <div class="feature-card">
+                    <div class="feature-icon">
+                        <i class="fas fa-chart-line"></i>
+                    </div>
+                    <h3>ACWR Analysis</h3>
+                    <p>Monitor training load with Acute:Chronic Workload Ratio to stay in the sweet spot.</p>
+                </div>
+                <div class="feature-card">
+                    <div class="feature-icon">
+                        <i class="fas fa-brain"></i>
+                    </div>
+                    <h3>AI Recommendations</h3>
+                    <p>Get personalized workout suggestions based on your performance and goals.</p>
+                </div>
+                <div class="feature-card">
+                    <div class="feature-icon">
+                        <i class="fas fa-sync-alt"></i>
+                    </div>
+                    <h3>Cloud Sync</h3>
+                    <p>Secure backup with Supabase and access your data across all devices.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- ACWR Analysis Section -->
+    <section id="analysis" class="analysis">
+        <div class="container">
+            <div class="analysis-content">
+                <div class="analysis-text">
+                    <h2>Train Smarter with ACWR</h2>
+                    <p>Cross implements the <strong>Acute:Chronic Workload Ratio (ACWR)</strong> – the same science elite athletes use to prevent injury and optimize performance.</p>
+                    <ul class="analysis-list">
+                        <li><i class="fas fa-check-circle"></i> <strong>AU Calculation:</strong> Session RPE × Duration</li>
+                        <li><i class="fas fa-check-circle"></i> <strong>Acute Load:</strong> 7-day training fatigue</li>
+                        <li><i class="fas fa-check-circle"></i> <strong>Chronic Load:</strong> 28-day fitness base</li>
+                        <li><i class="fas fa-check-circle"></i> <strong>Sweet Spot:</strong> 0.8-1.3 ACWR for optimal progress</li>
+                        <li><i class="fas fa-check-circle"></i> <strong>Personalized Targets:</strong> Recommended weekly AU based on your history</li>
+                    </ul>
+                    <a href="#download" class="primary-button">Start Training Smarter</a>
+                </div>
+                <div class="analysis-visual">
+                    <div class="acwr-chart">
+                        <div class="chart-container">
+                            <div class="chart-safe">SAFE ZONE<br>0.8-1.3 ACWR</div>
+                            <div class="chart-caution">CAUTION<br>1.3-1.5</div>
+                            <div class="chart-danger">DANGER<br>&gt;1.5</div>
+                            <div class="chart-needle"></div>
+                            <div class="chart-label">Your ACWR: 1.12 ✅</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Download CTA -->
+    <section id="download" class="download">
+        <div class="container">
+            <div class="download-content">
+                <h2>Ready to Cross-Train Better?</h2>
+                <p>Join the waitlist for early access to the only training app built specifically for hybrid athletes.</p>
+                <div class="download-buttons">
+                    <a href="#" class="primary-button large-button">
+                        <i class="fab fa-apple"></i> Join iOS Waitlist
+                    </a>
+                    <a href="#" class="primary-button large-button">
+                        <i class="fab fa-google-play"></i> Join Android Waitlist
+                    </a>
+                </div>
+                <p class="download-note">Currently in development. Expected release: Q2 2026</p>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <div class="container">
+            <div class="footer-content">
+                <div class="footer-logo">
+                    <img src="assets/icon.svg" alt="Cross App Icon" class="footer-icon">
+                    <span>Cross</span>
+                </div>
+                <div class="footer-links">
+                    <div class="footer-column">
+                        <h4>Product</h4>
+                        <a href="#features">Features</a>
+                        <a href="#analysis">ACWR Analysis</a>
+                        <a href="#download">Download</a>
+                    </div>
+                    <div class="footer-column">
+                        <h4>Resources</h4>
+                        <a href="https://github.com/cubecnelson/cross_app" target="_blank">GitHub</a>
+                        <a href="#">Documentation</a>
+                        <a href="#">Blog</a>
+                    </div>
+                    <div class="footer-column">
+                        <h4>Legal</h4>
+                        <a href="#">Privacy Policy</a>
+                        <a href="#">Terms of Service</a>
+                        <a href="#">Contact</a>
+                    </div>
+                </div>
+            </div>
+            <div class="footer-bottom">
+                <p>© 2026 Cross App. Built with ❤️ for hybrid athletes everywhere.</p>
+                <div class="footer-social">
+                    <a href="#"><i class="fab fa-twitter"></i></a>
+                    <a href="https://github.com/cubecnelson/cross_app" target="_blank"><i class="fab fa-github"></i></a>
+                    <a href="#"><i class="fab fa-instagram"></i></a>
+                </div>
+            </div>
+        </div>
+    </footer>
+
+    <script src="script.js"></script>
+</body>
+</html>
