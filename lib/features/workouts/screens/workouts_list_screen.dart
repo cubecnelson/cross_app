@@ -8,12 +8,37 @@ import 'active_workout_screen.dart';
 import 'workout_detail_screen.dart';
 import '../widgets/recommendations_section.dart';
 
-class WorkoutsListScreen extends ConsumerWidget {
+class WorkoutsListScreen extends ConsumerStatefulWidget {
   const WorkoutsListScreen({super.key});
 
   @override
-  Widget build(BuildContext context, WidgetRef ref) {
-    final workouts = ref.watch(workoutsProvider);
+  ConsumerState<WorkoutsListScreen> createState() => _WorkoutsListScreenState();
+}
+
+class _WorkoutsListScreenState extends ConsumerState<WorkoutsListScreen> with WidgetsBindingObserver {
+  @override
+  void initState() {
+    super.initState();
+    WidgetsBinding.instance.addObserver(this);
+  }
+
+  @override
+  void dispose() {
+    WidgetsBinding.instance.removeObserver(this);
+    super.dispose();
+  }
+
+  @override
+  void didChangeAppLifecycleState(AppLifecycleState state) {
+    if (state == AppLifecycleState.resumed && mounted) {
+      // Refresh when app comes back to foreground
+      ref.invalidate(workoutNotifierProvider);
+    }
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final workouts = ref.watch(workoutNotifierProvider);
 
     return Scaffold(
       appBar: AppBar(
@@ -48,7 +73,7 @@ class WorkoutsListScreen extends ConsumerWidget {
 
           return RefreshIndicator(
             onRefresh: () async {
-              ref.invalidate(workoutsProvider);
+              ref.invalidate(workoutNotifierProvider);
             },
             child: ListView.builder(
               padding: const EdgeInsets.all(16),
@@ -140,7 +165,7 @@ class WorkoutsListScreen extends ConsumerWidget {
               Text('Error loading workouts: $error'),
               const SizedBox(height: 16),
               ElevatedButton(
-                onPressed: () => ref.invalidate(workoutsProvider),
+                onPressed: () => ref.invalidate(workoutNotifierProvider),
                 child: const Text('Retry'),
               ),
             ],

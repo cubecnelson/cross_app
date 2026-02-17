@@ -6,12 +6,37 @@ import '../../../widgets/empty_state.dart';
 import '../../workouts/screens/active_workout_screen.dart';
 import 'create_routine_screen.dart';
 
-class RoutinesListScreen extends ConsumerWidget {
+class RoutinesListScreen extends ConsumerStatefulWidget {
   const RoutinesListScreen({super.key});
 
   @override
-  Widget build(BuildContext context, WidgetRef ref) {
-    final routines = ref.watch(routinesProvider);
+  ConsumerState<RoutinesListScreen> createState() => _RoutinesListScreenState();
+}
+
+class _RoutinesListScreenState extends ConsumerState<RoutinesListScreen> with WidgetsBindingObserver {
+  @override
+  void initState() {
+    super.initState();
+    WidgetsBinding.instance.addObserver(this);
+  }
+
+  @override
+  void dispose() {
+    WidgetsBinding.instance.removeObserver(this);
+    super.dispose();
+  }
+
+  @override
+  void didChangeAppLifecycleState(AppLifecycleState state) {
+    if (state == AppLifecycleState.resumed && mounted) {
+      // Refresh when app comes back to foreground
+      ref.invalidate(routineNotifierProvider);
+    }
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final routines = ref.watch(routineNotifierProvider);
 
     return Scaffold(
       appBar: AppBar(
@@ -38,7 +63,7 @@ class RoutinesListScreen extends ConsumerWidget {
 
           return RefreshIndicator(
             onRefresh: () async {
-              ref.invalidate(routinesProvider);
+              ref.invalidate(routineNotifierProvider);
             },
             child: ListView.builder(
               padding: const EdgeInsets.all(16),
@@ -123,7 +148,7 @@ class RoutinesListScreen extends ConsumerWidget {
               Text('Error: $error'),
               const SizedBox(height: 16),
               ElevatedButton(
-                onPressed: () => ref.invalidate(routinesProvider),
+                onPressed: () => ref.invalidate(routineNotifierProvider),
                 child: const Text('Retry'),
               ),
             ],
