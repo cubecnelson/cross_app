@@ -49,7 +49,7 @@ class _EditRoutineScreenState extends ConsumerState<EditRoutineScreen> {
     final result = await Navigator.push(
       context,
       MaterialPageRoute(
-        builder: (_) => ExercisePickerScreen(),
+        builder: (_) => const ExercisePickerScreen(),
       ),
     );
 
@@ -268,7 +268,7 @@ class _EditRoutineScreenState extends ConsumerState<EditRoutineScreen> {
                   itemBuilder: (context, index) {
                     final exercise = _exercises[index];
                     return Card(
-                      key: ValueKey(exercise.exerciseId + index.toString()),
+                      key: ValueKey('${exercise.exerciseId}_$index'),
                       margin: const EdgeInsets.only(bottom: 8),
                       child: ListTile(
                         leading: const Icon(Icons.drag_handle),
@@ -441,6 +441,17 @@ class _ExerciseConfigDialogState extends State<_ExerciseConfigDialog> {
             }
 
             final weight = double.tryParse(_weightController.text);
+            // Validate weight if provided
+            if (_weightController.text.isNotEmpty && (weight == null || weight <= 0)) {
+              ScaffoldMessenger.of(context).showSnackBar(
+                const SnackBar(
+                  content: Text('Weight must be a positive number'),
+                  backgroundColor: Colors.red,
+                ),
+              );
+              return;
+            }
+
             final restTime = int.tryParse(_restController.text);
 
             widget.onSave(sets, reps, weight, restTime);
