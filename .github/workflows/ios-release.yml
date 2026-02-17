@@ -5,7 +5,6 @@ name: iOS Release to App Store Connect (Certificate-Based)
 on:
   push:
     branches:
-      - main
       - release/*
     tags:
       - 'v*'
