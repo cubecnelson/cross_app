@@ -11,6 +11,7 @@ class Workout {
   final List<WorkoutSet> sets;
   final DateTime createdAt;
   final DateTime? updatedAt;
+  final double? sRPE; // Session Rate of Perceived Exertion (0-10)
 
   Workout({
     required this.id,
@@ -23,6 +24,7 @@ class Workout {
     this.sets = const [],
     required this.createdAt,
     this.updatedAt,
+    this.sRPE,
   });
 
   factory Workout.fromJson(Map<String, dynamic> json) {
@@ -41,6 +43,7 @@ class Workout {
               .map((setJson) => WorkoutSet.fromJson(setJson))
               .toList()
           : [],
+      sRPE: json['s_rpe'] != null ? (json['s_rpe'] as num).toDouble() : null,
       createdAt: DateTime.parse(json['created_at'] as String),
       updatedAt: json['updated_at'] != null
           ? DateTime.parse(json['updated_at'] as String)
@@ -57,6 +60,7 @@ class Workout {
       'routine_name': routineName,
       'notes': notes,
       'duration': duration?.inSeconds,
+      's_rpe': sRPE,
       'created_at': createdAt.toIso8601String(),
       'updated_at': updatedAt?.toIso8601String(),
     };
@@ -73,6 +77,7 @@ class Workout {
     List<WorkoutSet>? sets,
     DateTime? createdAt,
     DateTime? updatedAt,
+    double? sRPE,
   }) {
     return Workout(
       id: id ?? this.id,
@@ -85,6 +90,7 @@ class Workout {
       sets: sets ?? this.sets,
       createdAt: createdAt ?? this.createdAt,
       updatedAt: updatedAt ?? this.updatedAt,
+      sRPE: sRPE ?? this.sRPE,
     );
   }
 
@@ -97,5 +103,13 @@ class Workout {
 
   int get totalReps {
     return sets.fold(0, (sum, set) => sum + (set.reps ?? 0));
+  }
+
+  /// Calculate Arbitrary Units (AU) for this workout
+  /// AU = sRPE (0-10) × Duration (minutes)
+  /// Returns 0 if sRPE or duration is not available
+  double get au {
+    if (sRPE == null || duration == null) return 0.0;
+    return sRPE! * (duration!.inMinutes);
   }
 }

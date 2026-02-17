@@ -31,6 +31,7 @@ class _ActiveWorkoutScreenState extends ConsumerState<ActiveWorkoutScreen> {
 
   final List<WorkoutExercise> _exercises = [];
   final _notesController = TextEditingController();
+  double? _sRPE; // Session RPE (0-10)
   bool _isSaving = false;
 
   @override
@@ -237,6 +238,7 @@ class _ActiveWorkoutScreenState extends ConsumerState<ActiveWorkoutScreen> {
         routineName: widget.routine?.name,
         notes: _notesController.text.isEmpty ? null : _notesController.text,
         duration: _duration,
+        sRPE: _sRPE,
         createdAt: DateTime.now(),
       );
 
@@ -494,14 +496,45 @@ class _ActiveWorkoutScreenState extends ConsumerState<ActiveWorkoutScreen> {
               ),
             ],
           ),
-          child: TextField(
-            controller: _notesController,
-            decoration: const InputDecoration(
-              hintText: 'Add workout notes...',
-              border: OutlineInputBorder(),
-              prefixIcon: Icon(Icons.note_outlined, size: 24, color: null),
-            ),
-            maxLines: 2,
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              Row(
+                children: [
+                  Expanded(
+                    child: Text(
+                      'Session RPE (0-10):',
+                      style: Theme.of(context).textTheme.bodyMedium,
+                    ),
+                  ),
+                  ...List.generate(11, (index) {
+                    return Padding(
+                      padding: const EdgeInsets.symmetric(horizontal: 2),
+                      child: ChoiceChip(
+                        label: Text(index.toString()),
+                        selected: _sRPE?.toInt() == index,
+                        onSelected: (selected) {
+                          setState(() {
+                            _sRPE = selected ? index.toDouble() : null;
+                          });
+                        },
+                        visualDensity: VisualDensity.compact,
+                      ),
+                    );
+                  }),
+                ],
+              ),
+              const SizedBox(height: 12),
+              TextField(
+                controller: _notesController,
+                decoration: const InputDecoration(
+                  hintText: 'Add workout notes...',
+                  border: OutlineInputBorder(),
+                  prefixIcon: Icon(Icons.note_outlined, size: 24, color: null),
+                ),
+                maxLines: 2,
+              ),
+            ],
           ),
         ),
       ),
