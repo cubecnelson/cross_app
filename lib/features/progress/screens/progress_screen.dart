@@ -10,7 +10,7 @@ class ProgressScreen extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final workouts = ref.watch(workoutsProvider);
+    final workouts = ref.watch(workoutNotifierProvider);
 
     return Scaffold(
       appBar: AppBar(

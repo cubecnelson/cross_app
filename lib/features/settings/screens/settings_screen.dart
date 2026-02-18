@@ -5,6 +5,7 @@ import '../../../providers/auth_provider.dart';
 import '../../auth/screens/login_screen.dart';
 import 'health_settings_screen.dart';
 import 'data_export_screen.dart';
+import 'notification_settings_screen.dart';
 
 class SettingsScreen extends ConsumerWidget {
   const SettingsScreen({super.key});
@@ -34,6 +35,19 @@ class SettingsScreen extends ConsumerWidget {
                     'A robust workout tracking app for strength training.',
                   ),
                 ],
+              );
+            },
+          ),
+          ListTile(
+            leading: const Icon(Icons.notifications_outlined, size: 24, color: null),
+            title: const Text('Notifications'),
+            subtitle: const Text('Training alerts and achievements'),
+            onTap: () {
+              Navigator.push(
+                context,
+                MaterialPageRoute(
+                  builder: (_) => const NotificationSettingsScreen(),
+                ),
               );
             },
           ),

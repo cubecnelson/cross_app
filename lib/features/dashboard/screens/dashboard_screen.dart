@@ -4,10 +4,13 @@ import '../../../core/utils/date_utils.dart';
 import '../../../providers/auth_provider.dart';
 import '../../../providers/workout_provider.dart';
 import '../../../providers/routine_provider.dart';
+import '../../../providers/training_load_provider.dart';
+import '../../../providers/training_alert_provider.dart';
 import '../../../widgets/loading_indicator.dart';
 import '../../workouts/screens/active_workout_screen.dart';
 import '../../routines/screens/routines_list_screen.dart';
 import '../../auth/screens/login_screen.dart';
+import '../../settings/screens/notification_settings_screen.dart';
 
 class DashboardScreen extends ConsumerWidget {
   const DashboardScreen({super.key});
@@ -15,21 +18,58 @@ class DashboardScreen extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final userProfile = ref.watch(userProfileProvider);
-    final workouts = ref.watch(workoutsProvider);
-    final routines = ref.watch(routinesProvider);
+    final workouts = ref.watch(workoutNotifierProvider);
+    final routines = ref.watch(routineNotifierProvider);
 
-    return Scaffold(
+    return _DailyCheckRunner(
+      child: Scaffold(
       appBar: AppBar(
         title: const Text('Cross'),
         actions: [
-          IconButton(
-            icon: const Icon(Icons.notifications_outlined),
-            onPressed: () {
-              // TODO: Implement notifications
-              ScaffoldMessenger.of(context).showSnackBar(
-                const SnackBar(
-                  content: Text('Notifications coming soon!'),
-                ),
+          Consumer(
+            builder: (context, ref, child) {
+              final notificationState = ref.watch(notificationNotifierProvider);
+              final hasPending = notificationState.hasPendingNotifications;
+              final unreadAchievements = notificationState.unreadAchievements;
+              
+              return Stack(
+                children: [
+                  IconButton(
+                    icon: const Icon(Icons.notifications_outlined),
+                    onPressed: () {
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (_) => const NotificationSettingsScreen(),
+                        ),
+                      );
+                    },
+                  ),
+                  if (hasPending || unreadAchievements > 0)
+                    Positioned(
+                      right: 8,
+                      top: 8,
+                      child: Container(
+                        padding: const EdgeInsets.all(2),
+                        decoration: BoxDecoration(
+                          color: Colors.red,
+                          borderRadius: BorderRadius.circular(10),
+                        ),
+                        constraints: const BoxConstraints(
+                          minWidth: 16,
+                          minHeight: 16,
+                        ),
+                        child: Text(
+                          '${unreadAchievements > 0 ? unreadAchievements : '!'}',
+                          style: const TextStyle(
+                            color: Colors.white,
+                            fontSize: 10,
+                          ),
+                          textAlign: TextAlign.center,
+                        ),
+                      ),
+                    ),
+                ],
               );
             },
           ),
@@ -373,5 +413,63 @@ class DashboardScreen extends ConsumerWidget {
         ),
       ),
     );
+  }
+}
+
+// Widget that runs daily training load checks
+class _DailyCheckRunner extends ConsumerStatefulWidget {
+  const _DailyCheckRunner({required this.child});
+  
+  final Widget child;
+
+  @override
+  ConsumerState<_DailyCheckRunner> createState() => _DailyCheckRunnerState();
+}
+
+class _DailyCheckRunnerState extends ConsumerState<_DailyCheckRunner> 
+    with WidgetsBindingObserver {
+  
+  @override
+  void initState() {
+    super.initState();
+    WidgetsBinding.instance.addObserver(this);
+    _runDailyCheck();
+  }
+
+  @override
+  void dispose() {
+    WidgetsBinding.instance.removeObserver(this);
+    super.dispose();
+  }
+
+  @override
+  void didChangeAppLifecycleState(AppLifecycleState state) {
+    if (state == AppLifecycleState.resumed) {
+      // Run check when app returns to foreground
+      _runDailyCheck();
+    }
+  }
+
+  Future<void> _runDailyCheck() async {
+    final notificationNotifier = ref.read(notificationNotifierProvider.notifier);
+    
+    // Only run if should run daily check
+    if (!notificationNotifier.shouldRunDailyCheck()) {
+      return;
+    }
+    
+    // Get workouts
+    final workoutsAsync = ref.read(workoutNotifierProvider);
+    
+    workoutsAsync.whenData((workouts) async {
+      if (workouts.isNotEmpty) {
+        await notificationNotifier.runDailyCheck(workouts);
+      }
+    });
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return widget.child;
   }
 }
