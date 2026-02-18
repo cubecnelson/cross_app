@@ -4,7 +4,6 @@ import '../../../core/utils/date_utils.dart';
 import '../../../providers/auth_provider.dart';
 import '../../../providers/workout_provider.dart';
 import '../../../providers/routine_provider.dart';
-import '../../../providers/training_load_provider.dart';
 import '../../../providers/training_alert_provider.dart';
 import '../../../widgets/loading_indicator.dart';
 import '../../workouts/screens/active_workout_screen.dart';
@@ -23,9 +22,9 @@ class DashboardScreen extends ConsumerWidget {
 
     return _DailyCheckRunner(
       child: Scaffold(
-      appBar: AppBar(
-        title: const Text('Cross'),
-        actions: [
+        appBar: AppBar(
+          title: const Text('Cross'),
+          actions: [
           Consumer(
             builder: (context, ref, child) {
               final notificationState = ref.watch(notificationNotifierProvider);
@@ -150,10 +149,10 @@ class DashboardScreen extends ConsumerWidget {
               ),
             ],
           ),
-        ],
-      ),
-      body: SafeArea(
-        child: userProfile.when(
+          ],
+        ),
+        body: SafeArea(
+          child: userProfile.when(
           data: (profile) {
             if (profile == null) {
               return const Center(child: Text('User profile not found'));
@@ -412,6 +411,7 @@ class DashboardScreen extends ConsumerWidget {
           error: (error, stack) => Center(child: Text('Error: $error')),
         ),
       ),
+    ),
     );
   }
 }

@@ -11,7 +11,7 @@ import 'features/home/screens/home_screen.dart';
 class CrossApp extends ConsumerWidget {
   const CrossApp({super.key, required this.shorebirdCodePush});
 
-  final ShorebirdCodePush shorebirdCodePush;
+  final ShorebirdUpdater shorebirdCodePush;
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {

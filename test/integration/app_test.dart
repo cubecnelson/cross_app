@@ -1,8 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:shorebird_code_push/shorebird_code_push.dart';
 import 'package:cross/app.dart';
 import 'package:cross/providers/auth_provider.dart';
+import 'package:cross/providers/shorebird_provider.dart';
 import 'package:cross/providers/theme_provider.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 
@@ -22,8 +24,9 @@ void main() {
             return Stream.value(AuthState(AuthChangeEvent.signedOut, null));
           }),
           themeProvider.overrideWith((ref) => MockThemeNotifier(ThemeMode.light)),
+          shorebirdCodePushProvider.overrideWithValue(ShorebirdUpdater()),
         ],
-        child: const CrossApp(),
+        child: CrossApp(shorebirdCodePush: ShorebirdUpdater()),
       ),
     );
 
@@ -45,8 +48,9 @@ void main() {
             return const Stream.empty();
           }),
           themeProvider.overrideWith((ref) => MockThemeNotifier(ThemeMode.light)),
+          shorebirdCodePushProvider.overrideWithValue(ShorebirdUpdater()),
         ],
-        child: const CrossApp(),
+        child: CrossApp(shorebirdCodePush: ShorebirdUpdater()),
       ),
     );
 
@@ -62,8 +66,9 @@ void main() {
             return Stream.error('Test error');
           }),
           themeProvider.overrideWith((ref) => MockThemeNotifier(ThemeMode.light)),
+          shorebirdCodePushProvider.overrideWithValue(ShorebirdUpdater()),
         ],
-        child: const CrossApp(),
+        child: CrossApp(shorebirdCodePush: ShorebirdUpdater()),
       ),
     );
 
@@ -82,8 +87,9 @@ void main() {
             return Stream.value(AuthState(AuthChangeEvent.signedOut, null));
           }),
           themeProvider.overrideWith((ref) => MockThemeNotifier(ThemeMode.light)),
+          shorebirdCodePushProvider.overrideWithValue(ShorebirdUpdater()),
         ],
-        child: const CrossApp(),
+        child: CrossApp(shorebirdCodePush: ShorebirdUpdater()),
       ),
     );
 
@@ -98,8 +104,9 @@ void main() {
             return Stream.value(AuthState(AuthChangeEvent.signedOut, null));
           }),
           themeProvider.overrideWith((ref) => MockThemeNotifier(ThemeMode.dark)),
+          shorebirdCodePushProvider.overrideWithValue(ShorebirdUpdater()),
         ],
-        child: const CrossApp(),
+        child: CrossApp(shorebirdCodePush: ShorebirdUpdater()),
       ),
     );
 
@@ -114,8 +121,9 @@ void main() {
             return Stream.value(AuthState(AuthChangeEvent.signedOut, null));
           }),
           themeProvider.overrideWith((ref) => MockThemeNotifier(ThemeMode.system)),
+          shorebirdCodePushProvider.overrideWithValue(ShorebirdUpdater()),
         ],
-        child: const CrossApp(),
+        child: CrossApp(shorebirdCodePush: ShorebirdUpdater()),
       ),
     );
 

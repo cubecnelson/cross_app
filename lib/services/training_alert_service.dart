@@ -337,7 +337,7 @@ Week ending ${lastSunday.day}/${lastSunday.month}:
   Future<bool> requestPermissions() async {
     final bool? androidGranted = await _notificationsPlugin
         .resolvePlatformSpecificImplementation<AndroidFlutterLocalNotificationsPlugin>()
-        ?.requestPermission();
+        ?.requestNotificationsPermission();
     
     final bool? iosGranted = await _notificationsPlugin
         .resolvePlatformSpecificImplementation<IOSFlutterLocalNotificationsPlugin>()

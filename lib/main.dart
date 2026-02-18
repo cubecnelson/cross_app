@@ -11,7 +11,7 @@ void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   
   // Initialize Shorebird for over-the-air updates
-  final shorebirdCodePush = ShorebirdCodePush();
+  final shorebirdCodePush = ShorebirdUpdater();
   
   // Initialize Hive for local storage
   await Hive.initFlutter();

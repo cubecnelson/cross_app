@@ -1,4 +1,5 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import '../models/workout.dart';
 import '../services/training_alert_service.dart';
 
 final trainingAlertServiceProvider = Provider<TrainingAlertService>((ref) {

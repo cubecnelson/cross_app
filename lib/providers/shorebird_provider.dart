@@ -1,29 +1,28 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:shorebird_code_push/shorebird_code_push.dart';
 
-final shorebirdCodePushProvider = Provider<ShorebirdCodePush>((ref) {
+final shorebirdCodePushProvider = Provider<ShorebirdUpdater>((ref) {
   throw UnimplementedError('shorebirdCodePushProvider should be overridden');
 });
 
 final shorebirdUpdateAvailableProvider = FutureProvider<bool>((ref) async {
   final shorebird = ref.watch(shorebirdCodePushProvider);
-  
+
   try {
-    // Check if a new patch is available
-    final isUpdateAvailable = await shorebird.isNewPatchAvailableForDownload();
-    return isUpdateAvailable;
+    if (!shorebird.isAvailable) return false;
+    final status = await shorebird.checkForUpdate();
+    return status == UpdateStatus.outdated;
   } catch (e) {
-    // If there's an error, assume no update is available
     return false;
   }
 });
 
 final shorebirdCurrentPatchNumberProvider = FutureProvider<int?>((ref) async {
   final shorebird = ref.watch(shorebirdCodePushProvider);
-  
+
   try {
-    final currentPatchNumber = await shorebird.currentPatchNumber();
-    return currentPatchNumber;
+    final patch = await shorebird.readCurrentPatch();
+    return patch?.number;
   } catch (e) {
     return null;
   }
@@ -31,33 +30,37 @@ final shorebirdCurrentPatchNumberProvider = FutureProvider<int?>((ref) async {
 
 final shorebirdNextPatchNumberProvider = FutureProvider<int?>((ref) async {
   final shorebird = ref.watch(shorebirdCodePushProvider);
-  
+
   try {
-    final nextPatchNumber = await shorebird.nextPatchNumber();
-    return nextPatchNumber;
+    final patch = await shorebird.readNextPatch();
+    return patch?.number;
   } catch (e) {
     return null;
   }
 });
 
 class ShorebirdNotifier extends StateNotifier<ShorebirdState> {
-  final ShorebirdCodePush _shorebird;
-  
+  final ShorebirdUpdater _shorebird;
+
   ShorebirdNotifier(this._shorebird) : super(ShorebirdState.initial());
 
   Future<void> checkForUpdates() async {
     state = state.copyWith(checkingForUpdates: true);
-    
+
     try {
-      final isUpdateAvailable = await _shorebird.isNewPatchAvailableForDownload();
-      final currentPatchNumber = await _shorebird.currentPatchNumber();
-      final nextPatchNumber = await _shorebird.nextPatchNumber();
-      
+      if (!_shorebird.isAvailable) {
+        state = state.copyWith(checkingForUpdates: false);
+        return;
+      }
+      final status = await _shorebird.checkForUpdate();
+      final currentPatch = await _shorebird.readCurrentPatch();
+      final nextPatch = await _shorebird.readNextPatch();
+
       state = state.copyWith(
         checkingForUpdates: false,
-        updateAvailable: isUpdateAvailable,
-        currentPatchNumber: currentPatchNumber,
-        nextPatchNumber: nextPatchNumber,
+        updateAvailable: status == UpdateStatus.outdated,
+        currentPatchNumber: currentPatch?.number,
+        nextPatchNumber: nextPatch?.number,
         lastChecked: DateTime.now(),
       );
     } catch (e) {
@@ -71,11 +74,11 @@ class ShorebirdNotifier extends StateNotifier<ShorebirdState> {
 
   Future<bool> downloadUpdate() async {
     if (!state.updateAvailable) return false;
-    
+
     state = state.copyWith(downloadingUpdate: true);
-    
+
     try {
-      await _shorebird.downloadUpdateIfAvailable();
+      await _shorebird.update();
       state = state.copyWith(
         downloadingUpdate: false,
         updateAvailable: false,
