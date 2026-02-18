@@ -13,6 +13,7 @@ import '../../../providers/recommendation_provider.dart';
 import '../../exercises/screens/exercise_picker_screen.dart';
 import '../widgets/exercise_set_widget.dart';
 import '../widgets/recommendations_section.dart';
+import 'session_rpe_screen.dart';
 
 class ActiveWorkoutScreen extends ConsumerStatefulWidget {
   final Routine? routine;
@@ -31,7 +32,6 @@ class _ActiveWorkoutScreenState extends ConsumerState<ActiveWorkoutScreen> {
 
   final List<WorkoutExercise> _exercises = [];
   final _notesController = TextEditingController();
-  double? _sRPE; // Session RPE (0-10)
   bool _isSaving = false;
 
   @override
@@ -229,7 +229,7 @@ class _ActiveWorkoutScreenState extends ConsumerState<ActiveWorkoutScreen> {
     try {
       debugPrint('🏋️ Creating workout for user: ${user.id}');
 
-      // Create workout
+      // Create workout (sRPE selected on SessionRpeScreen after save)
       final workout = Workout(
         id: const Uuid().v4(),
         userId: user.id,
@@ -238,7 +238,7 @@ class _ActiveWorkoutScreenState extends ConsumerState<ActiveWorkoutScreen> {
         routineName: widget.routine?.name,
         notes: _notesController.text.isEmpty ? null : _notesController.text,
         duration: _duration,
-        sRPE: _sRPE,
+        sRPE: null, // Selected on SessionRpeScreen after finish
         createdAt: DateTime.now(),
       );
 
@@ -296,12 +296,24 @@ class _ActiveWorkoutScreenState extends ConsumerState<ActiveWorkoutScreen> {
 
       if (mounted) {
         Navigator.pop(context);
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(
-            content: Text('Workout saved! $setsCreated sets completed 🎉'),
-            backgroundColor: Colors.green,
+        // Navigate to Session RPE selection after saving
+        await Navigator.push(
+          context,
+          MaterialPageRoute(
+            builder: (_) => SessionRpeScreen(
+              workout: createdWorkout,
+              isPostWorkout: true,
+            ),
           ),
         );
+        if (mounted) {
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(
+              content: Text('Workout saved! $setsCreated sets completed 🎉'),
+              backgroundColor: Colors.green,
+            ),
+          );
+        }
       }
     } catch (e, stackTrace) {
       debugPrint('❌ Error saving workout: $e');
@@ -496,36 +508,7 @@ class _ActiveWorkoutScreenState extends ConsumerState<ActiveWorkoutScreen> {
               ),
             ],
           ),
-          child: Column(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              Row(
-                children: [
-                  Expanded(
-                    child: Text(
-                      'Session RPE (0-10):',
-                      style: Theme.of(context).textTheme.bodyMedium,
-                    ),
-                  ),
-                  ...List.generate(11, (index) {
-                    return Padding(
-                      padding: const EdgeInsets.symmetric(horizontal: 2),
-                      child: ChoiceChip(
-                        label: Text(index.toString()),
-                        selected: _sRPE?.toInt() == index,
-                        onSelected: (selected) {
-                          setState(() {
-                            _sRPE = selected ? index.toDouble() : null;
-                          });
-                        },
-                        visualDensity: VisualDensity.compact,
-                      ),
-                    );
-                  }),
-                ],
-              ),
-              const SizedBox(height: 12),
-              TextField(
+          child: TextField(
                 controller: _notesController,
                 decoration: const InputDecoration(
                   hintText: 'Add workout notes...',
@@ -534,8 +517,6 @@ class _ActiveWorkoutScreenState extends ConsumerState<ActiveWorkoutScreen> {
                 ),
                 maxLines: 2,
               ),
-            ],
-          ),
         ),
       ),
     );

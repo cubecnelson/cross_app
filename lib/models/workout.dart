@@ -78,6 +78,7 @@ class Workout {
     DateTime? createdAt,
     DateTime? updatedAt,
     double? sRPE,
+    bool clearSRPE = false,
   }) {
     return Workout(
       id: id ?? this.id,
@@ -90,7 +91,7 @@ class Workout {
       sets: sets ?? this.sets,
       createdAt: createdAt ?? this.createdAt,
       updatedAt: updatedAt ?? this.updatedAt,
-      sRPE: sRPE ?? this.sRPE,
+      sRPE: clearSRPE ? null : (sRPE ?? this.sRPE),
     );
   }
 
