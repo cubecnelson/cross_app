@@ -45,6 +45,9 @@ dependencies:
   # Error Tracking
   sentry_flutter: ^8.14.2
   
+  # Code Push (Over-the-air updates)
+  shorebird_code_push: ^0.27.1
+  
   # Health Integration
   health: ^13.3.0
   

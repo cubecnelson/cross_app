@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../../core/constants/app_constants.dart';
 import '../../../providers/auth_provider.dart';
+import '../../../providers/shorebird_provider.dart';
 import '../../auth/screens/login_screen.dart';
 import 'health_settings_screen.dart';
 import 'data_export_screen.dart';
@@ -136,6 +137,81 @@ class SettingsScreen extends ConsumerWidget {
                   ),
                 );
               }
+            },
+          ),
+          const Divider(),
+          const _SectionHeader(title: 'Updates'),
+          Consumer(
+            builder: (context, ref, child) {
+              final shorebirdState = ref.watch(shorebirdNotifierProvider);
+              final currentPatchAsync = ref.watch(shorebirdCurrentPatchNumberProvider);
+              final nextPatchAsync = ref.watch(shorebirdNextPatchNumberProvider);
+              
+              return Column(
+                children: [
+                  ListTile(
+                    leading: const Icon(Icons.system_update, size: 24, color: null),
+                    title: const Text('Check for Updates'),
+                    subtitle: currentPatchAsync.when(
+                      data: (patchNumber) => Text(
+                        patchNumber != null
+                            ? 'Current patch: $patchNumber'
+                            : 'Check for over-the-air updates',
+                      ),
+                      loading: () => const Text('Checking...'),
+                      error: (_, __) => const Text('Update check failed'),
+                    ),
+                    trailing: shorebirdState.checkingForUpdates
+                        ? const CircularProgressIndicator()
+                        : null,
+                    onTap: () async {
+                      final notifier = ref.read(shorebirdNotifierProvider.notifier);
+                      await notifier.checkForUpdates();
+                    },
+                  ),
+                  if (shorebirdState.updateAvailable)
+                    ListTile(
+                      leading: const Icon(Icons.download, size: 24, color: Colors.green),
+                      title: const Text('Update Available'),
+                      subtitle: nextPatchAsync.when(
+                        data: (nextPatch) => Text(
+                          nextPatch != null
+                              ? 'Patch $nextPatch ready to download'
+                              : 'New version available',
+                        ),
+                        loading: () => const Text('Checking...'),
+                        error: (_, __) => const Text('Error'),
+                      ),
+                      trailing: shorebirdState.downloadingUpdate
+                          ? const CircularProgressIndicator()
+                          : ElevatedButton(
+                              onPressed: () async {
+                                final notifier = ref.read(shorebirdNotifierProvider.notifier);
+                                final success = await notifier.downloadUpdate();
+                                if (success && context.mounted) {
+                                  ScaffoldMessenger.of(context).showSnackBar(
+                                    const SnackBar(
+                                      content: Text('Update downloaded successfully!'),
+                                      backgroundColor: Colors.green,
+                                    ),
+                                  );
+                                }
+                              },
+                              child: const Text('Download'),
+                            ),
+                    ),
+                  if (shorebirdState.error != null)
+                    ListTile(
+                      leading: const Icon(Icons.error_outline, size: 24, color: Colors.red),
+                      title: const Text('Update Error'),
+                      subtitle: Text(shorebirdState.error!),
+                      onTap: () {
+                        final notifier = ref.read(shorebirdNotifierProvider.notifier);
+                        notifier.clearError();
+                      },
+                    ),
+                ],
+              );
             },
           ),
           const Divider(),
