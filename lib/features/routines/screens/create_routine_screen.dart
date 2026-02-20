@@ -10,7 +10,9 @@ import '../../../widgets/custom_text_field.dart';
 import '../../exercises/screens/exercise_picker_screen.dart';
 
 class CreateRoutineScreen extends ConsumerStatefulWidget {
-  const CreateRoutineScreen({super.key});
+  final Routine? routine;
+
+  const CreateRoutineScreen({super.key, this.routine});
 
   @override
   ConsumerState<CreateRoutineScreen> createState() =>
@@ -23,6 +25,19 @@ class _CreateRoutineScreenState extends ConsumerState<CreateRoutineScreen> {
   final _descriptionController = TextEditingController();
   final List<RoutineExercise> _exercises = [];
   bool _isSaving = false;
+
+  @override
+  void initState() {
+    super.initState();
+    // If editing an existing routine, populate the form
+    if (widget.routine != null) {
+      _nameController.text = widget.routine!.name;
+      if (widget.routine!.description != null) {
+        _descriptionController.text = widget.routine!.description!;
+      }
+      _exercises.addAll(widget.routine!.exercises);
+    }
+  }
 
   @override
   void dispose() {
@@ -93,33 +108,58 @@ class _CreateRoutineScreenState extends ConsumerState<CreateRoutineScreen> {
     setState(() => _isSaving = true);
 
     try {
-      final routine = Routine(
-        id: const Uuid().v4(),
-        userId: user.id,
-        name: _nameController.text.trim(),
-        description: _descriptionController.text.isEmpty
-            ? null
-            : _descriptionController.text,
-        exercises: _exercises,
-        createdAt: DateTime.now(),
-      );
-
-      await ref.read(routineNotifierProvider.notifier).createRoutine(routine);
-
-      if (mounted) {
-        Navigator.pop(context);
-        ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(
-            content: Text('Routine created successfully!'),
-            backgroundColor: Colors.green,
-          ),
+      if (widget.routine != null) {
+        // Update existing routine
+        final updatedRoutine = widget.routine!.copyWith(
+          name: _nameController.text.trim(),
+          description: _descriptionController.text.isEmpty
+              ? null
+              : _descriptionController.text,
+          exercises: _exercises,
+          updatedAt: DateTime.now(),
         );
+
+        await ref.read(routineNotifierProvider.notifier).updateRoutine(updatedRoutine);
+
+        if (mounted) {
+          Navigator.pop(context);
+          ScaffoldMessenger.of(context).showSnackBar(
+            const SnackBar(
+              content: Text('Routine updated successfully!'),
+              backgroundColor: Colors.green,
+            ),
+          );
+        }
+      } else {
+        // Create new routine
+        final routine = Routine(
+          id: const Uuid().v4(),
+          userId: user.id,
+          name: _nameController.text.trim(),
+          description: _descriptionController.text.isEmpty
+              ? null
+              : _descriptionController.text,
+          exercises: _exercises,
+          createdAt: DateTime.now(),
+        );
+
+        await ref.read(routineNotifierProvider.notifier).createRoutine(routine);
+
+        if (mounted) {
+          Navigator.pop(context);
+          ScaffoldMessenger.of(context).showSnackBar(
+            const SnackBar(
+              content: Text('Routine created successfully!'),
+              backgroundColor: Colors.green,
+            ),
+          );
+        }
       }
     } catch (e) {
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
-            content: Text('Failed to create routine: $e'),
+            content: Text('Failed to save routine: $e'),
             backgroundColor: Colors.red,
           ),
         );
@@ -135,7 +175,7 @@ class _CreateRoutineScreenState extends ConsumerState<CreateRoutineScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Create Routine'),
+        title: Text(widget.routine != null ? 'Edit Routine' : 'Create Routine'),
       ),
       body: SingleChildScrollView(
         padding: const EdgeInsets.all(16),

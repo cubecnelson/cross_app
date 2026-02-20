@@ -98,6 +98,19 @@ class _RoutinesListScreenState extends ConsumerState<RoutinesListScreen> with Wi
                           },
                         ),
                         IconButton(
+                          icon: const Icon(Icons.edit_outlined),
+                          onPressed: () {
+                            Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                builder: (_) => CreateRoutineScreen(
+                                  routine: routine,
+                                ),
+                              ),
+                            );
+                          },
+                        ),
+                        IconButton(
                           icon: const Icon(Icons.delete_outline),
                           onPressed: () async {
                             final result = await showDialog<bool>(
