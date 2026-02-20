@@ -43,11 +43,28 @@
       "effort_hours": 4,
       "status": "completed",
       "selected_at": "2026-02-11T01:02:21Z"
+    },
+    "2026-02-19": {
+      "task_id": "P1-005",
+      "task_title": "Add achievement system (gamificatio",
+      "effort_hours": 3,
+      "status": "partially_completed",
+      "selected_at": "2026-02-19T01:06:24Z",
+      "completed_at": "2026-02-20T01:45:00Z",
+      "details": "Implemented achievement notifications for workout milestones (50/100 workouts, 10k/50k AU totals, 7/30 day streaks) via TrainingAlertService. Added notification settings screen and dashboard badge. Still needs UI components (badges display, achievement screen, points system)."
+    },
+    "2026-02-20": {
+      "task_id": "P2-009",
+      "task_title": "Add monthly challeng",
+      "effort_hours": 3,
+      "status": "in_progress",
+      "selected_at": "2026-02-20T01:01:45Z"
     }
   },
   "statistics": {
-    "total_tasks": 4,
-    "completed": 7,
-    "in_progress": 0
+    "total_tasks": 6,
+    "completed": 5,
+    "partially_completed": 1,
+    "in_progress": 1
   }
 }

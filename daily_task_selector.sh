@@ -4,8 +4,8 @@
 
 set -e
 
-BACKLOG_FILE="./BACKLOG.md"
-LOG_FILE="./daily_task_log.json"
+BACKLOG_FILE="./cross_app/BACKLOG.md"
+LOG_FILE="./cross_app/daily_task_log.json"
 TODAY=$(date +%Y-%m-%d)
 WORKDIR=$(pwd)
 
@@ -57,15 +57,23 @@ extract_tasks() {
         for(i=1; i<=10; i++) {
             getline next_line
             if (next_line ~ /- \*\*Status\*\*: /) {
-                if (match(next_line, /- \*\*Status\*\*: ([A-Za-z ]+)/)) {
-                    task_status = substr(next_line, RSTART+17, RLENGTH-17)
-                }
+                split(next_line, arr, /- \*\*Status\*\*: /)
+                task_status = arr[2]
+                # Remove leading/trailing spaces
+                gsub(/^[ \t]+|[ \t]+$/, "", task_status)
+                # Remove any emoji or extra characters (keep only letters and spaces)
+                gsub(/[^A-Za-z ]/, "", task_status)
+                # Trim again
+                gsub(/^[ \t]+|[ \t]+$/, "", task_status)
             }
             if (next_line ~ /- \*\*Effort\*\*: /) {
-                if (match(next_line, /- \*\*Effort\*\*: ([0-9]+) hours/)) {
-                    task_effort = substr(next_line, RSTART+17, RLENGTH-24)
+                split(next_line, arr, /- \*\*Effort\*\*: /)
+                task_effort = arr[2]
+                if (match(task_effort, /([0-9]+) hours/)) {
+                    task_effort = substr(task_effort, RSTART, RLENGTH)
                     gsub(/ hours/, "", task_effort)
                 }
+                gsub(/^[ \t]+|[ \t]+$/, "", task_effort)
             }
             if (task_status && task_effort) break
         }
@@ -73,6 +81,8 @@ extract_tasks() {
         if (task_id && task_status == "Not Started") {
             print task_id "|" task_title "|" task_effort
         }
+        # Reset for next task
+        task_id = ""; task_title = ""; task_status = ""; task_effort = ""
     }
     ' "$BACKLOG_FILE"
 }
@@ -202,7 +212,7 @@ update_backlog() {
         print "**Reason**: Automatically selected by daily task selector"
         print "**Status**: In Progress"
         print "**Start Time**: 9:00 AM"
-        print "**Expected Completion**: " strftime("%I:%M %p", systime() + 4*3600)
+        print "**Expected Completion**: 1:00 PM"
         print ""
         next
     }
@@ -245,7 +255,7 @@ generate_work_plan() {
     local task_title=$2
     local task_effort=$3
     
-    WORK_PLAN_FILE="./daily_work_plan_${TODAY}.md"
+    WORK_PLAN_FILE="./cross_app/daily_work_plan_${TODAY}.md"
     
     cat > "$WORK_PLAN_FILE" << EOF
 # Daily Work Plan - $TODAY
@@ -406,7 +416,7 @@ generate_completion_report() {
     local task_id=$1
     local task_date=$2
     
-    REPORT_FILE="./completion_report_${task_date}.md"
+    REPORT_FILE="./cross_app/completion_report_${task_date}.md"
     
     cat > "$REPORT_FILE" << EOF
 # Task Completion Report - $task_date

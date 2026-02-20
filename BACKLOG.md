@@ -164,14 +164,16 @@ This is a prioritized backlog of improvements and features for the Cross workout
 - **Notes**: Add retry logic, better error messages
 
 **P1-005**: Add achievement system (gamification)
-- **Status**: Not Started
+- **Status**: ✅ Partially Complete
+- **Completed**: 2026-02-19
 - **Effort**: 3 hours
-- **Notes**: Badges for consistency, PRs, streaks
+- **Notes**: Implemented achievement notifications for milestones (50/100 workouts, 10k/50k AU, 7/30 day streaks) via TrainingAlertService. Still needs UI components (badges, achievement screen, points system).
 
 **P1-006**: Implement workout streaks
-- **Status**: Not Started
+- **Status**: ✅ Partially Complete
+- **Completed**: 2026-02-19
 - **Effort**: 2 hours
-- **Notes**: Daily workout streak tracking
+- **Notes**: Implemented streak calculation logic in TrainingAlertService with notifications for 7-day and 30-day streaks. Still needs UI display (current streak on dashboard, streak calendar).
 
 ### 🟡 P2 Tasks
 **P2-001**: Implement Google OAuth authentication
@@ -242,7 +244,7 @@ This is a prioritized backlog of improvements and features for the Cross workout
 - **Notes**: One-rep max calculations, personal records
 
 **P2-009**: Add monthly challenges
-- **Status**: Not Started
+- **Status**: In Progress
 - **Effort**: 3 hours
 - **Notes**: Community challenges, leaderboards
 
@@ -314,6 +316,21 @@ This is a prioritized backlog of improvements and features for the Cross workout
 - **Notes**: Add analytics for performance metrics
 
 ## Daily Selection Log
+
+### 2026-02-20
+**Selected Task**: P2-009
+**Reason**: Automatically selected by daily task selector
+**Status**: In Progress
+**Start Time**: 9:00 AM
+**Expected Completion**: 12:01 PM
+
+### 2026-02-19
+**Selected Task**: P1-005
+**Reason**: Automatically selected by daily task selector
+**Status**: In Progress
+**Start Time**: 9:00 AM
+**Expected Completion**: 1:00 PM
+
 
 ### 2026-02-12
 **Selected Task**: P2-005
