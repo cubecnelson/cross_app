@@ -1,0 +1,107 @@
+<svg width="270" height="585" viewBox="0 0 270 585" fill="none" xmlns="http://www.w3.org/2000/svg">
+    <rect width="270" height="585" rx="30" fill="url(#gradient)"/>
+    <defs>
+        <linearGradient id="gradient" x1="0" y1="0" x2="270" y2="585" gradientUnits="userSpaceOnUse">
+            <stop stop-color="#8B5CF6"/>
+            <stop offset="1" stop-color="#A78BFA"/>
+        </linearGradient>
+    </defs>
+    
+    <!-- Header -->
+    <rect x="0" y="0" width="270" height="80" fill="white" fill-opacity="0.9"/>
+    <text x="20" y="50" font-family="Inter, sans-serif" font-weight="700" font-size="20" fill="#333">Workout Routines</text>
+    
+    <!-- Search Bar -->
+    <rect x="20" y="100" width="230" height="40" rx="20" fill="white" fill-opacity="0.9"/>
+    <circle cx="45" cy="120" r="6" fill="#9CA3AF"/>
+    <line x1="50" y1="120" x2="55" y2="125" stroke="#9CA3AF" stroke-width="1"/>
+    <text x="70" y="125" font-family="Inter, sans-serif" font-size="14" fill="#9CA3AF">Search routines...</text>
+    
+    <!-- Routine Card 1 -->
+    <rect x="20" y="160" width="230" height="80" rx="12" fill="white" fill-opacity="0.9"/>
+    <circle cx="45" cy="200" r="20" fill="#8B5CF6" fill-opacity="0.2"/>
+    <text x="45" y="205" text-anchor="middle" font-family="Inter, sans-serif" font-weight="600" font-size="16" fill="#8B5CF6">8</text>
+    <text x="45" y="220" text-anchor="middle" font-family="Inter, sans-serif" font-size="10" fill="#8B5CF6">exercises</text>
+    
+    <text x="75" y="185" font-family="Inter, sans-serif" font-weight="600" font-size="16" fill="#333">Chest & Triceps</text>
+    <text x="75" y="205" font-family="Inter, sans-serif" font-size="14" fill="#666">Bench press, dips, triceps extensions...</text>
+    
+    <!-- Action Buttons -->
+    <circle cx="180" cy="200" r="16" fill="#10B981"/>
+    <polygon points="175,195 175,205 185,200" fill="white"/>
+    
+    <circle cx="210" cy="200" r="16" fill="#3B82F6"/>
+    <path d="M205,195 L215,195 L215,205 L205,205 Z" fill="white"/>
+    <path d="M207,197 L213,197 L213,199 L207,199 Z" fill="white"/>
+    <path d="M207,201 L213,201 L213,203 L207,203 Z" fill="white"/>
+    
+    <circle cx="240" cy="200" r="16" fill="#EF4444"/>
+    <path d="M235,195 L245,195 L245,205 L235,205 Z" fill="white"/>
+    <path d="M237,200 L243,200" stroke="white" stroke-width="2"/>
+    
+    <!-- Routine Card 2 -->
+    <rect x="20" y="260" width="230" height="80" rx="12" fill="white" fill-opacity="0.9"/>
+    <circle cx="45" cy="300" r="20" fill="#8B5CF6" fill-opacity="0.2"/>
+    <text x="45" y="305" text-anchor="middle" font-family="Inter, sans-serif" font-weight="600" font-size="16" fill="#8B5CF6">6</text>
+    <text x="45" y="320" text-anchor="middle" font-family="Inter, sans-serif" font-size="10" fill="#8B5CF6">exercises</text>
+    
+    <text x="75" y="285" font-family="Inter, sans-serif" font-weight="600" font-size="16" fill="#333">Leg Day</text>
+    <text x="75" y="305" font-family="Inter, sans-serif" font-size="14" fill="#666">Squats, lunges, calf raises...</text>
+    
+    <!-- Action Buttons -->
+    <circle cx="180" cy="300" r="16" fill="#10B981"/>
+    <polygon points="175,295 175,305 185,300" fill="white"/>
+    
+    <circle cx="210" cy="300" r="16" fill="#3B82F6"/>
+    <path d="M205,295 L215,295 L215,305 L205,305 Z" fill="white"/>
+    <path d="M207,297 L213,297 L213,299 L207,299 Z" fill="white"/>
+    <path d="M207,301 L213,301 L213,303 L207,303 Z" fill="white"/>
+    
+    <circle cx="240" cy="300" r="16" fill="#EF4444"/>
+    <path d="M235,295 L245,295 L245,305 L235,305 Z" fill="white"/>
+    <path d="M237,300 L243,300" stroke="white" stroke-width="2"/>
+    
+    <!-- Routine Card 3 -->
+    <rect x="20" y="360" width="230" height="80" rx="12" fill="white" fill-opacity="0.9"/>
+    <circle cx="45" cy="400" r="20" fill="#8B5CF6" fill-opacity="0.2"/>
+    <text x="45" y="405" text-anchor="middle" font-family="Inter, sans-serif" font-weight="600" font-size="16" fill="#8B5CF6">5</text>
+    <text x="45" y="420" text-anchor="middle" font-family="Inter, sans-serif" font-size="10" fill="#8B5CF6">exercises</text>
+    
+    <text x="75" y="385" font-family="Inter, sans-serif" font-weight="600" font-size="16" fill="#333">Full Body Circuit</text>
+    <text x="75" y="405" font-family="Inter, sans-serif" font-size="14" fill="#666">Push-ups, pull-ups, squats...</text>
+    
+    <!-- Action Buttons -->
+    <circle cx="180" cy="400" r="16" fill="#10B981"/>
+    <polygon points="175,395 175,405 185,400" fill="white"/>
+    
+    <circle cx="210" cy="400" r="16" fill="#3B82F6"/>
+    <path d="M205,395 L215,395 L215,405 L205,405 Z" fill="white"/>
+    <path d="M207,397 L213,397 L213,399 L207,399 Z" fill="white"/>
+    <path d="M207,401 L213,401 L213,403 L207,403 Z" fill="white"/>
+    
+    <circle cx="240" cy="400" r="16" fill="#EF4444"/>
+    <path d="M235,395 L245,395 L245,405 L235,405 Z" fill="white"/>
+    <path d="M237,400 L243,400" stroke="white" stroke-width="2"/>
+    
+    <!-- Add Button -->
+    <rect x="20" y="460" width="230" height="50" rx="25" fill="white" fill-opacity="0.9"/>
+    <text x="135" y="490" text-anchor="middle" font-family="Inter, sans-serif" font-weight="600" font-size="16" fill="#8B5CF6">+ Create New Routine</text>
+    
+    <!-- Navigation -->
+    <rect x="0" y="525" width="270" height="60" fill="white" fill-opacity="0.9"/>
+    
+    <circle cx="45" cy="555" r="8" fill="#9CA3AF"/>
+    <text x="45" y="570" text-anchor="middle" font-family="Inter, sans-serif" font-size="10" fill="#9CA3AF">Home</text>
+    
+    <circle cx="90" cy="555" r="8" fill="#9CA3AF"/>
+    <text x="90" y="570" text-anchor="middle" font-family="Inter, sans-serif" font-size="10" fill="#9CA3AF">Workouts</text>
+    
+    <circle cx="135" cy="555" r="8" fill="#8B5CF6"/>
+    <text x="135" y="570" text-anchor="middle" font-family="Inter, sans-serif" font-size="10" fill="#8B5CF6">Routines</text>
+    
+    <circle cx="180" cy="555" r="8" fill="#9CA3AF"/>
+    <text x="180" y="570" text-anchor="middle" font-family="Inter, sans-serif" font-size="10" fill="#9CA3AF">Progress</text>
+    
+    <circle cx="225" cy="555" r="8" fill="#9CA3AF"/>
+    <text x="225" y="570" text-anchor="middle" font-family="Inter, sans-serif" font-size="10" fill="#9CA3AF">Profile</text>
+</svg>

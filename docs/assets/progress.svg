@@ -1,0 +1,85 @@
+<svg width="270" height="585" viewBox="0 0 270 585" fill="none" xmlns="http://www.w3.org/2000/svg">
+    <rect width="270" height="585" rx="30" fill="url(#gradient)"/>
+    <defs>
+        <linearGradient id="gradient" x1="0" y1="0" x2="270" y2="585" gradientUnits="userSpaceOnUse">
+            <stop stop-color="#0EA5E9"/>
+            <stop offset="1" stop-color="#3B82F6"/>
+        </linearGradient>
+    </defs>
+    
+    <!-- Header -->
+    <rect x="0" y="0" width="270" height="80" fill="white" fill-opacity="0.9"/>
+    <text x="20" y="50" font-family="Inter, sans-serif" font-weight="700" font-size="20" fill="#333">Progress & Analytics</text>
+    
+    <!-- Training Load Status -->
+    <rect x="20" y="100" width="230" height="100" rx="12" fill="white" fill-opacity="0.9"/>
+    <text x="35" y="125" font-family="Inter, sans-serif" font-weight="600" font-size="16" fill="#333">Training Load Status</text>
+    
+    <!-- ACWR Gauge -->
+    <circle cx="135" y="180" r="30" stroke="#E5E7EB" stroke-width="6" fill="none"/>
+    <circle cx="135" y="180" r="30" stroke="#10B981" stroke-width="6" stroke-dasharray="188.5" stroke-dashoffset="37.7" stroke-linecap="round" transform="rotate(-90 135 180)" fill="none"/>
+    <text x="135" y="180" text-anchor="middle" font-family="Inter, sans-serif" font-weight="700" font-size="20" fill="#333">0.8</text>
+    <text x="135" y="205" text-anchor="middle" font-family="Inter, sans-serif" font-size="12" fill="#666">ACWR (Optimal)</text>
+    
+    <!-- Weekly Chart -->
+    <text x="20" y="240" font-family="Inter, sans-serif" font-weight="600" font-size="16" fill="white">Weekly Training Load</text>
+    
+    <rect x="20" y="260" width="230" height="120" rx="8" fill="white" fill-opacity="0.9"/>
+    
+    <!-- Chart grid lines -->
+    <line x1="40" y1="280" x2="240" y2="280" stroke="#E5E7EB" stroke-width="1"/>
+    <line x1="40" y1="310" x2="240" y2="310" stroke="#E5E7EB" stroke-width="1"/>
+    <line x1="40" y1="340" x2="240" y2="340" stroke="#E5E7EB" stroke-width="1"/>
+    <line x1="40" y1="370" x2="240" y2="370" stroke="#E5E7EB" stroke-width="1"/>
+    
+    <!-- Chart bars -->
+    <rect x="50" y="320" width="20" height="60" rx="4" fill="#3B82F6"/>
+    <text x="60" y="385" text-anchor="middle" font-family="Inter, sans-serif" font-size="10" fill="#666">Mon</text>
+    
+    <rect x="80" y="300" width="20" height="80" rx="4" fill="#3B82F6"/>
+    <text x="90" y="385" text-anchor="middle" font-family="Inter, sans-serif" font-size="10" fill="#666">Tue</text>
+    
+    <rect x="110" y="280" width="20" height="100" rx="4" fill="#3B82F6"/>
+    <text x="120" y="385" text-anchor="middle" font-family="Inter, sans-serif" font-size="10" fill="#666">Wed</text>
+    
+    <rect x="140" y="340" width="20" height="40" rx="4" fill="#3B82F6"/>
+    <text x="150" y="385" text-anchor="middle" font-family="Inter, sans-serif" font-size="10" fill="#666">Thu</text>
+    
+    <rect x="170" y="310" width="20" height="70" rx="4" fill="#3B82F6"/>
+    <text x="180" y="385" text-anchor="middle" font-family="Inter, sans-serif" font-size="10" fill="#666">Fri</text>
+    
+    <rect x="200" y="290" width="20" height="90" rx="4" fill="#3B82F6"/>
+    <text x="210" y="385" text-anchor="middle" font-family="Inter, sans-serif" font-size="10" fill="#666">Sat</text>
+    
+    <!-- Stats Cards -->
+    <rect x="20" y="400" width="110" height="80" rx="8" fill="white" fill-opacity="0.9"/>
+    <text x="75" y="425" text-anchor="middle" font-family="Inter, sans-serif" font-weight="700" font-size="20" fill="#0EA5E9">1,850</text>
+    <text x="75" y="450" text-anchor="middle" font-family="Inter, sans-serif" font-size="12" fill="#666">Acute Load<br/>(7-day avg)</text>
+    
+    <rect x="140" y="400" width="110" height="80" rx="8" fill="white" fill-opacity="0.9"/>
+    <text x="195" y="425" text-anchor="middle" font-family="Inter, sans-serif" font-weight="700" font-size="20" fill="#10B981">2,315</text>
+    <text x="195" y="450" text-anchor="middle" font-family="Inter, sans-serif" font-size="12" fill="#666">Chronic Load<br/>(28-day avg)</text>
+    
+    <!-- Injury Risk Alert -->
+    <rect x="20" y="500" width="230" height="60" rx="8" fill="#FEF3C7" fill-opacity="0.9" stroke="#F59E0B" stroke-width="1"/>
+    <text x="35" y="525" font-family="Inter, sans-serif" font-weight="600" font-size="14" fill="#92400E">✅ Optimal Training Zone</text>
+    <text x="35" y="545" font-family="Inter, sans-serif" font-size="12" fill="#92400E">ACWR 0.8 - Low injury risk</text>
+    
+    <!-- Navigation -->
+    <rect x="0" y="525" width="270" height="60" fill="white" fill-opacity="0.9"/>
+    
+    <circle cx="45" cy="555" r="8" fill="#9CA3AF"/>
+    <text x="45" y="570" text-anchor="middle" font-family="Inter, sans-serif" font-size="10" fill="#9CA3AF">Home</text>
+    
+    <circle cx="90" cy="555" r="8" fill="#9CA3AF"/>
+    <text x="90" y="570" text-anchor="middle" font-family="Inter, sans-serif" font-size="10" fill="#9CA3AF">Workouts</text>
+    
+    <circle cx="135" cy="555" r="8" fill="#9CA3AF"/>
+    <text x="135" y="570" text-anchor="middle" font-family="Inter, sans-serif" font-size="10" fill="#9CA3AF">Routines</text>
+    
+    <circle cx="180" cy="555" r="8" fill="#0EA5E9"/>
+    <text x="180" y="570" text-anchor="middle" font-family="Inter, sans-serif" font-size="10" fill="#0EA5E9">Progress</text>
+    
+    <circle cx="225" cy="555" r="8" fill="#9CA3AF"/>
+    <text x="225" y="570" text-anchor="middle" font-family="Inter, sans-serif" font-size="10" fill="#9CA3AF">Profile</text>
+</svg>

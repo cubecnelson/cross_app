@@ -1,0 +1,124 @@
+<svg width="270" height="585" viewBox="0 0 270 585" fill="none" xmlns="http://www.w3.org/2000/svg">
+    <rect width="270" height="585" rx="30" fill="url(#gradient)"/>
+    <defs>
+        <linearGradient id="gradient" x1="0" y1="0" x2="270" y2="585" gradientUnits="userSpaceOnUse">
+            <stop stop-color="#F59E0B"/>
+            <stop offset="1" stop-color="#D97706"/>
+        </linearGradient>
+    </defs>
+    
+    <!-- Header -->
+    <rect x="0" y="0" width="270" height="80" fill="white" fill-opacity="0.9"/>
+    <text x="20" y="50" font-family="Inter, sans-serif" font-weight="700" font-size="20" fill="#333">Achievements</text>
+    
+    <!-- Points & Streak -->
+    <rect x="20" y="100" width="230" height="80" rx="12" fill="white" fill-opacity="0.9"/>
+    
+    <circle cx="60" cy="140" r="25" fill="#F59E0B"/>
+    <text x="60" y="145" text-anchor="middle" font-family="Inter, sans-serif" font-weight="700" font-size="16" fill="white">🏆</text>
+    <text x="60" y="165" text-anchor="middle" font-family="Inter, sans-serif" font-size="12" fill="#666">1,250 pts</text>
+    
+    <circle cx="135" cy="140" r="25" fill="#10B981"/>
+    <text x="135" y="145" text-anchor="middle" font-family="Inter, sans-serif" font-weight="700" font-size="16" fill="white">7</text>
+    <text x="135" y="165" text-anchor="middle" font-family="Inter, sans-serif" font-size="12" fill="#666">Day Streak</text>
+    
+    <circle cx="210" cy="140" r="25" fill="#3B82F6"/>
+    <text x="210" y="145" text-anchor="middle" font-family="Inter, sans-serif" font-weight="700" font-size="16" fill="white">12</text>
+    <text x="210" y="165" text-anchor="middle" font-family="Inter, sans-serif" font-size="12" fill="#666">Badges</text>
+    
+    <!-- Badges Section -->
+    <text x="20" y="200" font-family="Inter, sans-serif" font-weight="600" font-size="16" fill="white">Recent Badges</text>
+    
+    <!-- Badge Row 1 -->
+    <rect x="20" y="220" width="50" height="70" rx="8" fill="white" fill-opacity="0.9"/>
+    <circle cx="45" cy="250" r="15" fill="#F59E0B"/>
+    <text x="45" y="255" text-anchor="middle" font-family="Inter, sans-serif" font-weight="700" font-size="12" fill="white">🔥</text>
+    <text x="45" y="275" text-anchor="middle" font-family="Inter, sans-serif" font-size="10" fill="#666">7-Day Streak</text>
+    
+    <rect x="80" y="220" width="50" height="70" rx="8" fill="white" fill-opacity="0.9"/>
+    <circle cx="105" cy="250" r="15" fill="#3B82F6"/>
+    <text x="105" y="255" text-anchor="middle" font-family="Inter, sans-serif" font-weight="700" font-size="12" fill="white">💪</text>
+    <text x="105" y="275" text-anchor="middle" font-family="Inter, sans-serif" font-size="10" fill="#666">100 Workouts</text>
+    
+    <rect x="140" y="220" width="50" height="70" rx="8" fill="white" fill-opacity="0.9"/>
+    <circle cx="165" cy="250" r="15" fill="#8B5CF6"/>
+    <text x="165" y="255" text-anchor="middle" font-family="Inter, sans-serif" font-weight="700" font-size="12" fill="white">📈</text>
+    <text x="165" y="275" text-anchor="middle" font-family="Inter, sans-serif" font-size="10" fill="#666">10k AU Club</text>
+    
+    <rect x="200" y="220" width="50" height="70" rx="8" fill="white" fill-opacity="0.9"/>
+    <circle cx="225" cy="250" r="15" fill="#10B981"/>
+    <text x="225" y="255" text-anchor="middle" font-family="Inter, sans-serif" font-weight="700" font-size="12" fill="white">🏃</text>
+    <text x="225" y="275" text-anchor="middle" font-family="Inter, sans-serif" font-size="10" fill="#666">Marathon</text>
+    
+    <!-- Badge Row 2 -->
+    <rect x="20" y="300" width="50" height="70" rx="8" fill="white" fill-opacity="0.9"/>
+    <circle cx="45" cy="330" r="15" fill="#EF4444"/>
+    <text x="45" y="335" text-anchor="middle" font-family="Inter, sans-serif" font-weight="700" font-size="12" fill="white">🏋️</text>
+    <text x="45" y="355" text-anchor="middle" font-family="Inter, sans-serif" font-size="10" fill="#666">PR Master</text>
+    
+    <rect x="80" y="300" width="50" height="70" rx="8" fill="white" fill-opacity="0.9"/>
+    <circle cx="105" cy="330" r="15" fill="#0EA5E9"/>
+    <text x="105" y="335" text-anchor="middle" font-family="Inter, sans-serif" font-weight="700" font-size="12" fill="white">⚡</text>
+    <text x="105" y="355" text-anchor="middle" font-family="Inter, sans-serif" font-size="10" fill="#666">Consistency</text>
+    
+    <rect x="140" y="300" width="50" height="70" rx="8" fill="white" fill-opacity="0.9"/>
+    <circle cx="165" cy="330" r="15" fill="#F59E0B"/>
+    <text x="165" y="335" text-anchor="middle" font-family="Inter, sans-serif" font-weight="700" font-size="12" fill="white">🏆</text>
+    <text x="165" y="355" text-anchor="middle" font-family="Inter, sans-serif" font-size="10" fill="#666">Champion</text>
+    
+    <rect x="200" y="300" width="50" height="70" rx="8" fill="white" fill-opacity="0.9"/>
+    <circle cx="225" cy="330" r="15" fill="#8B5CF6"/>
+    <text x="225" y="335" text-anchor="middle" font-family="Inter, sans-serif" font-weight="700" font-size="12" fill="white">🎯</text>
+    <text x="225" y="355" text-anchor="middle" font-family="Inter, sans-serif" font-size="10" fill="#666">Perfect Form</text>
+    
+    <!-- Monthly Challenge -->
+    <text x="20" y="390" font-family="Inter, sans-serif" font-weight="600" font-size="16" fill="white">Monthly Challenge</text>
+    
+    <rect x="20" y="410" width="230" height="80" rx="12" fill="white" fill-opacity="0.9"/>
+    <circle cx="45" cy="450" r="20" fill="#F59E0B"/>
+    <text x="45" y="455" text-anchor="middle" font-family="Inter, sans-serif" font-weight="700" font-size="16" fill="white">🏅</text>
+    
+    <text x="75" y="430" font-family="Inter, sans-serif" font-weight="600" font-size="16" fill="#333">February Challenge</text>
+    <text x="75" y="450" font-family="Inter, sans-serif" font-size="14" fill="#666">Complete 12 workouts this month</text>
+    <text x="75" y="470" font-family="Inter, sans-serif" font-size="14" fill="#F59E0B">Progress: 8/12 (67%)</text>
+    
+    <!-- Progress bar -->
+    <rect x="75" y="475" width="150" height="6" rx="3" fill="#E5E7EB"/>
+    <rect x="75" y="475" width="100" height="6" rx="3" fill="#F59E0B"/>
+    
+    <!-- Upcoming Badges -->
+    <text x="20" y="510" font-family="Inter, sans-serif" font-weight="600" font-size="16" fill="white">Upcoming</text>
+    
+    <rect x="20" y="530" width="50" height="50" rx="8" fill="white" fill-opacity="0.3"/>
+    <circle cx="45" cy="555" r="12" fill="#9CA3AF"/>
+    <text x="45" y="560" text-anchor="middle" font-family="Inter, sans-serif" font-weight="700" font-size="10" fill="white">🏅</text>
+    <text x="45" y="575" text-anchor="middle" font-family="Inter, sans-serif" font-size="8" fill="#666">30-Day</text>
+    
+    <rect x="80" y="530" width="50" height="50" rx="8" fill="white" fill-opacity="0.3"/>
+    <circle cx="105" cy="555" r="12" fill="#9CA3AF"/>
+    <text x="105" y="560" text-anchor="middle" font-family="Inter, sans-serif" font-weight="700" font-size="10" fill="white">💎</text>
+    <text x="105" y="575" text-anchor="middle" font-family="Inter, sans-serif" font-size="8" fill="#666">50k AU</text>
+    
+    <rect x="140" y="530" width="50" height="50" rx="8" fill="white" fill-opacity="0.3"/>
+    <circle cx="165" cy="555" r="12" fill="#9CA3AF"/>
+    <text x="165" y="560" text-anchor="middle" font-family="Inter, sans-serif" font-weight="700" font-size="10" fill="white">👑</text>
+    <text x="165" y="575" text-anchor="middle" font-family="Inter, sans-serif" font-size="8" fill="#666">Elite</text>
+    
+    <!-- Navigation -->
+    <rect x="0" y="525" width="270" height="60" fill="white" fill-opacity="0.9"/>
+    
+    <circle cx="45" cy="555" r="8" fill="#9CA3AF"/>
+    <text x="45" y="570" text-anchor="middle" font-family="Inter, sans-serif" font-size="10" fill="#9CA3AF">Home</text>
+    
+    <circle cx="90" cy="555" r="8" fill="#9CA3AF"/>
+    <text x="90" y="570" text-anchor="middle" font-family="Inter, sans-serif" font-size="10" fill="#9CA3AF">Workouts</text>
+    
+    <circle cx="135" cy="555" r="8" fill="#9CA3AF"/>
+    <text x="135" y="570" text-anchor="middle" font-family="Inter, sans-serif" font-size="10" fill="#9CA3AF">Routines</text>
+    
+    <circle cx="180" cy="555" r="8" fill="#9CA3AF"/>
+    <text x="180" y="570" text-anchor="middle" font-family="Inter, sans-serif" font-size="10" fill="#9CA3AF">Progress</text>
+    
+    <circle cx="225" cy="555" r="8" fill="#F59E0B"/>
+    <text x="225" y="570" text-anchor="middle" font-family="Inter, sans-serif" font-size="10" fill="#F59E0B">Profile</text>
+</svg>

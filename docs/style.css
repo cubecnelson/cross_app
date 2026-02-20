@@ -281,6 +281,13 @@ p {
     position: relative;
 }
 
+/* Hero phone frame - transparent to show full SVG */
+.hero .phone-frame {
+    background: transparent;
+    padding: 0;
+    box-shadow: none;
+}
+
 .phone-screen {
     background-color: white;
     border-radius: 30px;
@@ -288,10 +295,21 @@ p {
     aspect-ratio: 9/19.5;
 }
 
+/* Hero phone screen - transparent for SVG */
+.hero .phone-screen {
+    background-color: transparent;
+    border-radius: 0;
+}
+
 .phone-screen img {
     width: 100%;
     height: 100%;
     object-fit: cover;
+}
+
+/* Hero image - contain to show full SVG */
+.hero .phone-screen img {
+    object-fit: contain;
 }
 
 /* Features Section */
@@ -341,6 +359,78 @@ p {
 
 .feature-card h3 {
     margin-bottom: var(--spacing-sm);
+}
+
+/* App Screens Section */
+.screens {
+    padding: var(--spacing-xxl) 0;
+    background-color: var(--background-alt);
+}
+
+.screens-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+    gap: var(--spacing-xl);
+    margin-top: var(--spacing-xl);
+}
+
+.screen-card {
+    background-color: white;
+    border-radius: var(--border-radius-lg);
+    overflow: hidden;
+    box-shadow: var(--shadow-md);
+    transition: all 0.3s ease;
+    text-align: center;
+}
+
+.screen-card:hover {
+    transform: translateY(-8px);
+    box-shadow: var(--shadow-lg);
+}
+
+.screen-card .phone-mockup {
+    width: 100%;
+    max-width: 280px;
+    margin: 0 auto;
+    padding: var(--spacing-md);
+}
+
+.screen-card .phone-frame {
+    background: linear-gradient(135deg, var(--secondary-color), var(--secondary-light));
+    border-radius: 30px;
+    padding: 12px;
+    box-shadow: var(--shadow-md);
+}
+
+.screen-card .phone-screen {
+    background: white;
+    border-radius: 20px;
+    overflow: hidden;
+    height: 500px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.screen-card .phone-screen img {
+    width: 100%;
+    height: 100%;
+    object-fit: contain;
+}
+
+.screen-info {
+    padding: var(--spacing-md);
+}
+
+.screen-info h3 {
+    margin-bottom: var(--spacing-sm);
+    color: var(--secondary-color);
+}
+
+.screen-info p {
+    color: var(--text-light);
+    font-size: 1rem;
+    line-height: 1.5;
 }
 
 /* Analysis Section */
@@ -604,6 +694,15 @@ p {
     .download-buttons {
         flex-direction: column;
         align-items: center;
+    }
+    
+    .screens-grid {
+        grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+        gap: var(--spacing-lg);
+    }
+    
+    .screen-card .phone-mockup {
+        max-width: 250px;
     }
 }
 
