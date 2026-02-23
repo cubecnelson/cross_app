@@ -13,12 +13,12 @@ class ScreenshotCapture {
   /// Capture a screenshot from the current widget tester state
   Future<void> capture(WidgetTester tester, String screenshotName) async {
     try {
-      // Check if screenshot capture is enabled
-      final shouldCapture = Platform.environment['CAPTURE_SCREENSHOTS'] == 'true' ||
-          Platform.environment['SCREENSHOT_MODE'] == 'true';
+      // Check if screenshot capture is disabled (default: enabled for screenshot tests)
+      final disabled = Platform.environment['CAPTURE_SCREENSHOTS'] == 'false' ||
+          Platform.environment['DISABLE_SCREENSHOTS'] == 'true';
       
-      if (!shouldCapture) {
-        print('Screenshot capture disabled. Enable with CAPTURE_SCREENSHOTS=true');
+      if (disabled) {
+        print('ℹ️ Screenshot capture disabled by DISABLE_SCREENSHOTS');
         return;
       }
 
@@ -51,8 +51,8 @@ class ScreenshotCapture {
   ) async {
     for (final deviceSize in deviceSizes) {
       // Set viewport size (simulating different devices)
-      tester.viewport.physicalSize = deviceSize.physicalSize;
-      tester.viewport.devicePixelRatio = deviceSize.devicePixelRatio;
+      tester.view.physicalSize = deviceSize.physicalSize;
+      tester.view.devicePixelRatio = deviceSize.devicePixelRatio;
       await tester.pumpAndSettle();
       
       await capture(tester, '${screenshotName}_${deviceSize.name}');
