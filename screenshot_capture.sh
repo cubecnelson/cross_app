@@ -47,7 +47,6 @@ CAPTURE_SCREENSHOTS=true SCREENSHOT_MODE=true flutter test \
   --dart-define=CAPTURE_SCREENSHOTS=true \
   --dart-define=SCREENSHOT_MODE=true \
   --no-track-widget-creation \
-  --platform ios \
   --timeout 60s
 
 # Check if screenshots were captured
