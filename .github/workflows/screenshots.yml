@@ -53,7 +53,7 @@ jobs:
             --dart-define=CAPTURE_SCREENSHOTS=true \
             --dart-define=SCREENSHOT_MODE=true \
             --no-track-widget-creation \
-            --platform chrome \
+            --platform ios \
             --timeout 60s \
             --verbose || echo "Tests completed with screenshots"
             
