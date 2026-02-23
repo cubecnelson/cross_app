@@ -42,18 +42,24 @@ jobs:
           
       - name: Create screenshots directory
         run: mkdir -p screenshots
-        
+
+      - name: Boot iOS Simulator
+        uses: futureware-tech/simulator-action@v4
+        with:
+          model: 'iPhone 16 Pro Max'
+          wait_for_boot: true
+          
       - name: Run screenshot tests
         env:
           CAPTURE_SCREENSHOTS: true
           SCREENSHOT_MODE: true
         run: |
-          # Run integration tests with screenshot capture enabled
           flutter test integration_test/screenshot_test.dart \
             --dart-define=CAPTURE_SCREENSHOTS=true \
             --dart-define=SCREENSHOT_MODE=true \
             --no-track-widget-creation \
-            --timeout 60s \
+            --timeout 120s \
+            -d "iPhone 16 Pro Max" \
             --verbose || echo "Tests completed with screenshots"
             
       - name: List captured screenshots
