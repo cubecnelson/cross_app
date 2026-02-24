@@ -31,7 +31,7 @@ flutter pub get
 # Run screenshot tests
 CAPTURE_SCREENSHOTS=true flutter test integration_test/screenshot_test.dart \
   --dart-define=CAPTURE_SCREENSHOTS=true \
-  --platform chrome \
+  (runs in default VM - omit --platform for integration tests) \
   --timeout 60s
 ```
 

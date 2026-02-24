@@ -17,12 +17,18 @@ jobs:
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
+
+      - uses: dart-lang/setup-dart@v1
+        with:
+          sdk: 3.5.4
         
       - name: Setup Flutter
         uses: subosito/flutter-action@v2
         with:
-          flutter-version: '3.19.0'
+          flutter-version: '3.38.7'
           channel: 'stable'
+          cache: true
+          cache-key: flutter-v3.38.7
           
       - name: Show Flutter environment
         run: |
@@ -46,7 +52,13 @@ jobs:
           
       - name: Create screenshots directory
         run: mkdir -p screenshots
-        
+
+      - name: Boot iOS Simulator
+        uses: futureware-tech/simulator-action@v4
+        with:
+          model: 'iPhone 16 Pro Max'
+          wait_for_boot: true
+          
       - name: Run screenshot tests
         env:
           CAPTURE_SCREENSHOTS: true
@@ -63,8 +75,7 @@ jobs:
             --dart-define=CAPTURE_SCREENSHOTS=true \
             --dart-define=SCREENSHOT_MODE=true \
             --no-track-widget-creation \
-            --no-sound-null-safety \
-            --platform chrome \
+            -d "iPhone 16 Pro Max" \
             --timeout 120s \
             --verbose 2>&1 | tee test_output.log
           

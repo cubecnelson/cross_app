@@ -47,8 +47,6 @@ CAPTURE_SCREENSHOTS=true SCREENSHOT_MODE=true flutter test \
   --dart-define=CAPTURE_SCREENSHOTS=true \
   --dart-define=SCREENSHOT_MODE=true \
   --no-track-widget-creation \
-  --no-sound-null-safety \
-  --platform chrome \
   --timeout 60s
 
 # Check if screenshots were captured
