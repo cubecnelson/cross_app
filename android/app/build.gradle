@@ -37,4 +37,7 @@ flutter {
     source = "../.."
 }
 
-dependencies {}
+dependencies {
+    // OpenCV for barbell tracking
+    implementation 'org.opencv:opencv:4.5.0'
+}
