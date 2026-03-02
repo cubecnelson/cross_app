@@ -293,9 +293,9 @@ This is a prioritized backlog of improvements and features for the Cross workout
 - **Notes**: Add 1RM tracking, plate calculator, warm-up sets, and progression planning for barbell lifts (1RM and plate calculator implemented)
 
 **P3-009**: Implement VBT (Velocity-Based Training) barbell tracking
-- **Status**: Foundation Laid
+- **Status**: ✅ Partially Complete - Live Camera Analysis Implemented
 - **Effort**: 12+ hours
-- **Notes**: Video-based barbell velocity tracking using camera/phone sensors, similar to metric.coach (models/database ready, camera packages added)
+- **Notes**: Video-based barbell velocity tracking using camera/phone sensors, similar to metric.coach. Live camera analysis implemented using color-based tracking (like VBT-Barbell-Tracker repo). Integrated with workout sets, velocity metrics, and real-time feedback.
 
 ### 🟣 P4 Tasks
 **P4-001**: Add comprehensive unit tests
