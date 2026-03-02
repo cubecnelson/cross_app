@@ -10,6 +10,7 @@ import '../../../models/workout_recommendation.dart';
 import '../../../providers/auth_provider.dart';
 import '../../../providers/workout_provider.dart';
 import '../../../providers/recommendation_provider.dart';
+import '../../../providers/personal_record_provider.dart';
 import '../../exercises/screens/exercise_picker_screen.dart';
 import '../widgets/exercise_set_widget.dart';
 import '../widgets/recommendations_section.dart';
@@ -293,6 +294,28 @@ class _ActiveWorkoutScreenState extends ConsumerState<ActiveWorkoutScreen> {
       }
 
       debugPrint('✅ Created $setsCreated sets');
+
+      // Detect and save personal records (PRs)
+      try {
+        final personalRecordNotifier = ref.read(personalRecordNotifierProvider.notifier);
+        final existingPRs = ref.read(personalRecordsProvider).value ?? [];
+        final allWorkouts = ref.read(workoutsProvider).value ?? [];
+        
+        final newPRs = await personalRecordNotifier.detectAndSavePRsFromWorkouts(
+          allWorkouts,
+          existingPRs,
+        );
+
+        if (newPRs.isNotEmpty) {
+          debugPrint('🎉 Detected ${newPRs.length} new personal records!');
+          for (final pr in newPRs) {
+            debugPrint('   - ${pr.exerciseName}: ${pr.displayText}');
+          }
+        }
+      } catch (e) {
+        debugPrint('⚠️ Failed to detect PRs: $e');
+        // Don't fail workout save if PR detection fails
+      }
 
       if (mounted) {
         Navigator.pop(context);

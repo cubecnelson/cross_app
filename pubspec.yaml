@@ -57,6 +57,12 @@ dependencies:
   share_plus: ^7.2.0
   path_provider: ^2.1.0
   shorebird_code_push: ^2.0.5
+  
+  # Video Recording & Analysis (for VBT)
+  camera: ^0.10.0+1
+  video_player: ^2.8.3
+  permission_handler: ^10.4.3
+  image_picker: ^1.0.4
 
 dev_dependencies:
   flutter_test:

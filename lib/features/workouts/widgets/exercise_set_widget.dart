@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import '../../barbell/screens/plate_calculator_screen.dart';
 import '../screens/active_workout_screen.dart';
 
 class ExerciseSetWidget extends StatelessWidget {
@@ -397,7 +398,46 @@ class _SetRowState extends State<_SetRow> {
             ),
           ),
 
-          const SizedBox(width: 8),
+          const SizedBox(width: 4),
+
+          // Calculator Button
+          IconButton(
+            icon: const Icon(Icons.calculate, size: 20),
+            onPressed: () {
+              final weight = double.tryParse(_weightController.text) ?? 0.0;
+              if (weight > 0) {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder: (_) => PlateCalculatorScreen(initialWeight: weight),
+                  ),
+                ).then((result) {
+                  if (result != null && result is double) {
+                    _weightController.text = result.toStringAsFixed(1);
+                    _updateStrengthSet();
+                  }
+                });
+              } else {
+                // If no weight entered, just open calculator
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder: (_) => const PlateCalculatorScreen(),
+                  ),
+                ).then((result) {
+                  if (result != null && result is double) {
+                    _weightController.text = result.toStringAsFixed(1);
+                    _updateStrengthSet();
+                  }
+                });
+              }
+            },
+            tooltip: 'Calculate plates',
+            padding: const EdgeInsets.all(4),
+            constraints: const BoxConstraints(),
+          ),
+
+          const SizedBox(width: 4),
 
           // Checkmark
           IconButton(
@@ -417,6 +457,8 @@ class _SetRowState extends State<_SetRow> {
                 ),
               );
             },
+            padding: const EdgeInsets.all(4),
+            constraints: const BoxConstraints(),
           ),
         ],
       ),

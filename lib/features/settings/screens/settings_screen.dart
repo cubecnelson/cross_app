@@ -4,6 +4,8 @@ import '../../../core/constants/app_constants.dart';
 import '../../../providers/auth_provider.dart';
 import '../../../providers/shorebird_provider.dart';
 import '../../auth/screens/login_screen.dart';
+import '../../barbell/screens/plate_calculator_screen.dart';
+import '../../barbell/screens/one_rep_max_screen.dart';
 import 'health_settings_screen.dart';
 import 'data_export_screen.dart';
 import 'notification_settings_screen.dart';
@@ -69,6 +71,34 @@ class SettingsScreen extends ConsumerWidget {
               // TODO: Show terms of service
               ScaffoldMessenger.of(context).showSnackBar(
                 const SnackBar(content: Text('Terms of service coming soon')),
+              );
+            },
+          ),
+          const Divider(),
+          const _SectionHeader(title: 'Barbell Tools'),
+          ListTile(
+            leading: const Icon(Icons.calculate_outlined, size: 24, color: null),
+            title: const Text('Plate Calculator'),
+            subtitle: const Text('Calculate plates needed for target weight'),
+            onTap: () {
+              Navigator.push(
+                context,
+                MaterialPageRoute(
+                  builder: (_) => const PlateCalculatorScreen(),
+                ),
+              );
+            },
+          ),
+          ListTile(
+            leading: const Icon(Icons.trending_up_outlined, size: 24, color: null),
+            title: const Text('1RM Calculator'),
+            subtitle: const Text('Estimate your one-rep maximum'),
+            onTap: () {
+              Navigator.push(
+                context,
+                MaterialPageRoute(
+                  builder: (_) => const OneRepMaxScreen(),
+                ),
               );
             },
           ),

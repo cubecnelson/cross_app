@@ -23,6 +23,7 @@ class WorkoutSet {
   // Common attributes
   final int? rpe; // Rate of Perceived Exertion (1-10)
   final String? notes;
+  final String? videoPath; // Path to recorded video for VBT analysis
   final bool isCompleted;
   final DateTime createdAt;
 
@@ -46,6 +47,7 @@ class WorkoutSet {
     // Common
     this.rpe,
     this.notes,
+    this.videoPath,
     this.isCompleted = false,
     required this.createdAt,
   });
@@ -76,6 +78,7 @@ class WorkoutSet {
       // Common
       rpe: json['rpe'] as int?,
       notes: json['notes'] as String?,
+      videoPath: json['video_path'] as String?,
       isCompleted: json['is_completed'] as bool? ?? false,
       createdAt: DateTime.parse(json['created_at'] as String),
     );
@@ -102,6 +105,7 @@ class WorkoutSet {
       // Common
       'rpe': rpe,
       'notes': notes,
+      'video_path': videoPath,
       'is_completed': isCompleted,
       'created_at': createdAt.toIso8601String(),
     };
@@ -127,6 +131,7 @@ class WorkoutSet {
     // Common
     int? rpe,
     String? notes,
+    String? videoPath,
     bool? isCompleted,
     DateTime? createdAt,
   }) {
@@ -147,6 +152,7 @@ class WorkoutSet {
       elevationGain: elevationGain ?? this.elevationGain,
       rpe: rpe ?? this.rpe,
       notes: notes ?? this.notes,
+      videoPath: videoPath ?? this.videoPath,
       isCompleted: isCompleted ?? this.isCompleted,
       createdAt: createdAt ?? this.createdAt,
     );

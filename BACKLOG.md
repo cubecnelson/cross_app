@@ -31,6 +31,8 @@ This is a prioritized backlog of improvements and features for the Cross workout
 - **P3-005**: Add nutrition tracking integration - NEW
 - **P3-006**: Expand video workout library - NEW
 - **P3-007**: Create web/desktop version
+- **P3-008**: Implement barbell tracking (1RM, plate calculator, progression) - NEW
+- **P3-009**: Implement VBT (Velocity-Based Training) barbell tracking - NEW
 
 ### 🟣 P4 - Technical Debt
 - **P4-001**: Add comprehensive unit tests
@@ -177,14 +179,15 @@ This is a prioritized backlog of improvements and features for the Cross workout
 
 ### 🟡 P2 Tasks
 **P2-001**: Implement Google OAuth authentication
-- **Status**: In Progress
+- **Status**: ✅ Complete
 - **Effort**: 4 hours
-- **Notes**: Follow Google Auth setup guide in docs
+- **Notes**: Follow Google Auth setup guide in docs (code implemented, needs configuration/testing)
 
 **P2-002**: Implement Apple Sign-In
-- **Status**: Not Started
+- **Status**: Done
+- **Completed**: 2026-03-02
 - **Effort**: 4 hours
-- **Notes**: Required for iOS App Store
+- **Notes**: Required for iOS App Store (code implemented, needs entitlements/testing)
 
 **P2-003**: Add workout rest timer with notifications
 - **Status**: ✅ Done
@@ -234,14 +237,14 @@ This is a prioritized backlog of improvements and features for the Cross workout
   - Display daily health metrics in app
 
 **P2-007**: Add basic social sharing
-- **Status**: Not Started
+- **Status**: In Progress
 - **Effort**: 4 hours
 - **Notes**: Share workouts to social media, friends
 
 **P2-008**: Implement advanced analytics (1RM tracking, PRs)
-- **Status**: Not Started
+- **Status**: ✅ Partially Complete
 - **Effort**: 6 hours
-- **Notes**: One-rep max calculations, personal records
+- **Notes**: One-rep max calculations, personal records (PR detection service, database, models, providers implemented)
 
 **P2-009**: Add monthly challenges
 - **Status**: In Progress
@@ -284,6 +287,16 @@ This is a prioritized backlog of improvements and features for the Cross workout
 - **Effort**: 20 hours
 - **Notes**: Flutter web/desktop support
 
+**P3-008**: Implement barbell tracking (1RM, plate calculator, progression)
+- **Status**: ✅ Partially Complete
+- **Effort**: 6 hours
+- **Notes**: Add 1RM tracking, plate calculator, warm-up sets, and progression planning for barbell lifts (1RM and plate calculator implemented)
+
+**P3-009**: Implement VBT (Velocity-Based Training) barbell tracking
+- **Status**: Foundation Laid
+- **Effort**: 12+ hours
+- **Notes**: Video-based barbell velocity tracking using camera/phone sensors, similar to metric.coach (models/database ready, camera packages added)
+
 ### 🟣 P4 Tasks
 **P4-001**: Add comprehensive unit tests
 - **Status**: Not Started
@@ -316,6 +329,29 @@ This is a prioritized backlog of improvements and features for the Cross workout
 - **Notes**: Add analytics for performance metrics
 
 ## Daily Selection Log
+
+### 2026-03-02
+**Selected Task**: P2-002
+**Reason**: Automatically selected by daily task selector
+**Status**: In Progress
+**Start Time**: 9:00 AM
+**Expected Completion**: 1:00 PM
+
+
+### 2026-02-27
+**Selected Task**: P2-008
+**Reason**: Automatically selected by daily task selector
+**Status**: In Progress
+**Start Time**: 9:00 AM
+**Expected Completion**: 1:00 PM
+
+
+### 2026-02-25
+**Selected Task**: P2-007
+**Reason**: Automatically selected by daily task selector
+**Status**: In Progress
+**Start Time**: 9:00 AM
+**Expected Completion**: 01:06 PM
 
 ### 2026-02-23
 **Selected Task**: P1-003
