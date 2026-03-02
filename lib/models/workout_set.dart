@@ -24,6 +24,8 @@ class WorkoutSet {
   final int? rpe; // Rate of Perceived Exertion (1-10)
   final String? notes;
   final String? videoPath; // Path to recorded video for VBT analysis
+  final double? velocity; // Barbell velocity (m/s) for VBT tracking
+  final double? peakVelocity; // Peak barbell velocity (m/s)
   final bool isCompleted;
   final DateTime createdAt;
 
@@ -79,6 +81,8 @@ class WorkoutSet {
       rpe: json['rpe'] as int?,
       notes: json['notes'] as String?,
       videoPath: json['video_path'] as String?,
+      velocity: json['velocity'] != null ? (json['velocity'] as num).toDouble() : null,
+      peakVelocity: json['peak_velocity'] != null ? (json['peak_velocity'] as num).toDouble() : null,
       isCompleted: json['is_completed'] as bool? ?? false,
       createdAt: DateTime.parse(json['created_at'] as String),
     );
@@ -106,6 +110,8 @@ class WorkoutSet {
       'rpe': rpe,
       'notes': notes,
       'video_path': videoPath,
+      'velocity': velocity,
+      'peak_velocity': peakVelocity,
       'is_completed': isCompleted,
       'created_at': createdAt.toIso8601String(),
     };
@@ -132,6 +138,8 @@ class WorkoutSet {
     int? rpe,
     String? notes,
     String? videoPath,
+    double? velocity,
+    double? peakVelocity,
     bool? isCompleted,
     DateTime? createdAt,
   }) {
@@ -153,6 +161,8 @@ class WorkoutSet {
       rpe: rpe ?? this.rpe,
       notes: notes ?? this.notes,
       videoPath: videoPath ?? this.videoPath,
+      velocity: velocity ?? this.velocity,
+      peakVelocity: peakVelocity ?? this.peakVelocity,
       isCompleted: isCompleted ?? this.isCompleted,
       createdAt: createdAt ?? this.createdAt,
     );

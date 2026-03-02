@@ -63,6 +63,10 @@ dependencies:
   video_player: ^2.8.3
   permission_handler: ^10.4.3
   image_picker: ^1.0.4
+  
+  # Image Processing for Barbell Tracking
+  image: ^4.1.4
+  vector_math: ^2.1.4
 
 dev_dependencies:
   flutter_test:
