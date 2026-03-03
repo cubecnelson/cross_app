@@ -50,6 +50,8 @@ class WorkoutSet {
     this.rpe,
     this.notes,
     this.videoPath,
+    this.velocity,
+    this.peakVelocity,
     this.isCompleted = false,
     required this.createdAt,
   });

@@ -3,7 +3,7 @@ import '../models/personal_record.dart';
 import '../core/config/supabase_config.dart';
 
 class PersonalRecordRepository {
-  final SupabaseClient _supabase = SupabaseConfig.supabaseClient;
+  final SupabaseClient _supabase = SupabaseConfig.client;
 
   /// Get all personal records for a user
   Future<List<PersonalRecord>> getPersonalRecordsByUserId(String userId) async {

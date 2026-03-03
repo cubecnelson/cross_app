@@ -95,12 +95,12 @@ class OpenCvBarbellService {
         'reps': reps,
       });
       
-      return result ?? {
+      return Map<String, dynamic>.from(result ?? {
         'isRep': false,
         'avgVel': 0.0,
         'peakVel': 0.0,
         'displacement': 0.0,
-      };
+      });
     } catch (e) {
       print('OpenCV rep analysis failed: $e');
       return {
@@ -144,55 +144,6 @@ class OpenCvBarbellService {
     } catch (e) {
       return 'OpenCV check failed: $e';
     }
-  }
-}
-
-/// Hybrid barbell service that uses OpenCV when available, falls back to Dart
-class HybridBarbellService extends VbtBarbellService {
-  final bool useOpenCv;
-  
-  HybridBarbellService(super.cameraController, {this.useOpenCv = true});
-  
-  @override
-  BarbellPosition? _detectBarbell(img.Image image) {
-    // If OpenCV is available and we want to use it
-    if (useOpenCv && OpenCvBarbellService._isOpenCvAvailable) {
-      // Convert image to bytes for OpenCV
-      final bytes = image.getBytes();
-      // Note: This is simplified - need proper format conversion
-      // In real implementation, we'd pass CameraImage directly
-    }
-    
-    // Fall back to Dart implementation
-    return super._detectBarbell(image);
-  }
-  
-  @override
-  bool _analyzeForRep() {
-    if (useOpenCv && OpenCvBarbellService._isOpenCvAvailable) {
-      // Convert history to OpenCV format
-      final openCvHistory = _convertHistoryForOpenCv();
-      final result = OpenCvBarbellService.analyzeForRepOpenCv(
-        openCvHistory,
-        _repCount,
-      );
-      
-      // This would be async in real implementation
-      // For now, use Dart implementation
-    }
-    
-    return super._analyzeForRep();
-  }
-  
-  List<Map<String, dynamic>> _convertHistoryForOpenCv() {
-    return _positionHistory.map((pos) {
-      return {
-        'x': pos.x,
-        'y': pos.y,
-        'radius': pos.radius,
-        'timestamp': pos.timestamp.millisecondsSinceEpoch,
-      };
-    }).toList();
   }
 }
 

@@ -1,5 +1,7 @@
 import 'dart:io';
+import 'dart:ui' show Size;
 import 'package:flutter_test/flutter_test.dart';
+import 'package:integration_test/integration_test.dart';
 import 'package:path/path.dart' as path;
 
 /// Screenshot capture utility for integration tests
@@ -25,15 +27,15 @@ class ScreenshotCapture {
       // Ensure output directory exists
       await outputDirectory.create(recursive: true);
 
-      // Take screenshot
-      final screenshotBytes = await tester.takeScreenshot();
+      // Take screenshot (use IntegrationTestWidgetsFlutterBinding)
+      final binding = IntegrationTestWidgetsFlutterBinding.ensureInitialized();
+      final screenshotBytes = await binding.takeScreenshot(screenshotName);
 
-      // Generate filename
+      // Generate filename and save
       final timestamp = DateTime.now().millisecondsSinceEpoch;
-      final filename = '${screenshotName}_${timestamp}.png';
+      final filename = '${screenshotName}_$timestamp.png';
       final file = File(path.join(outputDirectory.path, filename));
 
-      // Save screenshot
       await file.writeAsBytes(screenshotBytes);
       
       print('✅ Screenshot captured: $filename');

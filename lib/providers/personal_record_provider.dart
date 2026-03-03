@@ -1,5 +1,6 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../models/personal_record.dart';
+import '../models/workout.dart';
 import '../repositories/personal_record_repository.dart';
 import 'auth_provider.dart';
 import '../services/pr_service.dart';

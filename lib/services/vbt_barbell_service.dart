@@ -1,5 +1,4 @@
 import 'dart:async';
-import 'dart:io';
 import 'dart:math';
 import 'dart:typed_data';
 import 'package:camera/camera.dart';
@@ -188,7 +187,7 @@ class VbtBarbellService {
         return img.Image.fromBytes(
           width: image.width,
           height: image.height,
-          bytes: image.planes[0].bytes,
+          bytes: image.planes[0].bytes.buffer,
           numChannels: 4,
         );
       }
@@ -218,7 +217,7 @@ class VbtBarbellService {
         final int g = (yValue - 0.344136 * (uValue - 128) - 0.714136 * (vValue - 128)).clamp(0, 255).toInt();
         final int b = (yValue + 1.772 * (uValue - 128)).clamp(0, 255).toInt();
         
-        rgbImage.setPixelRgba(x, y, r, g, b);
+        rgbImage.setPixelRgba(x, y, r, g, b, 255);
       }
     }
     
@@ -235,16 +234,17 @@ class VbtBarbellService {
     
     for (int y = 0; y < image.height; y++) {
       for (int x = 0; x < image.width; x++) {
-        final int h = hsvImage.getPixel(x, y) >> 16 & 0xFF;
-        final int s = hsvImage.getPixel(x, y) >> 8 & 0xFF;
-        final int v = hsvImage.getPixel(x, y) & 0xFF;
+        final p = hsvImage.getPixel(x, y);
+        final int h = p.r.toInt();
+        final int s = p.g.toInt();
+        final int v = p.b.toInt();
         
         if (h >= _colorLower[0] && h <= _colorUpper[0] &&
             s >= _colorLower[1] && s <= _colorUpper[1] &&
             v >= _colorLower[2] && v <= _colorUpper[2]) {
-          mask.setPixelRgba(x, y, 255, 255, 255);
+          mask.setPixelRgba(x, y, 255, 255, 255, 255);
         } else {
-          mask.setPixelRgba(x, y, 0, 0, 0);
+          mask.setPixelRgba(x, y, 0, 0, 0, 255);
         }
       }
     }
@@ -260,7 +260,7 @@ class VbtBarbellService {
     
     for (int y = 0; y < mask.height; y++) {
       for (int x = 0; x < mask.width; x++) {
-        if (mask.getPixel(x, y) != 0) {
+        if (mask.getPixel(x, y).r > 0) {
           totalX += x;
           totalY += y;
           pixelCount++;
@@ -292,9 +292,10 @@ class VbtBarbellService {
     
     for (int y = 0; y < image.height; y++) {
       for (int x = 0; x < image.width; x++) {
-        final int r = image.getPixel(x, y) >> 16 & 0xFF;
-        final int g = image.getPixel(x, y) >> 8 & 0xFF;
-        final int b = image.getPixel(x, y) & 0xFF;
+        final p = image.getPixel(x, y);
+        final int r = p.r.toInt();
+        final int g = p.g.toInt();
+        final int b = p.b.toInt();
         
         // RGB to HSV conversion
         final double rNorm = r / 255.0;
@@ -327,7 +328,7 @@ class VbtBarbellService {
         final int sInt = (s * 255).toInt();
         final int vInt = (v * 255).toInt();
         
-        hsvImage.setPixelRgba(x, y, hInt, sInt, vInt);
+        hsvImage.setPixelRgba(x, y, hInt, sInt, vInt, 255);
       }
     }
     
