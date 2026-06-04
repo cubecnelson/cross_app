@@ -282,6 +282,12 @@ class _BarbellTrackingScreenState extends State<BarbellTrackingScreen>
   // Per-rep chart data (rep index → MCV)
   final List<FlSpot> _repSpots = [];
 
+  // Guards against AI frame-processing backlog.
+  bool _isProcessingFrame = false;
+
+  // Tracks rep count seen in the last onMetrics call for haptic feedback.
+  int _lastRepCount = 0;
+
   // Animation for velocity gauge
   late AnimationController _gaugeAnimCtrl;
   late Animation<double> _gaugeAnim;
@@ -363,11 +369,16 @@ class _BarbellTrackingScreenState extends State<BarbellTrackingScreen>
       );
       // Drive the AI detection from camera frames.
       _cameraController!.startImageStream((CameraImage image) async {
-        if (!_isTracking) return;
-        final result = await _aiService.detectBarbell(image);
-        if (result != null && mounted) {
-          _aiPositionCtrl?.add(result.position);
-          setState(() => _latestDetection = result);
+        if (!_isTracking || _isProcessingFrame) return;
+        _isProcessingFrame = true;
+        try {
+          final result = await _aiService.detectBarbell(image);
+          if (result != null && mounted) {
+            _aiPositionCtrl?.add(result.position);
+            setState(() => _latestDetection = result);
+          }
+        } finally {
+          _isProcessingFrame = false;
         }
       });
     } else {
@@ -406,7 +417,8 @@ class _BarbellTrackingScreenState extends State<BarbellTrackingScreen>
       ..forward();
 
     // Haptic feedback on rep detection.
-    if (metrics.repHistory.length > (_currentMetrics?.repCount ?? 0)) {
+    if (metrics.repHistory.length > _lastRepCount) {
+      _lastRepCount = metrics.repHistory.length;
       HapticFeedback.mediumImpact();
     }
 

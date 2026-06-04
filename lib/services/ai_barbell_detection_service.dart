@@ -69,6 +69,9 @@ class AiBarbellDetectionService {
   // stream mode).  Falls back to full detection every frame when unavailable.
   static const _channel = MethodChannel('com.cross.app/opencv_barbell');
 
+  // Confidence assigned to optical-flow results (native tracker gives no score).
+  static const double _opticalFlowConfidence = 0.6;
+
   // Minimum confidence to accept a detection.
   static const double _minConfidence = 0.45;
 
@@ -313,7 +316,7 @@ class AiBarbellDetectionService {
       final top = (result['top'] as num).toDouble();
       final right = (result['right'] as num).toDouble();
       final bottom = (result['bottom'] as num).toDouble();
-      final confidence = (result['confidence'] as num?)?.toDouble() ?? 0.6;
+      final confidence = (result['confidence'] as num?)?.toDouble() ?? _opticalFlowConfidence;
 
       final centerX = ((left + right) / 2) * image.width;
       final centerY = ((top + bottom) / 2) * image.height;
