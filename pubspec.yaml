@@ -68,6 +68,9 @@ dependencies:
   image: ^4.1.4
   vector_math: ^2.1.4
 
+  # AI/ML for Barbell Detection (VBT)
+  google_mlkit_object_detection: ^0.14.0
+
 dev_dependencies:
   flutter_test:
     sdk: flutter
@@ -84,5 +87,6 @@ flutter:
   assets:
     - assets/images/
     - assets/icons/
+    - assets/models/
     - shorebird.yaml
 
