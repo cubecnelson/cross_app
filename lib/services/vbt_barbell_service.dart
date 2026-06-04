@@ -3,39 +3,144 @@ import 'dart:math';
 import 'dart:typed_data';
 import 'package:camera/camera.dart';
 import 'package:image/image.dart' as img;
-import 'package:vector_math/vector_math.dart';
 
-/// Barbell metrics from VBT analysis
-class BarbellMetrics {
-  final double averageVelocity; // m/s
-  final double peakVelocity;    // m/s
-  final double displacement;    // mm
-  final double velocityLoss;    // percentage
-  final int repCount;
-  final bool shouldEndSet;
+// vector_math imported for potential future 3-D tracking; suppressed unused
+// warning via the alias.
+// ignore: unused_import
+import 'package:vector_math/vector_math.dart' as vm;
+
+// ---------------------------------------------------------------------------
+// Movement state machine
+// ---------------------------------------------------------------------------
+
+/// Phases of a single barbell rep.
+enum VbtState {
+  /// No significant movement detected.
+  idle,
+
+  /// Barbell is moving downward (loading phase — squat descent, bench
+  /// lowering, deadlift drop).
+  eccentric,
+
+  /// Barbell is moving upward (effort phase — the phase VBT cares about most).
+  concentric,
+}
+
+// ---------------------------------------------------------------------------
+// Velocity zone classification (based on force-velocity curve)
+// ---------------------------------------------------------------------------
+
+/// VBT velocity zones aligned to the force-velocity continuum.
+enum VelocityZone {
+  /// < 0.50 m/s — maximal strength zone.
+  strength,
+
+  /// 0.50–0.75 m/s — strength-speed zone.
+  strengthSpeed,
+
+  /// 0.75–1.00 m/s — speed-strength (power) zone.
+  speedStrength,
+
+  /// > 1.00 m/s — speed/ballistic zone.
+  speed,
+}
+
+extension VelocityZoneX on VelocityZone {
+  String get label {
+    switch (this) {
+      case VelocityZone.strength:
+        return 'Strength';
+      case VelocityZone.strengthSpeed:
+        return 'Strength-Speed';
+      case VelocityZone.speedStrength:
+        return 'Speed-Strength';
+      case VelocityZone.speed:
+        return 'Speed';
+    }
+  }
+
+  /// Classify a mean concentric velocity value into a zone.
+  static VelocityZone fromVelocity(double v) {
+    if (v < 0.50) return VelocityZone.strength;
+    if (v < 0.75) return VelocityZone.strengthSpeed;
+    if (v < 1.00) return VelocityZone.speedStrength;
+    return VelocityZone.speed;
+  }
+}
+
+// ---------------------------------------------------------------------------
+// Data models
+// ---------------------------------------------------------------------------
+
+/// Result for a single completed rep.
+class RepResult {
+  /// Mean concentric velocity (MCV) in m/s.
+  final double meanConcentricVelocity;
+  final double peakVelocity; // m/s
+  final double displacement; // mm
+  final VelocityZone zone;
+  final int repNumber;
   final DateTime timestamp;
 
-  BarbellMetrics({
+  const RepResult({
+    required this.meanConcentricVelocity,
+    required this.peakVelocity,
+    required this.displacement,
+    required this.zone,
+    required this.repNumber,
+    required this.timestamp,
+  });
+}
+
+/// Live barbell metrics emitted every frame while tracking.
+class BarbellMetrics {
+  final double averageVelocity; // m/s (current concentric phase or last rep)
+  final double peakVelocity;    // m/s
+  final double displacement;    // mm
+  final double velocityLoss;    // percentage relative to first rep
+  final int repCount;
+  final bool shouldEndSet;
+  final VbtState state;
+  final VelocityZone zone;
+  final List<RepResult> repHistory;
+  final DateTime timestamp;
+
+  const BarbellMetrics({
     required this.averageVelocity,
     required this.peakVelocity,
     required this.displacement,
     required this.velocityLoss,
     required this.repCount,
     required this.shouldEndSet,
+    required this.state,
+    required this.zone,
+    required this.repHistory,
     required this.timestamp,
   });
 
   @override
   String toString() {
-    return 'BarbellMetrics(avgVel: ${averageVelocity.toStringAsFixed(2)} m/s, peakVel: ${peakVelocity.toStringAsFixed(2)} m/s, disp: ${displacement.toStringAsFixed(0)} mm, loss: ${velocityLoss.toStringAsFixed(1)}%, reps: $repCount, endSet: $shouldEndSet)';
+    return 'BarbellMetrics('
+        'state: ${state.name}, '
+        'zone: ${zone.label}, '
+        'avgVel: ${averageVelocity.toStringAsFixed(2)} m/s, '
+        'peakVel: ${peakVelocity.toStringAsFixed(2)} m/s, '
+        'disp: ${displacement.toStringAsFixed(0)} mm, '
+        'loss: ${velocityLoss.toStringAsFixed(1)}%, '
+        'reps: $repCount, '
+        'endSet: $shouldEndSet)';
   }
 }
 
-/// Represents a detected barbell position
+// ---------------------------------------------------------------------------
+// BarbellPosition — shared data class
+// ---------------------------------------------------------------------------
+
+/// Detected barbell centre position in pixel coordinates.
 class BarbellPosition {
-  final double x; // pixel position
-  final double y; // pixel position
-  final double radius; // in pixels
+  final double x;      // pixels
+  final double y;      // pixels
+  final double radius; // pixels
   final DateTime timestamp;
 
   BarbellPosition({
@@ -45,145 +150,291 @@ class BarbellPosition {
     required this.timestamp,
   });
 
-  double distanceTo(BarbellPosition other) {
-    return sqrt(pow(x - other.x, 2) + pow(y - other.y, 2));
-  }
+  double distanceTo(BarbellPosition other) =>
+      sqrt(pow(x - other.x, 2) + pow(y - other.y, 2));
 }
 
-/// Service for Velocity-Based Training (VBT) barbell tracking
-/// Uses computer vision to track barbell movement in real-time
+// ---------------------------------------------------------------------------
+// VbtBarbellService — state-machine based VBT tracker
+// ---------------------------------------------------------------------------
+
+/// Velocity-Based Training barbell tracking service.
+///
+/// Implements a three-state movement machine (idle → eccentric → concentric)
+/// so that Mean Concentric Velocity (MCV) is computed only during the upward
+/// (effort) phase of each rep — the metric that correlates with training load
+/// in VBT literature.
+///
+/// Detection falls back to HSV colour thresholding when the AI model is not
+/// available. Inject [externalPositionStream] to drive the service from the
+/// [AiBarbellDetectionService] instead of the built-in colour detector.
 class VbtBarbellService {
-  static const double _defaultBarbellRadiusMm = 25.0; // Standard 50mm diameter
-  static const double _velocityLossThreshold = 20.0; // Percentage
-  static const double _minVelocityForRep = 0.1; // m/s
-  static const double _restThresholdMs = 80.0;
-  static const int _historySize = 10000;
-  static const int _vectorThreshold = 8;
-  
+  // ---- Constants ----
+  static const double _defaultBarbellRadiusMm = 225.0; // Half of 45 cm plate
+  static const double _velocityLossThreshold = 20.0;   // % before suggesting set end
+  static const double _minMovementPxPerFrame = 2.0;    // Noise floor
+  static const double _directionWindowSec = 0.15;      // Window to compute direction
+  static const int _historyLimit = 500;
+
+  // Color detection defaults (lime-green marker, HSV 0-180 scale)
+  static const List<int> _defaultColorLower = [33, 46, 80];
+  static const List<int> _defaultColorUpper = [86, 156, 255];
+
+  // ---- State ----
   late CameraController _cameraController;
   bool _isAnalyzing = false;
-  StreamController<BarbellMetrics>? _metricsStream;
-  final List<BarbellPosition> _positionHistory = [];
-  final List<double> _velocityHistory = [];
-  final List<double> _avgVelocities = [];
-  final List<double> _peakVelocities = [];
-  
-  int _repCount = 0;
-  double _firstVelocity = 0.0;
+  StreamController<BarbellMetrics>? _metricsStreamCtrl;
+
+  // Position & velocity history for the entire set.
+  final List<BarbellPosition> _setPositionHistory = [];
+
+  // Per-phase (current rep) buffers.
+  final List<BarbellPosition> _phasePositions = [];
+  final List<double> _phaseVelocities = [];
+
+  // Rep result list.
+  final List<RepResult> _repHistory = [];
+
+  // Current state-machine state.
+  VbtState _state = VbtState.idle;
+
+  // Calibration: mm per pixel, computed from detected radius.
+  double _mmPerPixel = 0.0;
+  double _barbellRadiusMm = _defaultBarbellRadiusMm;
+
+  // Running metrics.
   double _currentAvgVelocity = 0.0;
   double _currentPeakVelocity = 0.0;
   double _currentDisplacement = 0.0;
   double _velocityLoss = 0.0;
-  bool _shouldEndSet = false;
-  
-  /// Color range for detection (in HSV)
-  /// Default: Lime green (for painted barbell end)
-  static const List<int> _defaultColorLower = [33, 46, 80];   // HSV
-  static const List<int> _defaultColorUpper = [86, 156, 255]; // HSV
-  
+
+  // Color range (overrideable).
   List<int> _colorLower = _defaultColorLower;
   List<int> _colorUpper = _defaultColorUpper;
-  
-  /// Initialize with camera controller
+
+  /// Optional external position stream from AI detection service.
+  StreamSubscription<BarbellPosition>? _externalSub;
+
   VbtBarbellService(CameraController cameraController) {
     _cameraController = cameraController;
   }
-  
-  /// Start real-time barbell tracking
+
+  // ---- Public API ----
+
+  int get repCount => _repHistory.length;
+  VbtState get currentState => _state;
+  List<RepResult> get repHistory => List.unmodifiable(_repHistory);
+  List<BarbellPosition> get trajectoryHistory =>
+      List.unmodifiable(_setPositionHistory);
+
+  /// Start tracking using the internal colour detector.
   Stream<BarbellMetrics> startTracking({
     double barbellRadiusMm = _defaultBarbellRadiusMm,
     List<int>? colorLower,
     List<int>? colorUpper,
   }) {
-    _metricsStream = StreamController<BarbellMetrics>();
+    _barbellRadiusMm = barbellRadiusMm;
+    _metricsStreamCtrl = StreamController<BarbellMetrics>.broadcast();
     _isAnalyzing = true;
-    
+
     if (colorLower != null) _colorLower = colorLower;
     if (colorUpper != null) _colorUpper = colorUpper;
-    
-    // Start image stream analysis
+
     _cameraController.startImageStream((CameraImage image) {
       if (!_isAnalyzing) return;
-      
       try {
-        final metrics = _analyzeFrame(image, barbellRadiusMm);
-        if (metrics != null) {
-          _metricsStream?.add(metrics);
-        }
-      } catch (e) {
-        print('Error analyzing frame: $e');
-      }
+        final processed = _processCameraImage(image);
+        if (processed == null) return;
+        final position = _detectBarbell(processed);
+        if (position == null) return;
+        _ingestPosition(position);
+        _metricsStreamCtrl?.add(_buildMetrics());
+      } catch (_) {}
     });
-    
-    return _metricsStream!.stream;
+
+    return _metricsStreamCtrl!.stream;
   }
-  
-  /// Stop tracking
+
+  /// Start tracking using an external [BarbellPosition] stream (e.g. from
+  /// [AiBarbellDetectionService]).
+  Stream<BarbellMetrics> startTrackingExternal(
+    Stream<BarbellPosition> positions, {
+    double barbellRadiusMm = _defaultBarbellRadiusMm,
+  }) {
+    _barbellRadiusMm = barbellRadiusMm;
+    _metricsStreamCtrl = StreamController<BarbellMetrics>.broadcast();
+    _isAnalyzing = true;
+
+    _externalSub = positions.listen((position) {
+      if (!_isAnalyzing) return;
+      _ingestPosition(position);
+      _metricsStreamCtrl?.add(_buildMetrics());
+    });
+
+    return _metricsStreamCtrl!.stream;
+  }
+
   void stopTracking() {
     _isAnalyzing = false;
-    _cameraController.stopImageStream();
-    _metricsStream?.close();
-    _metricsStream = null;
-    _resetAnalysis();
+    try {
+      _cameraController.stopImageStream();
+    } catch (_) {}
+    _externalSub?.cancel();
+    _externalSub = null;
+    _metricsStreamCtrl?.close();
+    _metricsStreamCtrl = null;
   }
-  
-  /// Reset analysis state
+
   void reset() {
-    _resetAnalysis();
+    _setPositionHistory.clear();
+    _phasePositions.clear();
+    _phaseVelocities.clear();
+    _repHistory.clear();
+    _state = VbtState.idle;
+    _currentAvgVelocity = 0.0;
+    _currentPeakVelocity = 0.0;
+    _currentDisplacement = 0.0;
+    _velocityLoss = 0.0;
   }
-  
-  /// Update color detection range
+
   void updateColorRange(List<int> lower, List<int> upper) {
     _colorLower = lower;
     _colorUpper = upper;
   }
-  
-  /// Analyze a single camera frame
-  BarbellMetrics? _analyzeFrame(CameraImage image, double barbellRadiusMm) {
-    // Convert CameraImage to processable format
-    final img.Image? processedImage = _processCameraImage(image);
-    if (processedImage == null) return null;
-    
-    // Detect barbell position
-    final BarbellPosition? position = _detectBarbell(processedImage);
-    if (position == null) return null;
-    
-    // Calculate velocity
-    final double velocity = _calculateVelocity(position);
-    
-    // Update history
-    _updateHistory(position, velocity);
-    
-    // Analyze for rep
-    final bool isRep = _analyzeForRep();
-    
-    if (isRep) {
-      _repCount++;
-      _updateRepMetrics();
+
+  // ---- State machine ----
+
+  void _ingestPosition(BarbellPosition position) {
+    // Auto-calibrate mmPerPixel from detected radius when available.
+    if (position.radius > 0) {
+      _mmPerPixel = _barbellRadiusMm / position.radius;
     }
-    
-    // Check if set should end
-    _shouldEndSet = _velocityLoss > _velocityLossThreshold;
-    
+
+    _setPositionHistory.add(position);
+    if (_setPositionHistory.length > _historyLimit) {
+      _setPositionHistory.removeAt(0);
+    }
+
+    final double instantVel = _instantVelocity(position);
+    final _Direction dir = _movementDirection();
+
+    switch (_state) {
+      case VbtState.idle:
+        if (dir == _Direction.down) {
+          _state = VbtState.eccentric;
+          _phasePositions.clear();
+          _phaseVelocities.clear();
+        } else if (dir == _Direction.up) {
+          _state = VbtState.concentric;
+          _phasePositions.clear();
+          _phaseVelocities.clear();
+        }
+        break;
+
+      case VbtState.eccentric:
+        _phasePositions.add(position);
+        if (dir == _Direction.up) {
+          _state = VbtState.concentric;
+          _phasePositions.clear();
+          _phaseVelocities.clear();
+        }
+        break;
+
+      case VbtState.concentric:
+        _phasePositions.add(position);
+        if (instantVel > 0) _phaseVelocities.add(instantVel);
+        if (dir == _Direction.idle || dir == _Direction.down) {
+          _finaliseRep();
+          _state = VbtState.idle;
+        }
+        break;
+    }
+  }
+
+  _Direction _movementDirection() {
+    if (_setPositionHistory.length < 2) return _Direction.idle;
+    final now = _setPositionHistory.last.timestamp;
+    final windowStart = now.subtract(
+        Duration(milliseconds: (_directionWindowSec * 1000).toInt()));
+    double totalDy = 0;
+    int count = 0;
+    for (int i = _setPositionHistory.length - 1; i > 0; i--) {
+      final p = _setPositionHistory[i];
+      if (p.timestamp.isBefore(windowStart)) break;
+      final prev = _setPositionHistory[i - 1];
+      totalDy += p.y - prev.y;
+      count++;
+    }
+    if (count == 0) return _Direction.idle;
+    final avgDy = totalDy / count;
+    if (avgDy > _minMovementPxPerFrame) return _Direction.down;
+    if (avgDy < -_minMovementPxPerFrame) return _Direction.up;
+    return _Direction.idle;
+  }
+
+  double _instantVelocity(BarbellPosition current) {
+    if (_setPositionHistory.length < 2) return 0.0;
+    final prev = _setPositionHistory[_setPositionHistory.length - 2];
+    final dtMs = current.timestamp.difference(prev.timestamp).inMilliseconds;
+    if (dtMs <= 0) return 0.0;
+    final pixelDist = current.distanceTo(prev);
+    if (_mmPerPixel <= 0) return 0.0;
+    return (pixelDist * _mmPerPixel) / 1000.0 / (dtMs / 1000.0);
+  }
+
+  void _finaliseRep() {
+    if (_phaseVelocities.isEmpty) return;
+    final mcv =
+        _phaseVelocities.reduce((a, b) => a + b) / _phaseVelocities.length;
+    final peak = _phaseVelocities.reduce(max);
+    final disp = _phasePositions.length >= 2
+        ? (_phasePositions.first.y - _phasePositions.last.y).abs() *
+            (_mmPerPixel > 0 ? _mmPerPixel : 1.0)
+        : 0.0;
+    final rep = RepResult(
+      meanConcentricVelocity: mcv,
+      peakVelocity: peak,
+      displacement: disp,
+      zone: VelocityZoneX.fromVelocity(mcv),
+      repNumber: _repHistory.length + 1,
+      timestamp: DateTime.now(),
+    );
+    _repHistory.add(rep);
+    _currentAvgVelocity = mcv;
+    _currentPeakVelocity = peak;
+    _currentDisplacement = disp;
+    if (_repHistory.length > 1) {
+      final firstMcv = _repHistory.first.meanConcentricVelocity;
+      _velocityLoss = firstMcv > 0
+          ? ((firstMcv - mcv) / firstMcv) * 100.0
+          : 0.0;
+    } else {
+      _velocityLoss = 0.0;
+    }
+  }
+
+  BarbellMetrics _buildMetrics() {
     return BarbellMetrics(
       averageVelocity: _currentAvgVelocity,
       peakVelocity: _currentPeakVelocity,
       displacement: _currentDisplacement,
       velocityLoss: _velocityLoss,
-      repCount: _repCount,
-      shouldEndSet: _shouldEndSet,
+      repCount: _repHistory.length,
+      shouldEndSet: _velocityLoss > _velocityLossThreshold,
+      state: _state,
+      zone: VelocityZoneX.fromVelocity(_currentAvgVelocity),
+      repHistory: List.unmodifiable(_repHistory),
       timestamp: DateTime.now(),
     );
   }
-  
-  /// Convert CameraImage to img.Image for processing
+
+  // ---- Colour-based detection (fallback) ----
+
   img.Image? _processCameraImage(CameraImage image) {
     try {
       if (image.format.group == ImageFormatGroup.yuv420) {
-        // Convert YUV to RGB
         return _yuv420ToImage(image);
       } else if (image.format.group == ImageFormatGroup.bgra8888) {
-        // Already BGRA
         return img.Image.fromBytes(
           width: image.width,
           height: image.height,
@@ -191,301 +442,97 @@ class VbtBarbellService {
           numChannels: 4,
         );
       }
-    } catch (e) {
-      print('Error processing image: $e');
-    }
+    } catch (_) {}
     return null;
   }
-  
-  /// Convert YUV420 to RGB image
+
   img.Image _yuv420ToImage(CameraImage image) {
-    final img.Image rgbImage = img.Image(width: image.width, height: image.height);
-    
-    // Simplified YUV to RGB conversion
-    // For production, use more accurate conversion
-    for (int y = 0; y < image.height; y++) {
-      for (int x = 0; x < image.width; x++) {
-        final int yIndex = y * image.width + x;
-        final int uvIndex = (y ~/ 2) * (image.width ~/ 2) + (x ~/ 2);
-        
-        final int yValue = image.planes[0].bytes[yIndex];
-        final int uValue = image.planes[1].bytes[uvIndex];
-        final int vValue = image.planes[2].bytes[uvIndex];
-        
-        // YUV to RGB conversion
-        final int r = (yValue + 1.402 * (vValue - 128)).clamp(0, 255).toInt();
-        final int g = (yValue - 0.344136 * (uValue - 128) - 0.714136 * (vValue - 128)).clamp(0, 255).toInt();
-        final int b = (yValue + 1.772 * (uValue - 128)).clamp(0, 255).toInt();
-        
-        rgbImage.setPixelRgba(x, y, r, g, b, 255);
+    final out = img.Image(width: image.width, height: image.height);
+    for (int row = 0; row < image.height; row++) {
+      for (int col = 0; col < image.width; col++) {
+        final yIdx = row * image.planes[0].bytesPerRow + col;
+        final uvRow = row ~/ 2;
+        final uvCol = col ~/ 2;
+        final uvIdx = uvRow * image.planes[1].bytesPerRow + uvCol;
+        final yVal = image.planes[0].bytes[yIdx];
+        final uVal = image.planes[1].bytes[uvIdx];
+        final vVal = image.planes[2].bytes[uvIdx];
+        final r = (yVal + 1.402 * (vVal - 128)).clamp(0, 255).toInt();
+        final g = (yVal - 0.344136 * (uVal - 128) - 0.714136 * (vVal - 128))
+            .clamp(0, 255)
+            .toInt();
+        final b = (yVal + 1.772 * (uVal - 128)).clamp(0, 255).toInt();
+        out.setPixelRgba(col, row, r, g, b, 255);
       }
     }
-    
-    return rgbImage;
+    return out;
   }
-  
-  /// Detect barbell position using color-based detection
+
   BarbellPosition? _detectBarbell(img.Image image) {
-    // Convert to HSV for color detection
-    final img.Image hsvImage = _rgbToHsv(image);
-    
-    // Create mask for target color range
-    final img.Image mask = img.Image(width: image.width, height: image.height);
-    
-    for (int y = 0; y < image.height; y++) {
-      for (int x = 0; x < image.width; x++) {
-        final p = hsvImage.getPixel(x, y);
-        final int h = p.r.toInt();
-        final int s = p.g.toInt();
-        final int v = p.b.toInt();
-        
-        if (h >= _colorLower[0] && h <= _colorUpper[0] &&
-            s >= _colorLower[1] && s <= _colorUpper[1] &&
-            v >= _colorLower[2] && v <= _colorUpper[2]) {
-          mask.setPixelRgba(x, y, 255, 255, 255, 255);
-        } else {
-          mask.setPixelRgba(x, y, 0, 0, 0, 255);
+    double totalX = 0, totalY = 0;
+    int count = 0;
+    double minX = image.width.toDouble(), maxX = 0;
+    double minY = image.height.toDouble(), maxY = 0;
+
+    for (int row = 0; row < image.height; row++) {
+      for (int col = 0; col < image.width; col++) {
+        final p = image.getPixel(col, row);
+        final rN = p.r / 255.0, gN = p.g / 255.0, bN = p.b / 255.0;
+        final maxC = max(rN, max(gN, bN));
+        final minC = min(rN, min(gN, bN));
+        final delta = maxC - minC;
+        double h = 0, s = 0;
+        if (delta != 0) {
+          s = delta / maxC;
+          if (maxC == rN) {
+            h = 60 * (((gN - bN) / delta) % 6);
+          } else if (maxC == gN) {
+            h = 60 * (((bN - rN) / delta) + 2);
+          } else {
+            h = 60 * (((rN - gN) / delta) + 4);
+          }
+        }
+        if (h < 0) h += 360;
+        final hI = (h / 2).toInt();
+        final sI = (s * 255).toInt();
+        final vI = (maxC * 255).toInt();
+        if (hI >= _colorLower[0] && hI <= _colorUpper[0] &&
+            sI >= _colorLower[1] && sI <= _colorUpper[1] &&
+            vI >= _colorLower[2] && vI <= _colorUpper[2]) {
+          totalX += col;
+          totalY += row;
+          count++;
+          if (col < minX) minX = col.toDouble();
+          if (col > maxX) maxX = col.toDouble();
+          if (row < minY) minY = row.toDouble();
+          if (row > maxY) maxY = row.toDouble();
         }
       }
     }
-    
-    // Find contours (simplified - find largest connected region)
-    double totalX = 0;
-    double totalY = 0;
-    int pixelCount = 0;
-    double minX = image.width.toDouble();
-    double maxX = 0;
-    double minY = image.height.toDouble();
-    double maxY = 0;
-    
-    for (int y = 0; y < mask.height; y++) {
-      for (int x = 0; x < mask.width; x++) {
-        if (mask.getPixel(x, y).r > 0) {
-          totalX += x;
-          totalY += y;
-          pixelCount++;
-          minX = min(minX, x.toDouble());
-          maxX = max(maxX, x.toDouble());
-          minY = min(minY, y.toDouble());
-          maxY = max(maxY, y.toDouble());
-        }
-      }
-    }
-    
-    if (pixelCount == 0) return null;
-    
-    final double centerX = totalX / pixelCount;
-    final double centerY = totalY / pixelCount;
-    final double radius = max(maxX - minX, maxY - minY) / 2;
-    
+    if (count == 0) return null;
     return BarbellPosition(
-      x: centerX,
-      y: centerY,
-      radius: radius,
+      x: totalX / count,
+      y: totalY / count,
+      radius: max(maxX - minX, maxY - minY) / 2,
       timestamp: DateTime.now(),
     );
   }
-  
-  /// Convert RGB image to HSV
-  img.Image _rgbToHsv(img.Image image) {
-    final img.Image hsvImage = img.Image(width: image.width, height: image.height);
-    
-    for (int y = 0; y < image.height; y++) {
-      for (int x = 0; x < image.width; x++) {
-        final p = image.getPixel(x, y);
-        final int r = p.r.toInt();
-        final int g = p.g.toInt();
-        final int b = p.b.toInt();
-        
-        // RGB to HSV conversion
-        final double rNorm = r / 255.0;
-        final double gNorm = g / 255.0;
-        final double bNorm = b / 255.0;
-        
-        final double maxVal = max(rNorm, max(gNorm, bNorm));
-        final double minVal = min(rNorm, min(gNorm, bNorm));
-        final double delta = maxVal - minVal;
-        
-        double h = 0;
-        double s = 0;
-        double v = maxVal;
-        
-        if (delta != 0) {
-          s = delta / maxVal;
-          
-          if (maxVal == rNorm) {
-            h = 60 * (((gNorm - bNorm) / delta) % 6);
-          } else if (maxVal == gNorm) {
-            h = 60 * (((bNorm - rNorm) / delta) + 2);
-          } else {
-            h = 60 * (((rNorm - gNorm) / delta) + 4);
-          }
-        }
-        
-        if (h < 0) h += 360;
-        
-        final int hInt = (h / 2).toInt(); // Scale to 0-180 for OpenCV compatibility
-        final int sInt = (s * 255).toInt();
-        final int vInt = (v * 255).toInt();
-        
-        hsvImage.setPixelRgba(x, y, hInt, sInt, vInt, 255);
-      }
-    }
-    
-    return hsvImage;
-  }
-  
-  /// Calculate velocity from position history
-  double _calculateVelocity(BarbellPosition currentPosition) {
-    if (_positionHistory.isEmpty) return 0.0;
-    
-    final BarbellPosition lastPosition = _positionHistory.last;
-    final double timeDiff = currentPosition.timestamp.difference(lastPosition.timestamp).inMilliseconds / 1000.0;
-    if (timeDiff == 0) return 0.0;
-    
-    // Calculate pixel distance
-    final double pixelDistance = currentPosition.distanceTo(lastPosition);
-    
-    // Convert to mm using barbell radius as reference
-    // Assuming barbell end is circular and we know its actual size
-    final double mmPerPixel = _defaultBarbellRadiusMm / currentPosition.radius;
-    final double mmDistance = pixelDistance * mmPerPixel;
-    
-    // Convert to m/s
-    final double velocity = mmDistance / 1000 / timeDiff;
-    
-    return velocity;
-  }
-  
-  /// Update position and velocity history
-  void _updateHistory(BarbellPosition position, double velocity) {
-    _positionHistory.add(position);
-    _velocityHistory.add(velocity);
-    
-    // Limit history size
-    if (_positionHistory.length > _historySize) {
-      _positionHistory.removeAt(0);
-      _velocityHistory.removeAt(0);
-    }
-  }
-  
-  /// Analyze movement history to detect a rep
-  bool _analyzeForRep() {
-    if (_positionHistory.length < 2 * _vectorThreshold) {
-      return false;
-    }
-    
-    // Simplified rep detection logic
-    // In production, implement full logic from Python code
-    
-    // Check for significant vertical movement
-    double totalYDisp = 0;
-    for (int i = 1; i <= min(_vectorThreshold, _positionHistory.length); i++) {
-      final BarbellPosition pos1 = _positionHistory[_positionHistory.length - i];
-      final BarbellPosition pos2 = _positionHistory[_positionHistory.length - i - 1];
-      totalYDisp += (pos2.y - pos1.y).abs();
-    }
-    
-    // If significant vertical movement and velocity > threshold
-    final double avgVelocity = _velocityHistory.isNotEmpty
-        ? _velocityHistory.reduce((a, b) => a + b) / _velocityHistory.length
-        : 0.0;
-    
-    return totalYDisp > 50 && avgVelocity > _minVelocityForRep;
-  }
-  
-  /// Update metrics after a detected rep
-  void _updateRepMetrics() {
-    if (_velocityHistory.isEmpty) return;
-    
-    // Calculate average and peak velocity for the rep
-    double sumVelocity = 0;
-    double peakVelocity = 0;
-    
-    for (final velocity in _velocityHistory) {
-      sumVelocity += velocity;
-      if (velocity > peakVelocity) {
-        peakVelocity = velocity;
-      }
-    }
-    
-    final double avgVelocity = sumVelocity / _velocityHistory.length;
-    
-    // Store velocities
-    _avgVelocities.add(avgVelocity);
-    _peakVelocities.add(peakVelocity);
-    
-    // Update current metrics
-    _currentAvgVelocity = avgVelocity;
-    _currentPeakVelocity = peakVelocity;
-    
-    // Calculate displacement (simplified)
-    if (_positionHistory.length >= 2) {
-      final double firstY = _positionHistory.first.y;
-      final double lastY = _positionHistory.last.y;
-      final double mmPerPixel = _defaultBarbellRadiusMm / _positionHistory.last.radius;
-      _currentDisplacement = (lastY - firstY).abs() * mmPerPixel;
-    }
-    
-    // Calculate velocity loss
-    if (_avgVelocities.length > 1) {
-      _firstVelocity = _avgVelocities.first;
-      final double currentVelocity = _avgVelocities.last;
-      _velocityLoss = ((_firstVelocity - currentVelocity) / _firstVelocity) * 100;
-    } else if (_avgVelocities.length == 1) {
-      _firstVelocity = _avgVelocities.first;
-      _velocityLoss = 0.0;
-    }
-    
-    // Clear history for next rep
-    _positionHistory.clear();
-    _velocityHistory.clear();
-  }
-  
-  /// Reset analysis state
-  void _resetAnalysis() {
-    _positionHistory.clear();
-    _velocityHistory.clear();
-    _avgVelocities.clear();
-    _peakVelocities.clear();
-    _repCount = 0;
-    _firstVelocity = 0.0;
-    _currentAvgVelocity = 0.0;
-    _currentPeakVelocity = 0.0;
-    _currentDisplacement = 0.0;
-    _velocityLoss = 0.0;
-    _shouldEndSet = false;
-  }
 }
 
-/// Helper service for camera setup and VBT tracking
+// Internal movement direction enum.
+enum _Direction { up, down, idle }
+
+// ---------------------------------------------------------------------------
+// VbtCameraService — camera initialisation helper
+// ---------------------------------------------------------------------------
+
 class VbtCameraService {
   static Future<CameraController> initializeCamera() async {
     final cameras = await availableCameras();
-    final CameraDescription camera = cameras.firstWhere(
+    final camera = cameras.firstWhere(
       (c) => c.lensDirection == CameraLensDirection.back,
       orElse: () => cameras.first,
     );
-    
-    return CameraController(
-      camera,
-      ResolutionPreset.medium,
-      enableAudio: false,
-    );
-  }
-  
-  static Future<void> startVbtTracking({
-    required CameraController cameraController,
-    required Function(BarbellMetrics) onMetricsUpdate,
-    double barbellRadiusMm = 25.0,
-  }) async {
-    await cameraController.initialize();
-    
-    final vbtService = VbtBarbellService(cameraController);
-    final metricsStream = vbtService.startTracking(
-      barbellRadiusMm: barbellRadiusMm,
-    );
-    
-    metricsStream.listen(onMetricsUpdate);
+    return CameraController(camera, ResolutionPreset.medium, enableAudio: false);
   }
 }
