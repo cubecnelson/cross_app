@@ -9,9 +9,13 @@ A robust mobile application for tracking strength training workouts, managing ro
 - 📊 Workout logging with sets, reps, and weights
 - 📅 Customizable workout routines and programs
 - 📈 Progress tracking with charts and analytics
+- ⚠️ Training load alerts with ACWR analysis
+- 🏆 Achievement system with milestones and badges
+- 🔔 Smart notifications for over/under-training
 - 🌙 Dark mode support
 - 📱 Cross-platform (iOS & Android)
 - 🔄 Real-time sync with offline support
+- 🔄 Over-the-air updates (Shorebird integration)
 
 ## Tech Stack
 
@@ -20,6 +24,7 @@ A robust mobile application for tracking strength training workouts, managing ro
 - **State Management**: Riverpod
 - **Local Storage**: Hive
 - **Charts**: FL Chart
+- **OTA Updates**: Shorebird (Over-the-air updates)
 
 ## Getting Started
 

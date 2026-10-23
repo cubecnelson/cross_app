@@ -1,0 +1,126 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <style>
+        body { margin: 0; padding: 0; display: flex; justify-content: center; align-items: center; height: 100vh; background: #f0f0f0; }
+        .screen {
+            width: 270px;
+            height: 585px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            border-radius: 30px;
+            box-shadow: 0 20px 40px rgba(0,0,0,0.2);
+            position: relative;
+            overflow: hidden;
+            font-family: 'Inter', sans-serif;
+        }
+        .header {
+            height: 80px;
+            background: rgba(255,255,255,0.9);
+            display: flex;
+            align-items: center;
+            padding: 0 20px;
+            font-weight: 700;
+            font-size: 20px;
+            color: #333;
+        }
+        .content {
+            padding: 20px;
+            color: white;
+        }
+        .exercise {
+            background: rgba(255,255,255,0.9);
+            border-radius: 12px;
+            padding: 15px;
+            margin-bottom: 12px;
+            color: #333;
+        }
+        .exercise-header {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 10px;
+        }
+        .exercise-name {
+            font-weight: 600;
+            font-size: 16px;
+        }
+        .exercise-stats {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 8px;
+            font-size: 14px;
+            color: #666;
+        }
+        .stat {
+            display: flex;
+            justify-content: space-between;
+        }
+        .timer {
+            position: absolute;
+            bottom: 30px;
+            left: 0;
+            right: 0;
+            text-align: center;
+            font-size: 48px;
+            font-weight: 700;
+            color: white;
+            text-shadow: 0 2px 10px rgba(0,0,0,0.3);
+        }
+        .footer {
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            height: 60px;
+            background: rgba(255,255,255,0.9);
+            display: flex;
+            justify-content: space-around;
+            align-items: center;
+        }
+        .footer-button {
+            padding: 8px 16px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border-radius: 20px;
+            font-weight: 600;
+            font-size: 14px;
+        }
+    </style>
+</head>
+<body>
+    <div class="screen">
+        <div class="header">Active Workout</div>
+        <div class="content">
+            <div class="exercise">
+                <div class="exercise-header">
+                    <div class="exercise-name">Barbell Squat</div>
+                    <div style="color: #FF6B35; font-weight: 600;">Set 3/4</div>
+                </div>
+                <div class="exercise-stats">
+                    <div class="stat"><span>Weight:</span> <span style="font-weight: 600;">85 kg</span></div>
+                    <div class="stat"><span>Reps:</span> <span style="font-weight: 600;">8</span></div>
+                    <div class="stat"><span>RPE:</span> <span style="font-weight: 600;">7</span></div>
+                    <div class="stat"><span>Rest:</span> <span style="font-weight: 600;">90s</span></div>
+                </div>
+            </div>
+            <div class="exercise">
+                <div class="exercise-header">
+                    <div class="exercise-name">Running</div>
+                    <div style="color: #FF6B35; font-weight: 600;">5.2 km</div>
+                </div>
+                <div class="exercise-stats">
+                    <div class="stat"><span>Pace:</span> <span style="font-weight: 600;">5:30/km</span></div>
+                    <div class="stat"><span>HR:</span> <span style="font-weight: 600;">158 bpm</span></div>
+                    <div class="stat"><span>Time:</span> <span style="font-weight: 600;">28:42</span></div>
+                    <div class="stat"><span>Calories:</span> <span style="font-weight: 600;">320</span></div>
+                </div>
+            </div>
+        </div>
+        <div class="timer">28:42</div>
+        <div class="footer">
+            <div class="footer-button">Pause</div>
+            <div class="footer-button" style="background: linear-gradient(135deg, #FF6B35 0%, #E65100 100%);">Next Set</div>
+            <div class="footer-button">Finish</div>
+        </div>
+    </div>
+</body>
+</html>

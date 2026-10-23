@@ -10,9 +10,11 @@ import '../../../models/workout_recommendation.dart';
 import '../../../providers/auth_provider.dart';
 import '../../../providers/workout_provider.dart';
 import '../../../providers/recommendation_provider.dart';
+import '../../../providers/personal_record_provider.dart';
 import '../../exercises/screens/exercise_picker_screen.dart';
 import '../widgets/exercise_set_widget.dart';
 import '../widgets/recommendations_section.dart';
+import 'session_rpe_screen.dart';
 
 class ActiveWorkoutScreen extends ConsumerStatefulWidget {
   final Routine? routine;
@@ -228,7 +230,7 @@ class _ActiveWorkoutScreenState extends ConsumerState<ActiveWorkoutScreen> {
     try {
       debugPrint('🏋️ Creating workout for user: ${user.id}');
 
-      // Create workout
+      // Create workout (sRPE selected on SessionRpeScreen after save)
       final workout = Workout(
         id: const Uuid().v4(),
         userId: user.id,
@@ -237,6 +239,7 @@ class _ActiveWorkoutScreenState extends ConsumerState<ActiveWorkoutScreen> {
         routineName: widget.routine?.name,
         notes: _notesController.text.isEmpty ? null : _notesController.text,
         duration: _duration,
+        sRPE: null, // Selected on SessionRpeScreen after finish
         createdAt: DateTime.now(),
       );
 
@@ -292,14 +295,48 @@ class _ActiveWorkoutScreenState extends ConsumerState<ActiveWorkoutScreen> {
 
       debugPrint('✅ Created $setsCreated sets');
 
+      // Detect and save personal records (PRs)
+      try {
+        final personalRecordNotifier = ref.read(personalRecordNotifierProvider.notifier);
+        final existingPRs = ref.read(personalRecordsProvider).value ?? [];
+        final allWorkouts = ref.read(workoutsProvider).value ?? [];
+        
+        final newPRs = await personalRecordNotifier.detectAndSavePRsFromWorkouts(
+          allWorkouts,
+          existingPRs,
+        );
+
+        if (newPRs.isNotEmpty) {
+          debugPrint('🎉 Detected ${newPRs.length} new personal records!');
+          for (final pr in newPRs) {
+            debugPrint('   - ${pr.exerciseName}: ${pr.displayText}');
+          }
+        }
+      } catch (e) {
+        debugPrint('⚠️ Failed to detect PRs: $e');
+        // Don't fail workout save if PR detection fails
+      }
+
       if (mounted) {
         Navigator.pop(context);
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(
-            content: Text('Workout saved! $setsCreated sets completed 🎉'),
-            backgroundColor: Colors.green,
+        // Navigate to Session RPE selection after saving
+        await Navigator.push(
+          context,
+          MaterialPageRoute(
+            builder: (_) => SessionRpeScreen(
+              workout: createdWorkout,
+              isPostWorkout: true,
+            ),
           ),
         );
+        if (mounted) {
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(
+              content: Text('Workout saved! $setsCreated sets completed 🎉'),
+              backgroundColor: Colors.green,
+            ),
+          );
+        }
       }
     } catch (e, stackTrace) {
       debugPrint('❌ Error saving workout: $e');
@@ -495,14 +532,14 @@ class _ActiveWorkoutScreenState extends ConsumerState<ActiveWorkoutScreen> {
             ],
           ),
           child: TextField(
-            controller: _notesController,
-            decoration: const InputDecoration(
-              hintText: 'Add workout notes...',
-              border: OutlineInputBorder(),
-              prefixIcon: Icon(Icons.note_outlined, size: 24, color: null),
-            ),
-            maxLines: 2,
-          ),
+                controller: _notesController,
+                decoration: const InputDecoration(
+                  hintText: 'Add workout notes...',
+                  border: OutlineInputBorder(),
+                  prefixIcon: Icon(Icons.note_outlined, size: 24, color: null),
+                ),
+                maxLines: 2,
+              ),
         ),
       ),
     );

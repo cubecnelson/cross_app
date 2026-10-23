@@ -2,16 +2,31 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../../core/utils/date_utils.dart';
 import '../../../models/workout.dart';
+import 'session_rpe_screen.dart';
 import '../../../models/workout_set.dart';
 import '../../../providers/workout_provider.dart';
 
-class WorkoutDetailScreen extends ConsumerWidget {
+class WorkoutDetailScreen extends ConsumerStatefulWidget {
   final Workout workout;
 
   const WorkoutDetailScreen({super.key, required this.workout});
 
   @override
-  Widget build(BuildContext context, WidgetRef ref) {
+  ConsumerState<WorkoutDetailScreen> createState() => _WorkoutDetailScreenState();
+}
+
+class _WorkoutDetailScreenState extends ConsumerState<WorkoutDetailScreen> {
+  late Workout _workout;
+
+  @override
+  void initState() {
+    super.initState();
+    _workout = widget.workout;
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final workout = _workout;
     // Debug: Log workout sets info
     debugPrint('📊 Workout Detail - ID: ${workout.id}');
     debugPrint('📊 Total sets loaded: ${workout.sets.length}');
@@ -110,6 +125,66 @@ class WorkoutDetailScreen extends ConsumerWidget {
                           '${workout.totalVolume.toStringAsFixed(0)} kg',
                         ),
                       ],
+                    ),
+                    const Divider(height: 24),
+                    InkWell(
+                        onTap: () async {
+                          final result = await Navigator.push<bool>(
+                            context,
+                            MaterialPageRoute(
+                              builder: (_) => SessionRpeScreen(
+                                workout: workout,
+                                isPostWorkout: false,
+                              ),
+                            ),
+                          );
+                          if (result == true && mounted) {
+                            ref.invalidate(workoutByIdProvider(workout.id));
+                            final updated =
+                                await ref.read(workoutByIdProvider(workout.id).future);
+                            if (updated != null && mounted) {
+                              setState(() => _workout = updated);
+                            }
+                          }
+                        },
+                      borderRadius: BorderRadius.circular(8),
+                      child: Padding(
+                        padding: const EdgeInsets.symmetric(vertical: 8),
+                        child: Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          children: [
+                            Text(
+                              'Session RPE',
+                              style: Theme.of(context).textTheme.bodyLarge,
+                            ),
+                            Row(
+                              children: [
+                                Text(
+                                  workout.sRPE != null
+                                  ? '${workout.sRPE!.toStringAsFixed(0)}/10'
+                                  : 'Tap to add',
+                                  style: Theme.of(context)
+                                      .textTheme
+                                      .bodyMedium
+                                      ?.copyWith(
+                                        color: workout.sRPE != null
+                                            ? null
+                                            : Theme.of(context)
+                                                .colorScheme
+                                                .primary,
+                                      ),
+                                ),
+                                const SizedBox(width: 4),
+                                Icon(
+                                  Icons.edit_outlined,
+                                  size: 18,
+                                  color: Theme.of(context).colorScheme.primary,
+                                ),
+                              ],
+                            ),
+                          ],
+                        ),
+                      ),
                     ),
                   ],
                 ),

@@ -1,0 +1,75 @@
+<svg width="270" height="585" viewBox="0 0 270 585" fill="none" xmlns="http://www.w3.org/2000/svg">
+    <rect width="270" height="585" rx="30" fill="url(#gradient)"/>
+    <defs>
+        <linearGradient id="gradient" x1="0" y1="0" x2="270" y2="585" gradientUnits="userSpaceOnUse">
+            <stop stop-color="#6B7280"/>
+            <stop offset="1" stop-color="#4B5563"/>
+        </linearGradient>
+    </defs>
+    
+    <!-- Header -->
+    <rect x="0" y="0" width="270" height="80" fill="white" fill-opacity="0.9"/>
+    <text x="20" y="50" font-family="Inter, sans-serif" font-weight="700" font-size="20" fill="#333">Settings</text>
+    
+    <!-- Profile Section -->
+    <rect x="20" y="100" width="230" height="80" rx="12" fill="white" fill-opacity="0.9"/>
+    <circle cx="55" cy="140" r="25" fill="#3B82F6"/>
+    <text x="55" y="145" text-anchor="middle" font-family="Inter, sans-serif" font-weight="700" font-size="16" fill="white">A</text>
+    
+    <text x="85" y="125" font-family="Inter, sans-serif" font-weight="600" font-size="16" fill="#333">Alex Johnson</text>
+    <text x="85" y="145" font-family="Inter, sans-serif" font-size="14" fill="#666">alex@example.com</text>
+    <text x="85" y="165" font-family="Inter, sans-serif" font-size="14" fill="#3B82F6">Edit Profile →</text>
+    
+    <!-- Settings List -->
+    <rect x="20" y="200" width="230" height="40" rx="8" fill="white" fill-opacity="0.9"/>
+    <circle cx="45" cy="220" r="6" fill="#3B82F6"/>
+    <text x="65" y="225" font-family="Inter, sans-serif" font-size="14" fill="#333">Notifications</text>
+    <text x="220" y="225" text-anchor="end" font-family="Inter, sans-serif" font-size="14" fill="#666">On</text>
+    
+    <rect x="20" y="250" width="230" height="40" rx="8" fill="white" fill-opacity="0.9"/>
+    <circle cx="45" cy="270" r="6" fill="#10B981"/>
+    <text x="65" y="275" font-family="Inter, sans-serif" font-size="14" fill="#333">Training Alerts</text>
+    <text x="220" y="275" text-anchor="end" font-family="Inter, sans-serif" font-size="14" fill="#666">On</text>
+    
+    <rect x="20" y="300" width="230" height="40" rx="8" fill="white" fill-opacity="0.9"/>
+    <circle cx="45" cy="320" r="6" fill="#8B5CF6"/>
+    <text x="65" y="325" font-family="Inter, sans-serif" font-size="14" fill="#333">Achievements</text>
+    <text x="220" y="325" text-anchor="end" font-family="Inter, sans-serif" font-size="14" fill="#666">On</text>
+    
+    <rect x="20" y="350" width="230" height="40" rx="8" fill="white" fill-opacity="0.9"/>
+    <circle cx="45" cy="370" r="6" fill="#F59E0B"/>
+    <text x="65" y="375" font-family="Inter, sans-serif" font-size="14" fill="#333">App Updates</text>
+    <text x="220" y="375" text-anchor="end" font-family="Inter, sans-serif" font-size="14" fill="#666">Auto</text>
+    
+    <rect x="20" y="400" width="230" height="40" rx="8" fill="white" fill-opacity="0.9"/>
+    <circle cx="45" cy="420" r="6" fill="#0EA5E9"/>
+    <text x="65" y="425" font-family="Inter, sans-serif" font-size="14" fill="#333">Data Export</text>
+    <text x="220" y="425" text-anchor="end" font-family="Inter, sans-serif" font-size="14" fill="#666">→</text>
+    
+    <rect x="20" y="450" width="230" height="40" rx="8" fill="white" fill-opacity="0.9"/>
+    <circle cx="45" cy="470" r="6" fill="#EF4444"/>
+    <text x="65" y="475" font-family="Inter, sans-serif" font-size="14" fill="#333">Sign Out</text>
+    <text x="220" y="475" text-anchor="end" font-family="Inter, sans-serif" font-size="14" fill="#EF4444">→</text>
+    
+    <!-- App Info -->
+    <text x="20" y="510" font-family="Inter, sans-serif" font-size="12" fill="white" fill-opacity="0.8">Cross Workout Tracker v1.2.0</text>
+    <text x="20" y="525" font-family="Inter, sans-serif" font-size="12" fill="white" fill-opacity="0.8">© 2026 Cross Fitness Inc.</text>
+    
+    <!-- Navigation -->
+    <rect x="0" y="525" width="270" height="60" fill="white" fill-opacity="0.9"/>
+    
+    <circle cx="45" cy="555" r="8" fill="#9CA3AF"/>
+    <text x="45" y="570" text-anchor="middle" font-family="Inter, sans-serif" font-size="10" fill="#9CA3AF">Home</text>
+    
+    <circle cx="90" cy="555" r="8" fill="#9CA3AF"/>
+    <text x="90" y="570" text-anchor="middle" font-family="Inter, sans-serif" font-size="10" fill="#9CA3AF">Workouts</text>
+    
+    <circle cx="135" cy="555" r="8" fill="#9CA3AF"/>
+    <text x="135" y="570" text-anchor="middle" font-family="Inter, sans-serif" font-size="10" fill="#9CA3AF">Routines</text>
+    
+    <circle cx="180" cy="555" r="8" fill="#9CA3AF"/>
+    <text x="180" y="570" text-anchor="middle" font-family="Inter, sans-serif" font-size="10" fill="#9CA3AF">Progress</text>
+    
+    <circle cx="225" cy="555" r="8" fill="#6B7280"/>
+    <text x="225" y="570" text-anchor="middle" font-family="Inter, sans-serif" font-size="10" fill="#6B7280">Profile</text>
+</svg>

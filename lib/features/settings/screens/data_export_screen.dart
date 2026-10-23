@@ -20,7 +20,7 @@ class _DataExportScreenState extends ConsumerState<DataExportScreen> {
   Widget build(BuildContext context) {
     final user = ref.watch(currentUserProvider);
     final exportStatsAsync = ref.watch(exportStatsProvider);
-    final workoutsAsync = ref.watch(workoutsProvider);
+    final workoutsAsync = ref.watch(workoutNotifierProvider);
     
     return Scaffold(
       appBar: AppBar(

@@ -1,0 +1,59 @@
+<svg width="512" height="512" viewBox="0 0 512 512" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <!-- Background: Smooth Black Gradient Squircle -->
+  <rect x="0" y="0" width="512" height="512" rx="120" fill="url(#bg_gradient)"/>
+  
+  <!-- Shadow for depth -->
+  <defs>
+    <filter id="dropShadow" x="-50%" y="-50%" width="200%" height="200%">
+      <feGaussianBlur in="SourceAlpha" stdDeviation="10"/>
+      <feOffset dx="4" dy="8" result="offsetblur"/>
+      <feComponentTransfer>
+        <feFuncA type="linear" slope="0.5"/>
+      </feComponentTransfer>
+      <feMerge> 
+        <feMergeNode/>
+        <feMergeNode in="SourceGraphic"/> 
+      </feMerge>
+    </filter>
+    
+    <linearGradient id="bg_gradient" x1="0" y1="0" x2="512" y2="512" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#262626"/>
+      <stop offset="1" stop-color="#000000"/>
+    </linearGradient>
+    
+    <linearGradient id="bar_orange" x1="0" y1="0" x2="1" y2="1">
+      <stop stop-color="#FF8C00"/>
+      <stop offset="1" stop-color="#FF4500"/>
+    </linearGradient>
+    
+    <linearGradient id="bar_orange_dark" x1="0" y1="0" x2="1" y2="1">
+      <stop stop-color="#E65100"/>
+      <stop offset="1" stop-color="#BF360C"/>
+    </linearGradient>
+  </defs>
+
+  <!-- Group centered in the viewbox -->
+  <g transform="translate(256, 256)">
+    
+    <!-- Barbell 1 (Background/Underneath) - Darker Orange -->
+    <g transform="rotate(-45)">
+      <!-- The Bar -->
+      <rect x="-160" y="-25" width="320" height="50" rx="12" fill="url(#bar_orange_dark)" filter="url(#dropShadow)"/>
+      <!-- Left Plate -->
+      <rect x="-175" y="-35" width="30" height="70" rx="6" fill="url(#bar_orange_dark)"/>
+      <!-- Right Plate -->
+      <rect x="145" y="-35" width="30" height="70" rx="6" fill="url(#bar_orange_dark)"/>
+    </g>
+
+    <!-- Barbell 2 (Foreground/Top) - Vivid Orange -->
+    <g transform="rotate(45)">
+      <!-- The Bar -->
+      <rect x="-160" y="-25" width="320" height="50" rx="12" fill="url(#bar_orange)" filter="url(#dropShadow)"/>
+      <!-- Left Plate -->
+      <rect x="-175" y="-35" width="30" height="70" rx="6" fill="url(#bar_orange)"/>
+      <!-- Right Plate -->
+      <rect x="145" y="-35" width="30" height="70" rx="6" fill="url(#bar_orange)"/>
+    </g>
+    
+  </g>
+</svg>

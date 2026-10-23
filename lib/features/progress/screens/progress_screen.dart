@@ -3,17 +3,32 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:fl_chart/fl_chart.dart';
 import '../../../providers/workout_provider.dart';
 import '../../../widgets/loading_indicator.dart';
+import 'training_load_screen.dart';
 
 class ProgressScreen extends ConsumerWidget {
   const ProgressScreen({super.key});
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final workouts = ref.watch(workoutsProvider);
+    final workouts = ref.watch(workoutNotifierProvider);
 
     return Scaffold(
       appBar: AppBar(
         title: const Text('Progress'),
+        actions: [
+          IconButton(
+            icon: const Icon(Icons.insights_outlined),
+            onPressed: () {
+              Navigator.push(
+                context,
+                MaterialPageRoute(
+                  builder: (_) => const TrainingLoadScreen(),
+                ),
+              );
+            },
+            tooltip: 'Training Load Analysis',
+          ),
+        ],
       ),
       body: workouts.when(
         data: (workoutsList) {

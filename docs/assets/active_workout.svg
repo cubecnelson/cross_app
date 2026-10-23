@@ -1,0 +1,74 @@
+<svg width="270" height="585" viewBox="0 0 270 585" fill="none" xmlns="http://www.w3.org/2000/svg">
+    <rect width="270" height="585" rx="30" fill="url(#gradient)"/>
+    <defs>
+        <linearGradient id="gradient" x1="0" y1="0" x2="270" y2="585" gradientUnits="userSpaceOnUse">
+            <stop stop-color="#667eea"/>
+            <stop offset="1" stop-color="#764ba2"/>
+        </linearGradient>
+    </defs>
+    
+    <!-- Header -->
+    <rect x="0" y="0" width="270" height="80" fill="white" fill-opacity="0.9"/>
+    <text x="20" y="50" font-family="Inter, sans-serif" font-weight="700" font-size="20" fill="#333">Active Workout</text>
+    
+    <!-- Exercise Card 1 -->
+    <rect x="20" y="100" width="230" height="120" rx="12" fill="white" fill-opacity="0.9"/>
+    <text x="35" y="130" font-family="Inter, sans-serif" font-weight="600" font-size="16" fill="#333">Barbell Squat</text>
+    <text x="200" y="130" font-family="Inter, sans-serif" font-weight="600" font-size="16" fill="#FF6B35">Set 3/4</text>
+    
+    <text x="35" y="160" font-family="Inter, sans-serif" font-size="14" fill="#666">Weight:</text>
+    <text x="100" y="160" font-family="Inter, sans-serif" font-weight="600" font-size="14" fill="#333">85 kg</text>
+    
+    <text x="35" y="180" font-family="Inter, sans-serif" font-size="14" fill="#666">Reps:</text>
+    <text x="100" y="180" font-family="Inter, sans-serif" font-weight="600" font-size="14" fill="#333">8</text>
+    
+    <text x="150" y="160" font-family="Inter, sans-serif" font-size="14" fill="#666">RPE:</text>
+    <text x="190" y="160" font-family="Inter, sans-serif" font-weight="600" font-size="14" fill="#333">7</text>
+    
+    <text x="150" y="180" font-family="Inter, sans-serif" font-size="14" fill="#666">Rest:</text>
+    <text x="190" y="180" font-family="Inter, sans-serif" font-weight="600" font-size="14" fill="#333">90s</text>
+    
+    <!-- Exercise Card 2 -->
+    <rect x="20" y="240" width="230" height="120" rx="12" fill="white" fill-opacity="0.9"/>
+    <text x="35" y="270" font-family="Inter, sans-serif" font-weight="600" font-size="16" fill="#333">Running</text>
+    <text x="200" y="270" font-family="Inter, sans-serif" font-weight="600" font-size="16" fill="#FF6B35">5.2 km</text>
+    
+    <text x="35" y="300" font-family="Inter, sans-serif" font-size="14" fill="#666">Pace:</text>
+    <text x="100" y="300" font-family="Inter, sans-serif" font-weight="600" font-size="14" fill="#333">5:30/km</text>
+    
+    <text x="35" y="320" font-family="Inter, sans-serif" font-size="14" fill="#666">HR:</text>
+    <text x="100" y="320" font-family="Inter, sans-serif" font-weight="600" font-size="14" fill="#333">158 bpm</text>
+    
+    <text x="150" y="300" font-family="Inter, sans-serif" font-size="14" fill="#666">Time:</text>
+    <text x="190" y="300" font-family="Inter, sans-serif" font-weight="600" font-size="14" fill="#333">28:42</text>
+    
+    <text x="150" y="320" font-family="Inter, sans-serif" font-size="14" fill="#666">Calories:</text>
+    <text x="190" y="320" font-family="Inter, sans-serif" font-weight="600" font-size="14" fill="#333">320</text>
+    
+    <!-- Timer -->
+    <text x="135" y="450" text-anchor="middle" font-family="Inter, sans-serif" font-weight="700" font-size="48" fill="white">28:42</text>
+    
+    <!-- Footer -->
+    <rect x="0" y="525" width="270" height="60" fill="white" fill-opacity="0.9"/>
+    
+    <!-- Buttons -->
+    <rect x="20" y="535" width="70" height="40" rx="20" fill="url(#buttonGradient)"/>
+    <text x="55" y="560" text-anchor="middle" font-family="Inter, sans-serif" font-weight="600" font-size="14" fill="white">Pause</text>
+    
+    <rect x="100" y="535" width="70" height="40" rx="20" fill="url(#primaryGradient)"/>
+    <text x="135" y="560" text-anchor="middle" font-family="Inter, sans-serif" font-weight="600" font-size="14" fill="white">Next</text>
+    
+    <rect x="180" y="535" width="70" height="40" rx="20" fill="url(#buttonGradient)"/>
+    <text x="215" y="560" text-anchor="middle" font-family="Inter, sans-serif" font-weight="600" font-size="14" fill="white">Finish</text>
+    
+    <defs>
+        <linearGradient id="buttonGradient" x1="0" y1="0" x2="70" y2="40" gradientUnits="userSpaceOnUse">
+            <stop stop-color="#667eea"/>
+            <stop offset="1" stop-color="#764ba2"/>
+        </linearGradient>
+        <linearGradient id="primaryGradient" x1="0" y1="0" x2="70" y2="40" gradientUnits="userSpaceOnUse">
+            <stop stop-color="#FF6B35"/>
+            <stop offset="1" stop-color="#E65100"/>
+        </linearGradient>
+    </defs>
+</svg>

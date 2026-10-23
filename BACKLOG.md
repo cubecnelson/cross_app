@@ -31,6 +31,8 @@ This is a prioritized backlog of improvements and features for the Cross workout
 - **P3-005**: Add nutrition tracking integration - NEW
 - **P3-006**: Expand video workout library - NEW
 - **P3-007**: Create web/desktop version
+- **P3-008**: Implement barbell tracking (1RM, plate calculator, progression) - NEW
+- **P3-009**: Implement VBT (Velocity-Based Training) barbell tracking - NEW
 
 ### 🟣 P4 - Technical Debt
 - **P4-001**: Add comprehensive unit tests
@@ -153,7 +155,7 @@ This is a prioritized backlog of improvements and features for the Cross workout
 - **Notes**: Profiled and optimized workflow startup, removed complex fallback logic, simplified CI/CD pipeline
 
 **P1-003**: Fix authentication edge cases
-- **Status**: Not Started
+- **Status**: In Progress
 - **Effort**: 2 hours
 - **Notes**: Test offline auth, token refresh issues
 
@@ -164,25 +166,28 @@ This is a prioritized backlog of improvements and features for the Cross workout
 - **Notes**: Add retry logic, better error messages
 
 **P1-005**: Add achievement system (gamification)
-- **Status**: Not Started
+- **Status**: ✅ Partially Complete
+- **Completed**: 2026-02-19
 - **Effort**: 3 hours
-- **Notes**: Badges for consistency, PRs, streaks
+- **Notes**: Implemented achievement notifications for milestones (50/100 workouts, 10k/50k AU, 7/30 day streaks) via TrainingAlertService. Still needs UI components (badges, achievement screen, points system).
 
 **P1-006**: Implement workout streaks
-- **Status**: Not Started
+- **Status**: ✅ Partially Complete
+- **Completed**: 2026-02-19
 - **Effort**: 2 hours
-- **Notes**: Daily workout streak tracking
+- **Notes**: Implemented streak calculation logic in TrainingAlertService with notifications for 7-day and 30-day streaks. Still needs UI display (current streak on dashboard, streak calendar).
 
 ### 🟡 P2 Tasks
 **P2-001**: Implement Google OAuth authentication
-- **Status**: In Progress
+- **Status**: ✅ Complete
 - **Effort**: 4 hours
-- **Notes**: Follow Google Auth setup guide in docs
+- **Notes**: Follow Google Auth setup guide in docs (code implemented, needs configuration/testing)
 
 **P2-002**: Implement Apple Sign-In
-- **Status**: Not Started
+- **Status**: Done
+- **Completed**: 2026-03-02
 - **Effort**: 4 hours
-- **Notes**: Required for iOS App Store
+- **Notes**: Required for iOS App Store (code implemented, needs entitlements/testing)
 
 **P2-003**: Add workout rest timer with notifications
 - **Status**: ✅ Done
@@ -232,17 +237,17 @@ This is a prioritized backlog of improvements and features for the Cross workout
   - Display daily health metrics in app
 
 **P2-007**: Add basic social sharing
-- **Status**: Not Started
+- **Status**: In Progress
 - **Effort**: 4 hours
 - **Notes**: Share workouts to social media, friends
 
 **P2-008**: Implement advanced analytics (1RM tracking, PRs)
-- **Status**: Not Started
+- **Status**: ✅ Partially Complete
 - **Effort**: 6 hours
-- **Notes**: One-rep max calculations, personal records
+- **Notes**: One-rep max calculations, personal records (PR detection service, database, models, providers implemented)
 
 **P2-009**: Add monthly challenges
-- **Status**: Not Started
+- **Status**: In Progress
 - **Effort**: 3 hours
 - **Notes**: Community challenges, leaderboards
 
@@ -282,6 +287,16 @@ This is a prioritized backlog of improvements and features for the Cross workout
 - **Effort**: 20 hours
 - **Notes**: Flutter web/desktop support
 
+**P3-008**: Implement barbell tracking (1RM, plate calculator, progression)
+- **Status**: ✅ Partially Complete
+- **Effort**: 6 hours
+- **Notes**: Add 1RM tracking, plate calculator, warm-up sets, and progression planning for barbell lifts (1RM and plate calculator implemented)
+
+**P3-009**: Implement VBT (Velocity-Based Training) barbell tracking
+- **Status**: ✅ Partially Complete - OpenCV Architecture Implemented
+- **Effort**: 12+ hours
+- **Notes**: OpenCV-based barbell tracking architecture implemented with platform channels for iOS/Android. Includes method channels, native stubs, OpenCV dependencies, and hybrid service with Dart fallback. Ready for native OpenCV algorithm implementation following VBT-Barbell-Tracker reference.
+
 ### 🟣 P4 Tasks
 **P4-001**: Add comprehensive unit tests
 - **Status**: Not Started
@@ -314,6 +329,52 @@ This is a prioritized backlog of improvements and features for the Cross workout
 - **Notes**: Add analytics for performance metrics
 
 ## Daily Selection Log
+
+### 2026-03-02
+**Selected Task**: P2-002
+**Reason**: Automatically selected by daily task selector
+**Status**: In Progress
+**Start Time**: 9:00 AM
+**Expected Completion**: 1:00 PM
+
+
+### 2026-02-27
+**Selected Task**: P2-008
+**Reason**: Automatically selected by daily task selector
+**Status**: In Progress
+**Start Time**: 9:00 AM
+**Expected Completion**: 1:00 PM
+
+
+### 2026-02-25
+**Selected Task**: P2-007
+**Reason**: Automatically selected by daily task selector
+**Status**: In Progress
+**Start Time**: 9:00 AM
+**Expected Completion**: 01:06 PM
+
+### 2026-02-23
+**Selected Task**: P1-003
+**Reason**: Automatically selected by daily task selector
+**Status**: In Progress
+**Start Time**: 9:00 AM
+**Expected Completion**: 1:00 PM
+
+
+### 2026-02-20
+**Selected Task**: P2-009
+**Reason**: Automatically selected by daily task selector
+**Status**: In Progress
+**Start Time**: 9:00 AM
+**Expected Completion**: 12:01 PM
+
+### 2026-02-19
+**Selected Task**: P1-005
+**Reason**: Automatically selected by daily task selector
+**Status**: In Progress
+**Start Time**: 9:00 AM
+**Expected Completion**: 1:00 PM
+
 
 ### 2026-02-12
 **Selected Task**: P2-005

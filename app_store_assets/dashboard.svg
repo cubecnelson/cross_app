@@ -1,0 +1,72 @@
+<svg width="270" height="585" viewBox="0 0 270 585" fill="none" xmlns="http://www.w3.org/2000/svg">
+    <rect width="270" height="585" rx="30" fill="url(#gradient)"/>
+    <defs>
+        <linearGradient id="gradient" x1="0" y1="0" x2="270" y2="585" gradientUnits="userSpaceOnUse">
+            <stop stop-color="#4F46E5"/>
+            <stop offset="1" stop-color="#7C3AED"/>
+        </linearGradient>
+    </defs>
+    
+    <!-- Header -->
+    <rect x="0" y="0" width="270" height="80" fill="white" fill-opacity="0.9"/>
+    <text x="20" y="50" font-family="Inter, sans-serif" font-weight="700" font-size="20" fill="#333">Dashboard</text>
+    
+    <!-- Welcome Card -->
+    <rect x="20" y="100" width="230" height="100" rx="12" fill="white" fill-opacity="0.9"/>
+    <text x="35" y="130" font-family="Inter, sans-serif" font-weight="600" font-size="16" fill="#333">Welcome back, Alex!</text>
+    <text x="35" y="155" font-family="Inter, sans-serif" font-size="14" fill="#666">Today: Chest & Triceps</text>
+    <text x="35" y="175" font-family="Inter, sans-serif" font-size="14" fill="#666">Current streak: 7 days 🔥</text>
+    
+    <!-- Stats Row -->
+    <rect x="20" y="220" width="70" height="80" rx="8" fill="white" fill-opacity="0.9"/>
+    <text x="55" y="250" text-anchor="middle" font-family="Inter, sans-serif" font-weight="700" font-size="20" fill="#4F46E5">5</text>
+    <text x="55" y="275" text-anchor="middle" font-family="Inter, sans-serif" font-size="12" fill="#666">Workouts<br/>this week</text>
+    
+    <rect x="100" y="220" width="70" height="80" rx="8" fill="white" fill-opacity="0.9"/>
+    <text x="135" y="250" text-anchor="middle" font-family="Inter, sans-serif" font-weight="700" font-size="20" fill="#10B981">12.5k</text>
+    <text x="135" y="275" text-anchor="middle" font-family="Inter, sans-serif" font-size="12" fill="#666">Training<br/>Load</text>
+    
+    <rect x="180" y="220" width="70" height="80" rx="8" fill="white" fill-opacity="0.9"/>
+    <text x="215" y="250" text-anchor="middle" font-family="Inter, sans-serif" font-weight="700" font-size="20" fill="#F59E0B">0.8</text>
+    <text x="215" y="275" text-anchor="middle" font-family="Inter, sans-serif" font-size="12" fill="#666">ACWR<br/>(Optimal)</text>
+    
+    <!-- Quick Actions -->
+    <text x="20" y="320" font-family="Inter, sans-serif" font-weight="600" font-size="16" fill="white">Quick Actions</text>
+    
+    <rect x="20" y="340" width="110" height="60" rx="12" fill="white" fill-opacity="0.9"/>
+    <text x="75" y="370" text-anchor="middle" font-family="Inter, sans-serif" font-weight="600" font-size="14" fill="#333">Start Workout</text>
+    
+    <rect x="140" y="340" width="110" height="60" rx="12" fill="white" fill-opacity="0.9"/>
+    <text x="195" y="370" text-anchor="middle" font-family="Inter, sans-serif" font-weight="600" font-size="14" fill="#333">View Routines</text>
+    
+    <!-- Recent Workouts -->
+    <text x="20" y="420" font-family="Inter, sans-serif" font-weight="600" font-size="16" fill="white">Recent Workouts</text>
+    
+    <rect x="20" y="440" width="230" height="60" rx="8" fill="white" fill-opacity="0.9"/>
+    <text x="35" y="465" font-family="Inter, sans-serif" font-weight="600" font-size="14" fill="#333">Chest & Triceps</text>
+    <text x="200" y="465" font-family="Inter, sans-serif" font-size="14" fill="#666">Today</text>
+    <text x="35" y="485" font-family="Inter, sans-serif" font-size="12" fill="#666">8 exercises • 1,250 AU</text>
+    
+    <rect x="20" y="510" width="230" height="60" rx="8" fill="white" fill-opacity="0.9"/>
+    <text x="35" y="535" font-family="Inter, sans-serif" font-weight="600" font-size="14" fill="#333">Leg Day</text>
+    <text x="200" y="535" font-family="Inter, sans-serif" font-size="14" fill="#666">Yesterday</text>
+    <text x="35" y="555" font-family="Inter, sans-serif" font-size="12" fill="#666">6 exercises • 1,800 AU</text>
+    
+    <!-- Navigation -->
+    <rect x="0" y="525" width="270" height="60" fill="white" fill-opacity="0.9"/>
+    
+    <circle cx="45" cy="555" r="8" fill="#4F46E5"/>
+    <text x="45" y="570" text-anchor="middle" font-family="Inter, sans-serif" font-size="10" fill="#4F46E5">Home</text>
+    
+    <circle cx="90" cy="555" r="8" fill="#9CA3AF"/>
+    <text x="90" y="570" text-anchor="middle" font-family="Inter, sans-serif" font-size="10" fill="#9CA3AF">Workouts</text>
+    
+    <circle cx="135" cy="555" r="8" fill="#9CA3AF"/>
+    <text x="135" y="570" text-anchor="middle" font-family="Inter, sans-serif" font-size="10" fill="#9CA3AF">Routines</text>
+    
+    <circle cx="180" cy="555" r="8" fill="#9CA3AF"/>
+    <text x="180" y="570" text-anchor="middle" font-family="Inter, sans-serif" font-size="10" fill="#9CA3AF">Progress</text>
+    
+    <circle cx="225" cy="555" r="8" fill="#9CA3AF"/>
+    <text x="225" y="570" text-anchor="middle" font-family="Inter, sans-serif" font-size="10" fill="#9CA3AF">Profile</text>
+</svg>

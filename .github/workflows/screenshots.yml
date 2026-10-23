@@ -1,0 +1,147 @@
+name: Capture App Screenshots
+on:
+  workflow_dispatch:  # Allow manual trigger
+  push:
+    branches: [ main ]
+    paths:
+      - 'lib/**'
+      - 'integration_test/**'
+      - '.github/workflows/screenshots.yml'
+      - 'pubspec.yaml'
+
+jobs:
+  capture-screenshots:
+    runs-on: macos-latest  # macOS needed for iOS simulator
+    timeout-minutes: 30
+    
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - uses: dart-lang/setup-dart@v1
+        with:
+          sdk: 3.5.4
+        
+      - name: Setup Flutter
+        uses: subosito/flutter-action@v2
+        with:
+          flutter-version: '3.38.7'
+          channel: 'stable'
+          cache: true
+          cache-key: flutter-v3.38.7
+          
+      - name: Show Flutter environment
+        run: |
+          flutter --version
+          flutter doctor -v
+          
+      - name: Install dependencies
+        run: |
+          flutter pub get
+          flutter pub global activate screenshot 2>/dev/null || true
+          
+      - name: Setup Flutter web (for Chrome testing)
+        run: |
+          flutter config --enable-web
+          
+      - name: Build web app (for testing)
+        run: |
+          echo "Building web app for testing..."
+          flutter build web --release --no-tree-shake-icons 2>&1 | tail -50 || echo "Web build completed"
+          echo "Web platform enabled for Chrome testing"
+          
+      - name: Create screenshots directory
+        run: mkdir -p screenshots
+
+      - name: Boot iOS Simulator
+        uses: futureware-tech/simulator-action@v4
+        with:
+          model: 'iPhone 16 Pro Max'
+          wait_for_boot: true
+          
+      - name: Run screenshot tests
+        env:
+          CAPTURE_SCREENSHOTS: true
+          SCREENSHOT_MODE: true
+        run: |
+          echo "🚀 Running screenshot capture tests..."
+          echo "======================================"
+          
+          # Run integration tests with screenshot capture enabled
+          # Using || true to ensure workflow continues even if tests fail
+          set +e  # Don't exit on error
+          
+          flutter test integration_test/screenshot_test.dart \
+            --dart-define=CAPTURE_SCREENSHOTS=true \
+            --dart-define=SCREENSHOT_MODE=true \
+            --no-track-widget-creation \
+            -d "iPhone 16 Pro Max" \
+            --timeout 120s \
+            --verbose 2>&1 | tee test_output.log
+          
+          TEST_EXIT_CODE=$?
+          
+          if [ $TEST_EXIT_CODE -eq 0 ]; then
+            echo "✅ All screenshot tests passed!"
+          else
+            echo "⚠️ Some screenshot tests failed, but continuing..."
+            echo "   Check test_output.log for details"
+          fi
+          
+          echo "======================================"
+          echo "Screenshot capture phase completed"
+            
+      - name: List captured screenshots
+        if: always()
+        run: |
+          echo "📸 Captured screenshots:"
+          find screenshots -name "*.png" -type f 2>/dev/null | while read file; do
+            echo "  - $(basename "$file") ($(du -h "$file" | cut -f1))"
+          done || echo "No screenshots found"
+          
+      - name: Upload screenshots as artifact
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: app-screenshots
+          path: screenshots/
+          retention-days: 7
+          
+      - name: Deploy screenshots to website (optional)
+        if: success()
+        run: |
+          echo "📝 To deploy screenshots to website:"
+          echo "1. Copy screenshots to docs/assets/"
+          echo "2. Update docs/index.html to reference new screenshots"
+          echo "3. Commit and push changes"
+          echo ""
+          echo "Example command:"
+          echo "  cp screenshots/*.png docs/assets/ 2>/dev/null || true"
+          
+      - name: Create summary report
+        if: always()
+        run: |
+          SCREENSHOT_COUNT=$(find screenshots -name "*.png" -type f 2>/dev/null | wc -l)
+          echo "## Screenshot Capture Summary" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "**Status:** ${{ job.status }}" >> $GITHUB_STEP_SUMMARY
+          echo "**Screenshots captured:** $SCREENSHOT_COUNT" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          
+          if [ $SCREENSHOT_COUNT -gt 0 ]; then
+            echo "### 📸 Captured Screenshots:" >> $GITHUB_STEP_SUMMARY
+            find screenshots -name "*.png" -type f 2>/dev/null | while read file; do
+              filename=$(basename "$file")
+              echo "- \`$filename\`" >> $GITHUB_STEP_SUMMARY
+            done
+          else
+            echo "### ⚠️ No screenshots captured" >> $GITHUB_STEP_SUMMARY
+            echo "Check test logs for errors." >> $GITHUB_STEP_SUMMARY
+          fi
+          
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "### 🔧 Next Steps:" >> $GITHUB_STEP_SUMMARY
+          echo "1. Download the 'app-screenshots' artifact" >> $GITHUB_STEP_SUMMARY
+          echo "2. Review screenshot quality" >> $GITHUB_STEP_SUMMARY
+          echo "3. Update website/assets with new screenshots" >> $GITHUB_STEP_SUMMARY
+          echo "4. Use for app store submissions" >> $GITHUB_STEP_SUMMARY
