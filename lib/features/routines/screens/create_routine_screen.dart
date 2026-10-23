@@ -50,7 +50,7 @@ class _CreateRoutineScreenState extends ConsumerState<CreateRoutineScreen> {
     final result = await Navigator.push(
       context,
       MaterialPageRoute(
-        builder: (_) => ExercisePickerScreen(),
+        builder: (_) => const ExercisePickerScreen(),
       ),
     );
 

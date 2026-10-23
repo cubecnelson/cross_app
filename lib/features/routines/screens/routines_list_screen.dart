@@ -5,6 +5,7 @@ import '../../../widgets/loading_indicator.dart';
 import '../../../widgets/empty_state.dart';
 import '../../workouts/screens/active_workout_screen.dart';
 import 'create_routine_screen.dart';
+import 'edit_routine_screen.dart';
 
 class RoutinesListScreen extends ConsumerStatefulWidget {
   const RoutinesListScreen({super.key});
@@ -103,7 +104,7 @@ class _RoutinesListScreenState extends ConsumerState<RoutinesListScreen> with Wi
                             Navigator.push(
                               context,
                               MaterialPageRoute(
-                                builder: (_) => CreateRoutineScreen(
+                                builder: (_) => EditRoutineScreen(
                                   routine: routine,
                                 ),
                               ),
