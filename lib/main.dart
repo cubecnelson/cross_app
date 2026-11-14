@@ -1,34 +1,41 @@
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:hive_flutter/hive_flutter.dart';
-import 'package:shorebird_code_push/shorebird_code_push.dart';
-import 'core/config/supabase_config.dart';
-import 'services/local_storage_service.dart';
 import 'app.dart';
-import 'providers/shorebird_provider.dart';
+import 'core/config/supabase_config.dart';
+import 'providers/catalog_provider.dart';
+import 'services/catalog_service.dart';
+import 'services/local_auth_service.dart';
 
-void main() async {
+Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
-  
-  // Initialize Shorebird for over-the-air updates
-  final shorebirdCodePush = ShorebirdUpdater();
-  
-  // Initialize Hive for local storage
+
   await Hive.initFlutter();
-  await LocalStorageService.initialize();
-  
-  // Initialize Supabase
-  await SupabaseConfig.initialize();
-  
+
+  final catalog = CatalogService.hive();
+  await catalog.initialize();
+
+  final auth = LocalAuthService(catalog);
+  await auth.initialize();
+
+  // Optional: keep Cross-era Supabase config via dart-define, but do not
+  // block startup or write catalog data to Cross workout tables.
+  try {
+    await SupabaseConfig.initializeIfConfigured();
+  } catch (e) {
+    if (kDebugMode) {
+      debugPrint('Supabase init skipped: $e');
+    }
+  }
+
   runApp(
     ProviderScope(
       overrides: [
-        shorebirdCodePushProvider.overrideWithValue(shorebirdCodePush),
+        catalogServiceProvider.overrideWithValue(catalog),
+        localAuthServiceProvider.overrideWithValue(auth),
       ],
-      child: CrossApp(
-        shorebirdCodePush: shorebirdCodePush,
-      ),
+      child: const OnTheRackApp(),
     ),
   );
 }
-
