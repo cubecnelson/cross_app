@@ -10,7 +10,7 @@
     <uses-permission android:name="android.permission.ACTIVITY_RECOGNITION"/>
 
     <application
-        android:label="Cross"
+        android:label="OnTheRack"
         android:name="${applicationName}"
         android:icon="@mipmap/ic_launcher">
         <activity

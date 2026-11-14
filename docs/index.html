@@ -3,8 +3,8 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Cross - Hybrid Athlete Training App</title>
-    <meta name="description" content="Track strength, cardio, and isometric workouts with intelligent training load analysis for hybrid athletes.">
+    <title>OnTheRack — See what's on the floor before you go</title>
+    <meta name="description" content="Crowdsourced inventory and reviews of gym equipment at different gyms. Hong Kong first. Not affiliated with any chain.">
     <link rel="stylesheet" href="style.css">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -13,54 +13,53 @@
     <link rel="icon" type="image/svg+xml" href="assets/icon.svg">
 </head>
 <body>
-    <!-- Navigation -->
     <nav class="navbar">
         <div class="container">
             <div class="nav-content">
                 <a href="#" class="logo">
-                    <img src="assets/icon.svg" alt="Cross App Icon" class="logo-icon">
-                    <span>Cross</span>
+                    <img src="assets/icon.svg" alt="OnTheRack icon" class="logo-icon">
+                    <span>OnTheRack</span>
                 </a>
                 <div class="nav-links">
                     <a href="#features">Features</a>
-                    <a href="#screens">Screens</a>
-                    <a href="#analysis">Analysis</a>
-                    <a href="#download" class="cta-button">Get Early Access</a>
+                    <a href="#how">How it works</a>
+                    <a href="#disclaimer">Disclaimer</a>
+                    <a href="https://github.com/cubecnelson/cross_app" class="cta-button">View on GitHub</a>
                 </div>
-                <button class="mobile-menu-btn">
+                <button class="mobile-menu-btn" aria-label="Open menu">
                     <i class="fas fa-bars"></i>
                 </button>
             </div>
         </div>
     </nav>
 
-    <!-- Hero Section -->
     <section class="hero">
         <div class="container">
             <div class="hero-content">
                 <div class="hero-text">
-                    <h1 class="hero-title">Train Smarter, Not Just Harder</h1>
-                    <p class="hero-subtitle">The first training app that balances strength, cardio, and isometric workouts with <span class="highlight">science-backed training load analysis</span> to prevent injury and optimize progress.</p>
+                    <p class="hero-subtitle" style="font-weight:600;letter-spacing:0.08em;text-transform:uppercase;font-size:0.85rem;margin-bottom:12px;">Crowdsourced equipment reviews</p>
+                    <h1 class="hero-title">See what's on the floor before you go.</h1>
+                    <p class="hero-subtitle">OnTheRack is a social inventory of machines, racks, cardio, and free weights — reviewed <em>per gym</em>. Hong Kong first, not Hong Kong only.</p>
                     <div class="hero-buttons">
-                        <a href="#download" class="primary-button">
-                            <i class="fab fa-apple"></i> App Store (Coming Soon)
+                        <a href="https://github.com/cubecnelson/cross_app" class="primary-button">
+                            <i class="fab fa-github"></i> Flutter app source
                         </a>
-                        <a href="#download" class="secondary-button">
-                            <i class="fab fa-google-play"></i> Google Play (Coming Soon)
+                        <a href="#how" class="secondary-button">
+                            How it works
                         </a>
                     </div>
                     <div class="hero-stats">
                         <div class="stat">
-                            <span class="stat-number">3-in-1</span>
-                            <span class="stat-label">Training Types</span>
+                            <span class="stat-number">Per machine</span>
+                            <span class="stat-label">Not just the venue</span>
                         </div>
                         <div class="stat">
-                            <span class="stat-number">ACWR</span>
-                            <span class="stat-label">Load Analysis</span>
+                            <span class="stat-number">HK first</span>
+                            <span class="stat-label">Not HK only</span>
                         </div>
                         <div class="stat">
-                            <span class="stat-number">AI</span>
-                            <span class="stat-label">Smart Recommendations</span>
+                            <span class="stat-number">Guest OK</span>
+                            <span class="stat-label">Login to contribute</span>
                         </div>
                     </div>
                 </div>
@@ -68,7 +67,7 @@
                     <div class="phone-mockup">
                         <div class="phone-frame">
                             <div class="phone-screen">
-                                <img src="assets/dashboard.svg" alt="Cross App Dashboard">
+                                <img src="assets/dashboard.svg" alt="OnTheRack app preview">
                             </div>
                         </div>
                     </div>
@@ -77,235 +76,128 @@
         </div>
     </section>
 
-    <!-- Features Section -->
     <section id="features" class="features">
         <div class="container">
             <div class="section-header">
-                <h2>Built for Hybrid Athletes</h2>
-                <p>Whether you're a runner who lifts or a lifter who runs, Cross helps you balance both without overtraining.</p>
+                <h2>Built to answer one question</h2>
+                <p>Is the squat rack free? Is the assault bike taped off? What's actually on the floor at this gym?</p>
             </div>
             <div class="features-grid">
                 <div class="feature-card">
-                    <div class="feature-icon">
-                        <i class="fas fa-dumbbell"></i>
-                    </div>
-                    <h3>Strength Training</h3>
-                    <p>Track weight, reps, sets, and rest times with intelligent progression tracking.</p>
+                    <div class="feature-icon"><i class="fas fa-magnifying-glass"></i></div>
+                    <h3>Search gyms</h3>
+                    <p>Find a gym by name, address, chain, or Hong Kong district. Browse without creating an account.</p>
                 </div>
                 <div class="feature-card">
-                    <div class="feature-icon">
-                        <i class="fas fa-running"></i>
-                    </div>
-                    <h3>Cardio Workouts</h3>
-                    <p>Log distance, pace, heart rate, and elevation for running, cycling, or HIIT.</p>
+                    <div class="feature-icon"><i class="fas fa-dumbbell"></i></div>
+                    <h3>Equipment lists</h3>
+                    <p>Open a gym to see machines, racks, cardio, and free weights people have listed on that floor.</p>
                 </div>
                 <div class="feature-card">
-                    <div class="feature-icon">
-                        <i class="fas fa-clock"></i>
-                    </div>
-                    <h3>Isometric Holds</h3>
-                    <p>Track plank times, wall sits, and other isometric exercises with RPE ratings.</p>
+                    <div class="feature-icon"><i class="fas fa-star"></i></div>
+                    <h3>Condition &amp; wait</h3>
+                    <p>Each review rates condition 1–5 and availability — plenty, some wait, crowded, or out of service.</p>
                 </div>
                 <div class="feature-card">
-                    <div class="feature-icon">
-                        <i class="fas fa-chart-line"></i>
-                    </div>
-                    <h3>ACWR Analysis</h3>
-                    <p>Monitor training load with Acute:Chronic Workload Ratio to stay in the sweet spot.</p>
+                    <div class="feature-icon"><i class="fas fa-pen-to-square"></i></div>
+                    <h3>Contribute</h3>
+                    <p>Log in to add a gym, add a piece of equipment, write a review, or upvote a useful report.</p>
                 </div>
                 <div class="feature-card">
-                    <div class="feature-icon">
-                        <i class="fas fa-brain"></i>
-                    </div>
-                    <h3>AI Recommendations</h3>
-                    <p>Get personalized workout suggestions based on your performance and goals.</p>
+                    <div class="feature-icon"><i class="fas fa-location-dot"></i></div>
+                    <h3>Hong Kong sample data</h3>
+                    <p>The first release ships with labelled sample gyms in Central, Sha Tin, Mong Kok, and Kwun Tong.</p>
                 </div>
                 <div class="feature-card">
-                    <div class="feature-icon">
-                        <i class="fas fa-sync-alt"></i>
-                    </div>
-                    <h3>Cloud Sync</h3>
-                    <p>Secure backup with Supabase and access your data across all devices.</p>
+                    <div class="feature-icon"><i class="fas fa-mobile-screen"></i></div>
+                    <h3>Flutter for iOS &amp; Android</h3>
+                    <p>The running app is a Flutter MVP. Catalog data is stored on-device in this first pass.</p>
                 </div>
             </div>
         </div>
     </section>
 
-    <!-- App Screens Section -->
-    <section id="screens" class="screens">
+    <section id="how" class="screens">
         <div class="container">
             <div class="section-header">
-                <h2>Beautiful, Intuitive Interface</h2>
-                <p>Cross combines powerful analytics with a clean, modern design that makes tracking workouts effortless.</p>
+                <h2>How it works</h2>
+                <p>The unit of review is a machine at a gym — not a generic star rating for the club.</p>
             </div>
-            <div class="screens-grid">
-                <div class="screen-card">
-                    <div class="phone-mockup">
-                        <div class="phone-frame">
-                            <div class="phone-screen">
-                                <img src="assets/dashboard.svg" alt="Cross Dashboard Screen">
-                            </div>
-                        </div>
-                    </div>
-                    <div class="screen-info">
-                        <h3>Dashboard</h3>
-                        <p>Quick overview of your training load, streak, and upcoming workouts at a glance.</p>
-                    </div>
+            <div class="features-grid">
+                <div class="feature-card">
+                    <h3>1. Browse</h3>
+                    <p>Open the gym list, search, or filter by district. Seeded listings are marked <strong>Sample data</strong>.</p>
                 </div>
-                <div class="screen-card">
-                    <div class="phone-mockup">
-                        <div class="phone-frame">
-                            <div class="phone-screen">
-                                <img src="assets/active_workout.svg" alt="Cross Active Workout Screen">
-                            </div>
-                        </div>
-                    </div>
-                    <div class="screen-info">
-                        <h3>Active Workout</h3>
-                        <p>Track sets, reps, RPE, and rest times with built-in timer and exercise library.</p>
-                    </div>
+                <div class="feature-card">
+                    <h3>2. Check the floor</h3>
+                    <p>Open a gym for its equipment list and aggregate condition. Open an item for chronological reviews.</p>
                 </div>
-                <div class="screen-card">
-                    <div class="phone-mockup">
-                        <div class="phone-frame">
-                            <div class="phone-screen">
-                                <img src="assets/progress.svg" alt="Cross Progress Analytics Screen">
-                            </div>
-                        </div>
-                    </div>
-                    <div class="screen-info">
-                        <h3>Progress Analytics</h3>
-                        <p>Monitor training load with ACWR charts to stay in the optimal training zone.</p>
-                    </div>
-                </div>
-                <div class="screen-card">
-                    <div class="phone-mockup">
-                        <div class="phone-frame">
-                            <div class="phone-screen">
-                                <img src="assets/routines.svg" alt="Cross Routines Screen">
-                            </div>
-                        </div>
-                    </div>
-                    <div class="screen-info">
-                        <h3>Workout Routines</h3>
-                        <p>Create, edit, and organize custom workout routines with our intuitive editor.</p>
-                    </div>
-                </div>
-                <div class="screen-card">
-                    <div class="phone-mockup">
-                        <div class="phone-frame">
-                            <div class="phone-screen">
-                                <img src="assets/achievements.svg" alt="Cross Achievements Screen">
-                            </div>
-                        </div>
-                    </div>
-                    <div class="screen-info">
-                        <h3>Achievements</h3>
-                        <p>Stay motivated with badges, streaks, and challenges that celebrate your progress.</p>
-                    </div>
-                </div>
-                <div class="screen-card">
-                    <div class="phone-mockup">
-                        <div class="phone-frame">
-                            <div class="phone-screen">
-                                <img src="assets/settings.svg" alt="Cross Settings Screen">
-                            </div>
-                        </div>
-                    </div>
-                    <div class="screen-info">
-                        <h3>Settings & Profile</h3>
-                        <p>Customize notifications, training alerts, and manage your account preferences.</p>
-                    </div>
+                <div class="feature-card">
+                    <h3>3. Add what you saw</h3>
+                    <p>Create an account on the device to contribute a gym, a machine, or a review with wait time and notes.</p>
                 </div>
             </div>
         </div>
     </section>
 
-    <!-- ACWR Analysis Section -->
-    <section id="analysis" class="analysis">
+    <section id="disclaimer" class="analysis">
         <div class="container">
             <div class="analysis-content">
                 <div class="analysis-text">
-                    <h2>Train Smarter with ACWR</h2>
-                    <p>Cross implements the <strong>Acute:Chronic Workload Ratio (ACWR)</strong> – the same science elite athletes use to prevent injury and optimize performance.</p>
+                    <h2>Not official gym data</h2>
+                    <p>OnTheRack is a personal project. It has no partnership with any chain, club, or government operator (including LCSD). Listings and ratings are user-generated and may be incomplete, outdated, or wrong.</p>
                     <ul class="analysis-list">
-                        <li><i class="fas fa-check-circle"></i> <strong>AU Calculation:</strong> Session RPE × Duration</li>
-                        <li><i class="fas fa-check-circle"></i> <strong>Acute Load:</strong> 7-day training fatigue</li>
-                        <li><i class="fas fa-check-circle"></i> <strong>Chronic Load:</strong> 28-day fitness base</li>
-                        <li><i class="fas fa-check-circle"></i> <strong>Sweet Spot:</strong> 0.8-1.3 ACWR for optimal progress</li>
-                        <li><i class="fas fa-check-circle"></i> <strong>Personalized Targets:</strong> Recommended weekly AU based on your history</li>
+                        <li><i class="fas fa-check-circle"></i> Seeded rows are labelled <strong>Sample data</strong></li>
+                        <li><i class="fas fa-check-circle"></i> Always confirm hours and access with the venue</li>
+                        <li><i class="fas fa-check-circle"></i> Do not treat reviews as safety or maintenance advice</li>
+                        <li><i class="fas fa-check-circle"></i> Users are responsible for what they post</li>
                     </ul>
-                    <a href="#download" class="primary-button">Start Training Smarter</a>
-                </div>
-                <div class="analysis-visual">
-                    <div class="acwr-chart">
-                        <div class="chart-container">
-                            <div class="chart-safe">SAFE ZONE<br>0.8-1.3 ACWR</div>
-                            <div class="chart-caution">CAUTION<br>1.3-1.5</div>
-                            <div class="chart-danger">DANGER<br>&gt;1.5</div>
-                            <div class="chart-needle"></div>
-                            <div class="chart-label">Your ACWR: 1.12 ✅</div>
-                        </div>
-                    </div>
+                    <p>中文簡介：OnTheRack 係眾包平台，用家可以為唔同健身室嘅<strong>器材</strong>（唔係成間 gym）寫狀況同等候評分。香港為先，但唔限香港。</p>
                 </div>
             </div>
         </div>
     </section>
 
-    <!-- Download CTA -->
     <section id="download" class="download">
         <div class="container">
             <div class="download-content">
-                <h2>Ready to Cross-Train Better?</h2>
-                <p>Join the waitlist for early access to the only training app built specifically for hybrid athletes.</p>
+                <h2>Run the Flutter app</h2>
+                <p>The source lives in the <code>cross_app</code> repository. Clone it, run <code>flutter pub get</code>, then <code>flutter run</code>. Store listings and new icons are not part of this first pass.</p>
                 <div class="download-buttons">
-                    <a href="#" class="primary-button large-button">
-                        <i class="fab fa-apple"></i> Join iOS Waitlist
-                    </a>
-                    <a href="#" class="primary-button large-button">
-                        <i class="fab fa-google-play"></i> Join Android Waitlist
+                    <a href="https://github.com/cubecnelson/cross_app" class="primary-button large-button">
+                        <i class="fab fa-github"></i> cubecnelson/cross_app
                     </a>
                 </div>
-                <p class="download-note">Currently in development. Expected release: Q2 2026</p>
+                <p class="download-note">Personal project by Nelson Cheung. iOS and Android display names are OnTheRack; existing bundle IDs and app icons are unchanged for now.</p>
             </div>
         </div>
     </section>
 
-    <!-- Footer -->
     <footer class="footer">
         <div class="container">
             <div class="footer-content">
                 <div class="footer-logo">
-                    <img src="assets/icon.svg" alt="Cross App Icon" class="footer-icon">
-                    <span>Cross</span>
+                    <img src="assets/icon.svg" alt="OnTheRack icon" class="footer-icon">
+                    <span>OnTheRack</span>
                 </div>
                 <div class="footer-links">
                     <div class="footer-column">
                         <h4>Product</h4>
                         <a href="#features">Features</a>
-                        <a href="#analysis">ACWR Analysis</a>
-                        <a href="#download">Download</a>
+                        <a href="#how">How it works</a>
+                        <a href="#disclaimer">Disclaimer</a>
                     </div>
                     <div class="footer-column">
-                        <h4>Resources</h4>
-                        <a href="https://github.com/cubecnelson/cross_app" target="_blank">GitHub</a>
-                        <a href="#">Documentation</a>
-                        <a href="#">Blog</a>
-                    </div>
-                    <div class="footer-column">
-                        <h4>Legal</h4>
-                        <a href="#">Privacy Policy</a>
-                        <a href="#">Terms of Service</a>
-                        <a href="#">Contact</a>
+                        <h4>Source</h4>
+                        <a href="https://github.com/cubecnelson/cross_app" target="_blank" rel="noopener">GitHub</a>
+                        <a href="https://github.com/cubecnelson/cross_app#readme" target="_blank" rel="noopener">README</a>
                     </div>
                 </div>
             </div>
             <div class="footer-bottom">
-                <p>© 2026 Cross App. Built with ❤️ for hybrid athletes everywhere.</p>
+                <p>© 2026 Nelson Cheung. OnTheRack is not affiliated with any gym, chain, or government operator.</p>
                 <div class="footer-social">
-                    <a href="#"><i class="fab fa-twitter"></i></a>
-                    <a href="https://github.com/cubecnelson/cross_app" target="_blank"><i class="fab fa-github"></i></a>
-                    <a href="#"><i class="fab fa-instagram"></i></a>
+                    <a href="https://github.com/cubecnelson/cross_app" target="_blank" rel="noopener" aria-label="GitHub"><i class="fab fa-github"></i></a>
                 </div>
             </div>
         </div>

@@ -4,7 +4,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:integration_test/integration_test.dart';
-import 'package:shorebird_code_push/shorebird_code_push.dart';
 
 import 'package:cross/app.dart';
 import 'package:cross/core/theme/app_theme.dart';
@@ -62,8 +61,8 @@ void main() {
     testWidgets('Login', (tester) async {
       await tester.pumpWidget(
         ProviderScope(
-          overrides: signedOutOverrides(),
-          child: CrossApp(shorebirdCodePush: ShorebirdUpdater()),
+          overrides: [...signedOutOverrides(), ...await onTheRackCatalogOverrides()],
+          child: const OnTheRackApp(),
         ),
       );
       await tester.pumpAndSettle(const Duration(seconds: 2));
@@ -94,8 +93,8 @@ void main() {
     testWidgets('Dashboard', (tester) async {
       await tester.pumpWidget(
         ProviderScope(
-          overrides: signedInOverrides(),
-          child: CrossApp(shorebirdCodePush: ShorebirdUpdater()),
+          overrides: [...signedInOverrides(), ...await onTheRackCatalogOverrides()],
+          child: const OnTheRackApp(),
         ),
       );
       await tester.pumpAndSettle(const Duration(seconds: 3));
@@ -105,12 +104,12 @@ void main() {
     testWidgets('Workouts', (tester) async {
       await tester.pumpWidget(
         ProviderScope(
-          overrides: signedInOverrides(),
-          child: CrossApp(shorebirdCodePush: ShorebirdUpdater()),
+          overrides: [...signedInOverrides(), ...await onTheRackCatalogOverrides()],
+          child: const OnTheRackApp(),
         ),
       );
       await tester.pumpAndSettle(const Duration(seconds: 3));
-      await tester.tap(find.text('Workouts'));
+      await tester.tap(find.text('Reviews'));
       await tester.pumpAndSettle();
       await captureScreen(tester, screenshotCapture, 'workouts', testDeviceSizes);
     });
@@ -118,12 +117,12 @@ void main() {
     testWidgets('Progress', (tester) async {
       await tester.pumpWidget(
         ProviderScope(
-          overrides: signedInOverrides(),
-          child: CrossApp(shorebirdCodePush: ShorebirdUpdater()),
+          overrides: [...signedInOverrides(), ...await onTheRackCatalogOverrides()],
+          child: const OnTheRackApp(),
         ),
       );
       await tester.pumpAndSettle(const Duration(seconds: 3));
-      await tester.tap(find.text('Progress'));
+      await tester.tap(find.text('Account'));
       await tester.pumpAndSettle();
       await captureScreen(tester, screenshotCapture, 'progress', testDeviceSizes);
     });
@@ -131,12 +130,12 @@ void main() {
     testWidgets('Profile', (tester) async {
       await tester.pumpWidget(
         ProviderScope(
-          overrides: signedInOverrides(),
-          child: CrossApp(shorebirdCodePush: ShorebirdUpdater()),
+          overrides: [...signedInOverrides(), ...await onTheRackCatalogOverrides()],
+          child: const OnTheRackApp(),
         ),
       );
       await tester.pumpAndSettle(const Duration(seconds: 3));
-      await tester.tap(find.text('Profile'));
+      await tester.tap(find.text('Account'));
       await tester.pumpAndSettle();
       await captureScreen(tester, screenshotCapture, 'profile', testDeviceSizes);
     });

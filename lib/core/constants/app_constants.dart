@@ -1,6 +1,6 @@
 class AppConstants {
   // App Info
-  static const String appName = 'Cross';
+  static const String appName = 'OnTheRack';
   static const String appVersion = '1.0.0';
   
   // Database Tables

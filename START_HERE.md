@@ -1,3 +1,5 @@
+> **Note (November 2026):** This repository is now **OnTheRack**, a crowdsourced gym-equipment review app. The running Flutter app is no longer the Cross workout tracker. See the root [README.md](README.md) for current setup and product details. The notes below are historical Cross documentation and may be outdated.
+
 # iOS Deployment - Quick Start
 
 Your GitHub Action is ready! Follow these steps to complete setup.

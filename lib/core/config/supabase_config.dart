@@ -12,6 +12,27 @@ class SupabaseConfig {
     defaultValue: 'your-anon-key-here',
   );
 
+
+  static bool get isConfigured =>
+      supabaseUrl != 'https://your-project.supabase.co' &&
+      supabaseAnonKey != 'your-anon-key-here' &&
+      supabaseUrl.isNotEmpty &&
+      supabaseAnonKey.isNotEmpty;
+
+  /// Initializes only when dart-define / env values are present.
+  /// Returns false (and does not throw) when credentials are placeholders,
+  /// so the OnTheRack catalog can run without a Supabase project.
+  static Future<bool> initializeIfConfigured() async {
+    if (!isConfigured) {
+      if (kDebugMode) {
+        print('ℹ️  Supabase not configured; continuing with local catalog.');
+      }
+      return false;
+    }
+    await initialize();
+    return true;
+  }
+
   static Future<void> initialize() async {
     // Check if using default values (development)
     if (supabaseUrl == 'https://your-project.supabase.co' || 

@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'dart:ui' as ui;
 import 'dart:math';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -68,7 +69,7 @@ class _TrajectoryPainter extends CustomPainter {
     // Draw AI bounding box if available.
     if (latestDetection != null) {
       final box = latestDetection!.boundingBox;
-      final rect = Rect.fromLTRB(
+      final rect = ui.Rect.fromLTRB(
         box.left * size.width,
         box.top * size.height,
         box.right * size.width,
@@ -134,7 +135,7 @@ class _VelocityGaugePainter extends CustomPainter {
       ..strokeWidth = 14
       ..strokeCap = StrokeCap.round;
     canvas.drawArc(
-      Rect.fromCircle(center: Offset(cx, cy), radius: r),
+      ui.Rect.fromCircle(center: Offset(cx, cy), radius: r),
       startAngle,
       sweepAngle,
       false,
@@ -153,7 +154,7 @@ class _VelocityGaugePainter extends CustomPainter {
         ..strokeWidth = 14
         ..strokeCap = StrokeCap.butt;
       canvas.drawArc(
-        Rect.fromCircle(center: Offset(cx, cy), radius: r),
+        ui.Rect.fromCircle(center: Offset(cx, cy), radius: r),
         zoneStart,
         zoneSweep,
         false,
@@ -171,7 +172,7 @@ class _VelocityGaugePainter extends CustomPainter {
         ..strokeWidth = 14
         ..strokeCap = StrokeCap.round;
       canvas.drawArc(
-        Rect.fromCircle(center: Offset(cx, cy), radius: r),
+        ui.Rect.fromCircle(center: Offset(cx, cy), radius: r),
         startAngle,
         sweepAngle * fraction,
         false,
