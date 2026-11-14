@@ -1,12 +1,11 @@
-# Fastfile for iOS deployment (Automatic Signing)
+# Fastfile for iOS deployment (certificate-based manual signing in CI)
 
 default_platform(:ios)
 
 platform :ios do
-  desc "Push a new beta build to TestFlight (Automatic Signing)"
+  desc "Push a new beta build to TestFlight (Certificate-Based)"
   lane :beta do
-    # For automatic signing approach, we use API key authentication
-    # Fastlane will automatically manage certificates and profiles
+    # Certificates and the App Store profile are installed by the GitHub Actions workflow.
     
     # Use build number from environment (GitHub run number) or increment local
     if ENV['BUILD_NUMBER']
@@ -23,7 +22,20 @@ platform :ios do
       build_number: new_build
     )
     
-    # Build the app with automatic signing using API key
+    # Use the distribution certificate and App Store profile installed by CI.
+    profile_name = ENV['PROVISIONING_PROFILE_SPECIFIER'].to_s
+    UI.user_error!("PROVISIONING_PROFILE_SPECIFIER is not set") if profile_name.empty?
+
+    update_code_signing_settings(
+      use_automatic_signing: false,
+      path: "Runner.xcodeproj",
+      team_id: ENV['TEAM_ID'],
+      targets: ["Runner"],
+      code_sign_identity: "Apple Distribution",
+      profile_name: profile_name,
+      bundle_identifier: "com.cross.app"
+    )
+
     build_app(
       workspace: "Runner.xcworkspace",
       scheme: "Runner",
@@ -37,14 +49,13 @@ platform :ios do
         uploadSymbols: true,
         uploadBitcode: false,
         teamID: ENV['TEAM_ID'],
-        signingStyle: "automatic",
+        signingStyle: "manual",
+        signingCertificate: "Apple Distribution",
         provisioningProfiles: {
-          # For automatic signing, we don't specify profile names
-          # Xcode will automatically manage them
-          "com.cross.app" => ""
+          "com.cross.app" => profile_name
         }
       },
-      xcargs: "-allowProvisioningUpdates"
+      xcargs: "CODE_SIGN_STYLE=Manual CODE_SIGN_IDENTITY='Apple Distribution' DEVELOPMENT_TEAM=#{ENV['TEAM_ID']} PROVISIONING_PROFILE_SPECIFIER='#{profile_name}'"
     )
     
     # Upload to TestFlight - Fastlane auto-uses environment variables
@@ -59,10 +70,8 @@ platform :ios do
     clean_build_artifacts
   end
   
-  desc "Build the app for App Store submission (Automatic Signing)"
+  desc "Build the app for App Store submission (Certificate-Based)"
   lane :release do
-    # For automatic signing approach
-    
     # Use build number from environment (GitHub run number) or increment local
     if ENV['BUILD_NUMBER']
       new_build = ENV['BUILD_NUMBER'].to_i
@@ -78,7 +87,20 @@ platform :ios do
       build_number: new_build
     )
     
-    # Build the app with automatic signing
+    # Use the distribution certificate and App Store profile installed by CI.
+    profile_name = ENV['PROVISIONING_PROFILE_SPECIFIER'].to_s
+    UI.user_error!("PROVISIONING_PROFILE_SPECIFIER is not set") if profile_name.empty?
+
+    update_code_signing_settings(
+      use_automatic_signing: false,
+      path: "Runner.xcodeproj",
+      team_id: ENV['TEAM_ID'],
+      targets: ["Runner"],
+      code_sign_identity: "Apple Distribution",
+      profile_name: profile_name,
+      bundle_identifier: "com.cross.app"
+    )
+
     build_app(
       workspace: "Runner.xcworkspace",
       scheme: "Runner",
@@ -92,12 +114,13 @@ platform :ios do
         uploadSymbols: true,
         uploadBitcode: false,
         teamID: ENV['TEAM_ID'],
-        signingStyle: "automatic",
+        signingStyle: "manual",
+        signingCertificate: "Apple Distribution",
         provisioningProfiles: {
-          "com.cross.app" => ""
+          "com.cross.app" => profile_name
         }
       },
-      xcargs: "-allowProvisioningUpdates"
+      xcargs: "CODE_SIGN_STYLE=Manual CODE_SIGN_IDENTITY='Apple Distribution' DEVELOPMENT_TEAM=#{ENV['TEAM_ID']} PROVISIONING_PROFILE_SPECIFIER='#{profile_name}'"
     )
     
     # Upload to App Store Connect - Fastlane auto-uses environment variables

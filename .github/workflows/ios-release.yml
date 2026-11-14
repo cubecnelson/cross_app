@@ -192,10 +192,27 @@ jobs:
           echo "Listing certificates in keychain:"
           security find-identity -p codesigning -v build.keychain
           
-          # Install provisioning profile
+          # Install the profile under its UUID in both Xcode search paths.
+          # Xcode 16+ reads ~/Library/Developer/Xcode/UserData/Provisioning Profiles;
+          # older tools still look in ~/Library/MobileDevice/Provisioning Profiles.
           echo "Installing provisioning profile..."
-          mkdir -p ~/Library/MobileDevice/Provisioning\ Profiles
-          cp ~/certs/AppStore.mobileprovision ~/Library/MobileDevice/Provisioning\ Profiles/
+          PROFILE_PLIST=$(mktemp)
+          security cms -D -i ~/certs/AppStore.mobileprovision > "$PROFILE_PLIST"
+          PROFILE_UUID=$(/usr/libexec/PlistBuddy -c 'Print UUID' "$PROFILE_PLIST")
+          PROFILE_NAME=$(/usr/libexec/PlistBuddy -c 'Print Name' "$PROFILE_PLIST")
+          rm -f "$PROFILE_PLIST"
+          if [ -z "$PROFILE_UUID" ] || [ -z "$PROFILE_NAME" ]; then
+            echo "❌ Could not read UUID or Name from the provisioning profile"
+            exit 1
+          fi
+          echo "Provisioning profile name: $PROFILE_NAME"
+          echo "Provisioning profile UUID: $PROFILE_UUID"
+          NEW_DIR="$HOME/Library/Developer/Xcode/UserData/Provisioning Profiles"
+          LEGACY_DIR="$HOME/Library/MobileDevice/Provisioning Profiles"
+          mkdir -p "$NEW_DIR" "$LEGACY_DIR"
+          cp ~/certs/AppStore.mobileprovision "$NEW_DIR/${PROFILE_UUID}.mobileprovision"
+          cp ~/certs/AppStore.mobileprovision "$LEGACY_DIR/${PROFILE_UUID}.mobileprovision"
+          echo "PROVISIONING_PROFILE_SPECIFIER=$PROFILE_NAME" >> "$GITHUB_ENV"
           
           echo "✅ Certificates and profiles setup complete"
           
@@ -252,6 +269,7 @@ jobs:
           echo "Issuer ID: $APP_STORE_CONNECT_API_KEY_ISSUER_ID"
           echo "Key Format: $APP_STORE_CONNECT_API_KEY_IS_KEY_CONTENT_BASE64"
           echo "Bundle ID: com.cross.app"
+          echo "Provisioning profile: $PROVISIONING_PROFILE_SPECIFIER"
           echo "Using: Certificate-Based Signing Approach"
           echo ""
           
