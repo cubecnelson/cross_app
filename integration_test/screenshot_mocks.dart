@@ -14,6 +14,9 @@ import 'package:cross/providers/exercise_provider.dart';
 import 'package:cross/providers/export_provider.dart';
 import 'package:cross/providers/health_provider.dart';
 import 'package:shorebird_code_push/shorebird_code_push.dart';
+import 'package:cross/providers/catalog_provider.dart';
+import 'package:cross/services/catalog_service.dart';
+import 'package:cross/services/local_auth_service.dart';
 
 /// Mock session for screenshot tests (signed-in state)
 Session get mockSession => Session.fromJson({
@@ -77,3 +80,15 @@ List<Override> signedOutOverrides() => [
   themeProvider.overrideWith((ref) => MockThemeNotifier(ThemeMode.light)),
   shorebirdCodePushProvider.overrideWithValue(ShorebirdUpdater()),
 ];
+
+
+Future<List<Override>> onTheRackCatalogOverrides() async {
+  final catalog = CatalogService.memory();
+  await catalog.initialize();
+  final auth = LocalAuthService(catalog);
+  await auth.initialize();
+  return [
+    catalogServiceProvider.overrideWithValue(catalog),
+    localAuthServiceProvider.overrideWithValue(auth),
+  ];
+}
