@@ -1,9 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import '../../dashboard/screens/dashboard_screen.dart';
-import '../../workouts/screens/workouts_list_screen.dart';
-import '../../progress/screens/progress_screen.dart';
-import '../../profile/screens/profile_screen.dart';
+import '../../account/screens/account_screen.dart';
+import '../../gyms/screens/gyms_list_screen.dart';
+import '../../reviews/screens/recent_reviews_screen.dart';
 
 final _currentIndexProvider = StateProvider<int>((ref) => 0);
 
@@ -14,11 +13,10 @@ class HomeScreen extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     final currentIndex = ref.watch(_currentIndexProvider);
 
-    final screens = [
-      const DashboardScreen(),
-      const WorkoutsListScreen(),
-      const ProgressScreen(),
-      const ProfileScreen(),
+    const screens = [
+      GymsListScreen(),
+      RecentReviewsScreen(),
+      AccountScreen(),
     ];
 
     return Scaffold(
@@ -32,28 +30,22 @@ class HomeScreen extends ConsumerWidget {
         type: BottomNavigationBarType.fixed,
         items: const [
           BottomNavigationBarItem(
-            icon: Icon(Icons.home_outlined),
-            activeIcon: Icon(Icons.home),
-            label: 'Home',
+            icon: Icon(Icons.storefront_outlined),
+            activeIcon: Icon(Icons.storefront),
+            label: 'Gyms',
           ),
           BottomNavigationBarItem(
-            icon: Icon(Icons.fitness_center_outlined),
-            activeIcon: Icon(Icons.fitness_center),
-            label: 'Workouts',
-          ),
-          BottomNavigationBarItem(
-            icon: Icon(Icons.trending_up_outlined),
-            activeIcon: Icon(Icons.trending_up),
-            label: 'Progress',
+            icon: Icon(Icons.rate_review_outlined),
+            activeIcon: Icon(Icons.rate_review),
+            label: 'Reviews',
           ),
           BottomNavigationBarItem(
             icon: Icon(Icons.person_outline),
             activeIcon: Icon(Icons.person),
-            label: 'Profile',
+            label: 'Account',
           ),
         ],
       ),
     );
   }
 }
-
